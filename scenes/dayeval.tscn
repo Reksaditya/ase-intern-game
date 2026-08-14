@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://b2kgl1uefraf5"]
+
+[ext_resource type="FontFile" uid="uid://bmsrpfli7wk6a" path="res://assets/fonts/RobotoMono-Italic.ttf" id="1_m15n0"]
+[ext_resource type="FontFile" uid="uid://c7jtwt6md44kx" path="res://assets/fonts/RobotoMono-Regular.ttf" id="2_nbn0a"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_odkhf"]
+font = ExtResource("1_m15n0")
+font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_h44e2"]
+font = ExtResource("2_nbn0a")
+font_size = 24
+font_color = Color(0.17128617, 0.18415022, 0.18158087, 1)
+
+[node name="Node2D" type="Node2D" unique_id=102469646]
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=802188768]
+light_mask = 0
+offset_right = 1153.0
+offset_bottom = 648.0
+color = Color(0, 0, 0, 1)
+
+[node name="popup" type="ColorRect" parent="." unique_id=1085431713]
+offset_left = 295.0
+offset_top = 115.0
+offset_right = 859.1002
+offset_bottom = 525.0
+color = Color(0.9098039, 0.89411765, 0.84705883, 1)
+
+[node name="Label" type="Label" parent="popup" unique_id=2063444505]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 93.0
+offset_right = 210.0
+offset_bottom = 116.0
+text = "KOMANDAN SEKTOR 07"
+label_settings = SubResource("LabelSettings_odkhf")
+
+[node name="line" type="Line2D" parent="popup" unique_id=124311910]
+position = Vector2(-296, -112)
+points = PackedVector2Array(329, 192, 833, 192)
+width = 1.5
+default_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
+
+[node name="header" type="Label" parent="popup" unique_id=617206416]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 32.0
+offset_right = 452.0
+offset_bottom = 66.0
+text = "MORNING REPORT - DAY 3"
+label_settings = SubResource("LabelSettings_h44e2")
+horizontal_alignment = 1
+vertical_alignment = 1
