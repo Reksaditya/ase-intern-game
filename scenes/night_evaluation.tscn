@@ -1,0 +1,130 @@
+[gd_scene format=3]
+
+[ext_resource type="FontFile" uid="uid://c7jtwt6md44kx" path="res://assets/fonts/RobotoMono-Regular.ttf" id="2_regular"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_section"]
+font = ExtResource("2_regular")
+font_size = 18
+font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_body"]
+font = ExtResource("2_regular")
+font_size = 17
+font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_muted"]
+font = ExtResource("2_regular")
+font_size = 17
+font_color = Color(0.48, 0.49, 0.47, 1)
+
+[node name="NightEvaluation" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="popup" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 295.0
+offset_top = 115.0
+offset_right = 859.1002
+offset_bottom = 525.0
+mouse_filter = 2
+color = Color(0.9098039, 0.89411765, 0.84705883, 1)
+
+[node name="SectionHeading" type="Label" parent="popup"]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 93.0
+offset_right = 400.0
+offset_bottom = 120.0
+mouse_filter = 2
+text = "RINGKASAN SHIFT"
+label_settings = SubResource("LabelSettings_section")
+
+[node name="ShiftSummary" type="Label" parent="popup"]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 139.0
+offset_right = 525.0
+offset_bottom = 225.0
+mouse_filter = 2
+text = "[PLACEHOLDER] Jumlah pemohon diperiksa akan ditampilkan di sini.\n[PLACEHOLDER] Jumlah diterima dan ditolak akan ditampilkan di sini."
+label_settings = SubResource("LabelSettings_body")
+autowrap_mode = 2
+
+[node name="ShiftNotes" type="Label" parent="popup"]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 235.0
+offset_right = 525.0
+offset_bottom = 305.0
+mouse_filter = 2
+text = "[PLACEHOLDER] Catatan militer dan status gerbang akan ditampilkan di sini."
+label_settings = SubResource("LabelSettings_body")
+autowrap_mode = 2
+
+[node name="MutedNightNotes" type="Label" parent="popup"]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 325.0
+offset_right = 525.0
+offset_bottom = 400.0
+mouse_filter = 2
+text = "[PLACEHOLDER] Catatan kondisi malam akan ditampilkan di sini."
+label_settings = SubResource("LabelSettings_muted")
+autowrap_mode = 2
+
+[node name="line" type="Line2D" parent="popup"]
+position = Vector2(-296, -112)
+points = PackedVector2Array(329, 192, 833, 192)
+width = 1.5
+default_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
+
+[node name="header" type="Label" parent="popup"]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 32.0
+offset_right = 484.0
+offset_bottom = 66.0
+mouse_filter = 2
+text = "EVALUASI MALAM - HARI 3"
+label_settings = SubResource("LabelSettings_section")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -68.0
+offset_right = 260.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(0.55, 0.55, 0.55, 1)
+theme_override_colors/font_pressed_color = Color(0.4, 0.4, 0.4, 1)
+theme_override_fonts/font = ExtResource("2_regular")
+theme_override_font_sizes/font_size = 16
+text = "[ CLICK EVERYWHERE TO CONTINUE ]"
+flat = true

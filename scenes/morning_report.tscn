@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://b2x22e5h75y8e"]
+[gd_scene format=3 uid="uid://b2kgl1uefraf5"]
 
 [ext_resource type="FontFile" uid="uid://bmsrpfli7wk6a" path="res://assets/fonts/RobotoMono-Italic.ttf" id="1_m15n0"]
 [ext_resource type="FontFile" uid="uid://c7jtwt6md44kx" path="res://assets/fonts/RobotoMono-Regular.ttf" id="2_nbn0a"]
@@ -7,15 +7,15 @@
 font = ExtResource("1_m15n0")
 font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_placeholder"]
-font = ExtResource("2_nbn0a")
-font_size = 17
-font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
-
 [sub_resource type="LabelSettings" id="LabelSettings_h44e2"]
 font = ExtResource("2_nbn0a")
 font_size = 24
 font_color = Color(0.17128617, 0.18415022, 0.18158087, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_placeholder"]
+font = ExtResource("2_nbn0a")
+font_size = 17
+font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
 
 [node name="MorningReport" type="Control" unique_id=102469646]
 layout_mode = 3
@@ -27,7 +27,6 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=802188768]
-light_mask = 0
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -35,6 +34,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+light_mask = 0
 color = Color(0, 0, 0, 1)
 
 [node name="popup" type="ColorRect" parent="." unique_id=1085431713]
@@ -52,20 +52,18 @@ offset_left = 33.0
 offset_top = 93.0
 offset_right = 210.0
 offset_bottom = 116.0
+mouse_filter = 2
 text = "KOMANDAN SEKTOR 07"
 label_settings = SubResource("LabelSettings_odkhf")
 
-[node name="PlaceholderText" type="Label" parent="popup" unique_id=935021874]
+[node name="PlaceholderText" type="Label" parent="popup"]
 layout_mode = 0
 offset_left = 33.0
 offset_top = 135.0
 offset_right = 525.0
 offset_bottom = 350.0
-text = "[PLACEHOLDER] Ringkasan pelanggaran protokol dari hari sebelumnya akan ditampilkan di sini.
-
-[PLACEHOLDER] Status indikasi penyusup untuk hari ini akan ditampilkan di sini.
-
-[PLACEHOLDER] Instruksi SOP baru akan ditampilkan di sini."
+mouse_filter = 2
+text = "[PLACEHOLDER] Ringkasan pelanggaran protokol dari hari sebelumnya akan ditampilkan di sini.\n\n[PLACEHOLDER] Status indikasi penyusup untuk hari ini akan ditampilkan di sini.\n\n[PLACEHOLDER] Instruksi SOP baru akan ditampilkan di sini."
 label_settings = SubResource("LabelSettings_placeholder")
 autowrap_mode = 2
 
@@ -81,12 +79,13 @@ offset_left = 134.0
 offset_top = 32.0
 offset_right = 452.0
 offset_bottom = 66.0
+mouse_filter = 2
 text = "MORNING REPORT - DAY 3"
 label_settings = SubResource("LabelSettings_h44e2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ContinueButton" type="Button" parent="." unique_id=141264162]
+[node name="ContinueButton" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -102,8 +101,8 @@ grow_vertical = 0
 focus_mode = 0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_pressed_color = Color(0.4, 0.4, 0.4, 1)
 theme_override_colors/font_hover_color = Color(0.55, 0.55, 0.55, 1)
+theme_override_colors/font_pressed_color = Color(0.4, 0.4, 0.4, 1)
 theme_override_fonts/font = ExtResource("2_nbn0a")
 theme_override_font_sizes/font_size = 16
 text = "[ CLICK EVERYWHERE TO CONTINUE ]"
