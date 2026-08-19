@@ -12,14 +12,19 @@ const ENDING_SCENE: PackedScene = preload("res://scenes/ending.tscn")
 var _timeline: Array[Dictionary] = []
 var _timeline_index := 0
 var _active_scene: Node
+var _game_started := false
+
+@onready var _main_menu := $MainMenu
 
 
 func _ready() -> void:
-	_timeline = _build_timeline()
-	_show_timeline_step()
+	$MainMenu/Buttons/NewGameButton.pressed.connect(_start_new_game)
+	$MainMenu/Buttons/QuitButton.pressed.connect(_quit_game)
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not _game_started:
+		return
 	var should_advance := event.is_action_pressed("ui_accept")
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
@@ -27,6 +32,19 @@ func _unhandled_input(event: InputEvent) -> void:
 	if should_advance:
 		_advance_timeline()
 		get_viewport().set_input_as_handled()
+
+
+func _start_new_game() -> void:
+	if _game_started:
+		return
+	_game_started = true
+	_timeline = _build_timeline()
+	_main_menu.hide()
+	_show_timeline_step()
+
+
+func _quit_game() -> void:
+	get_tree().quit()
 
 
 func _build_timeline() -> Array[Dictionary]:
