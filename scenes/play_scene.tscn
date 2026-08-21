@@ -1,0 +1,340 @@
+[gd_scene format=3 uid="uid://nhgafyocdil3"]
+
+[ext_resource type="FontFile" uid="uid://c3285r3n5l6cg" path="res://assets/fonts/CourierPrime-Bold.ttf" id="1_m1edv"]
+[ext_resource type="FontFile" uid="uid://bxdeha88xo6ug" path="res://assets/fonts/CourierPrime-Regular.ttf" id="2_que2y"]
+[ext_resource type="Texture2D" uid="uid://cpg5jhsmbf3u2" path="res://assets/main.png" id="2_wklqy"]
+[ext_resource type="Texture2D" uid="uid://8mgwxii5501c" path="res://assets/karakter1.png" id="4_kdvgv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kdvgv"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.2, 1, 0.2, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="Theme" id="Theme_m1edv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_que2y"]
+bg_color = Color(0.11372549, 0.11764706, 0.13333334, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.23921569, 0.24705882, 0.25490198, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 20.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ief5h"]
+bg_color = Color(0.20784314, 0.22352941, 0.20784314, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.23921569, 0.24705882, 0.25490198, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_da3qe"]
+bg_color = Color(0.11372549, 0.11764706, 0.13333334, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.23921569, 0.24705882, 0.25490198, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 20.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btd5q"]
+bg_color = Color(0.11372549, 0.11764706, 0.13333334, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 1, 0.2, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 20.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7pyap"]
+bg_color = Color(0.11372549, 0.11764706, 0.13333334, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.23921569, 0.24705882, 0.25490198, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uyxvy"]
+bg_color = Color(0, 0.23137255, 0.003921569, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 1, 0.2, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_741iy"]
+bg_color = Color(0.24313726, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.13333334, 0.13333334, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="Node2D" type="Node2D" unique_id=1154118291]
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1443645134]
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.047058824, 0.0627451, 0.043137256, 1)
+
+[node name="border" type="PanelContainer" parent="." unique_id=2006726033]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 1136.0
+offset_bottom = 632.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_kdvgv")
+
+[node name="sektor" type="Label" parent="." unique_id=1807478912]
+offset_left = 39.500122
+offset_top = 35.25
+offset_right = 339.50012
+offset_bottom = 67.25
+theme_override_colors/font_color = Color(0, 0.8, 0, 1)
+theme_override_fonts/font = ExtResource("1_m1edv")
+theme_override_font_sizes/font_size = 20
+text = "SEKTOR 07 // POS INSPEKSI"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="." unique_id=1556913042]
+offset_left = 1036.5001
+offset_top = 39.25
+offset_right = 1116.5001
+offset_bottom = 65.25
+theme_override_colors/font_color = Color(0, 0.8, 0, 1)
+theme_override_fonts/font = ExtResource("1_m1edv")
+theme_override_font_sizes/font_size = 20
+text = "Hari 2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Line2D" type="Line2D" parent="." unique_id=862573871]
+position = Vector2(-0.49987793, 1.25)
+points = PackedVector2Array(40, 72, 1112, 72)
+width = 1.0
+default_color = Color(0, 0.22352941, 0, 1)
+
+[node name="rules" type="PanelContainer" parent="." unique_id=1969309382]
+offset_left = 59.500122
+offset_top = 89.25
+offset_right = 1111.5001
+offset_bottom = 145.25
+theme = SubResource("Theme_m1edv")
+theme_override_styles/panel = SubResource("StyleBoxFlat_que2y")
+
+[node name="Label" type="Label" parent="rules" unique_id=1807901845]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.73333335, 0, 1)
+theme_override_fonts/font = ExtResource("2_que2y")
+text = "SOP AKTIF: Tolak pemohon dengan BPM > 110"
+
+[node name="Main" type="Sprite2D" parent="." unique_id=1396301233]
+position = Vector2(984, -424)
+scale = Vector2(1.6594203, 1.6479028)
+texture = ExtResource("2_wklqy")
+
+[node name="Panel" type="Panel" parent="." unique_id=778692409]
+offset_left = 39.500122
+offset_top = 161.25
+offset_right = 799.5001
+offset_bottom = 480.25
+theme_override_styles/panel = SubResource("StyleBoxFlat_ief5h")
+
+[node name="biometricsbox" type="PanelContainer" parent="." unique_id=1740650895]
+offset_left = 835.5001
+offset_top = 161.25
+offset_right = 1111.5001
+offset_bottom = 209.25
+theme_override_styles/panel = SubResource("StyleBoxFlat_da3qe")
+
+[node name="Label" type="Label" parent="biometricsbox" unique_id=1628167409]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.23921569, 0.24705882, 0.25490198, 1)
+theme_override_fonts/font = ExtResource("2_que2y")
+text = "SENTER PUPIL (terkunci)"
+
+[node name="senterpupilbox" type="PanelContainer" parent="." unique_id=1154553858]
+offset_left = 835.5001
+offset_top = 217.25
+offset_right = 1111.5001
+offset_bottom = 265.25
+theme_override_styles/panel = SubResource("StyleBoxFlat_da3qe")
+
+[node name="Label" type="Label" parent="senterpupilbox" unique_id=1899751569]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.23921569, 0.24705882, 0.25490198, 1)
+theme_override_fonts/font = ExtResource("2_que2y")
+text = "BIOMETRIC (terkunci)"
+
+[node name="interogationlabel" type="Label" parent="." unique_id=584509787]
+offset_left = 816.5001
+offset_top = 273.25
+offset_right = 939.5001
+offset_bottom = 288.25
+theme_override_colors/font_color = Color(0.20784314, 0.22352941, 0.20784314, 1)
+theme_override_fonts/font = ExtResource("1_m1edv")
+theme_override_font_sizes/font_size = 12
+text = "INTERROGATION LOG"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="emotional" type="PanelContainer" parent="." unique_id=155864121]
+offset_left = 835.5001
+offset_top = 297.25
+offset_right = 1112.5001
+offset_bottom = 330.25
+theme_override_styles/panel = SubResource("StyleBoxFlat_btd5q")
+
+[node name="Label" type="Label" parent="emotional" unique_id=1468749172]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_que2y")
+theme_override_font_sizes/font_size = 12
+text = "Emosional"
+vertical_alignment = 1
+
+[node name="faktual" type="PanelContainer" parent="." unique_id=1846807205]
+offset_left = 835.5001
+offset_top = 337.25
+offset_right = 1111.5001
+offset_bottom = 369.25
+theme_override_styles/panel = SubResource("StyleBoxFlat_btd5q")
+
+[node name="Label" type="Label" parent="faktual" unique_id=2002445965]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_que2y")
+theme_override_font_sizes/font_size = 12
+text = "Faktual"
+vertical_alignment = 1
+
+[node name="jebakan" type="PanelContainer" parent="." unique_id=1929112044]
+offset_left = 835.5001
+offset_top = 377.25
+offset_right = 1111.5001
+offset_bottom = 409.25
+theme_override_styles/panel = SubResource("StyleBoxFlat_btd5q")
+
+[node name="Label" type="Label" parent="jebakan" unique_id=539860771]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_que2y")
+theme_override_font_sizes/font_size = 12
+text = "Jebakan"
+vertical_alignment = 1
+
+[node name="klarifikasi" type="PanelContainer" parent="." unique_id=48058385]
+offset_left = 835.5001
+offset_top = 417.25
+offset_right = 1111.5001
+offset_bottom = 449.25
+theme_override_styles/panel = SubResource("StyleBoxFlat_btd5q")
+
+[node name="Label" type="Label" parent="klarifikasi" unique_id=780447770]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_que2y")
+theme_override_font_sizes/font_size = 12
+text = "Klarifikasi"
+vertical_alignment = 1
+
+[node name="kriteria" type="Label" parent="." unique_id=1233272077]
+offset_left = 816.5001
+offset_top = 457.25
+offset_right = 1105.5001
+offset_bottom = 480.25
+theme_override_colors/font_color = Color(1, 0.73333335, 0, 1)
+theme_override_fonts/font = ExtResource("2_que2y")
+theme_override_font_sizes/font_size = 12
+text = "Butuh 2 pertanyaan untuk buka alat (0/2)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Karakter1" type="Sprite2D" parent="." unique_id=747487703]
+position = Vector2(407.50012, 288.75)
+scale = Vector2(0.1482747, 0.09350586)
+texture = ExtResource("4_kdvgv")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1381847290]
+offset_left = 39.500122
+offset_top = 497.25
+offset_right = 799.5001
+offset_bottom = 609.25
+theme_override_styles/panel = SubResource("StyleBoxFlat_7pyap")
+
+[node name="percakapan" type="Label" parent="." unique_id=1485938923]
+offset_left = 56.0
+offset_top = 512.0
+offset_right = 470.49988
+offset_bottom = 535.0
+theme_override_colors/font_color = Color(0.23921569, 0.24705882, 0.25490198, 1)
+theme_override_fonts/font = ExtResource("2_que2y")
+text = "Mulai dengan bertanya lewat Interrogation Log."
+
+[node name="terima" type="PanelContainer" parent="." unique_id=401295110]
+offset_left = 816.0
+offset_top = 497.0
+offset_right = 1112.0
+offset_bottom = 547.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_uyxvy")
+
+[node name="Label" type="Label" parent="terima" unique_id=833451326]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.2, 1)
+theme_override_fonts/font = ExtResource("2_que2y")
+theme_override_font_sizes/font_size = 12
+text = "TERIMA"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="tolak" type="PanelContainer" parent="." unique_id=1501154661]
+offset_left = 816.0
+offset_top = 557.0
+offset_right = 1112.0
+offset_bottom = 608.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_741iy")
+
+[node name="Label" type="Label" parent="tolak" unique_id=990166055]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9490196, 0.13333334, 0.13333334, 1)
+theme_override_fonts/font = ExtResource("2_que2y")
+theme_override_font_sizes/font_size = 12
+text = "TOLAK"
+horizontal_alignment = 1
+vertical_alignment = 1

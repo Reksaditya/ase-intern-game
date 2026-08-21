@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://dlq6mcqaf28nm"
-path="res://.godot/imported/RobotoMono-SemiBoldItalic.ttf-663b2e32a029c0cd16eecf5663421e51.fontdata"
+uid="uid://c3285r3n5l6cg"
+path="res://.godot/imported/CourierPrime-Bold.ttf-976e7168a9bd68d3075217c154f4000e.fontdata"
 
 [deps]
 
-source_file="res://assets/fonts/RobotoMono-SemiBoldItalic.ttf"
-dest_files=["res://.godot/imported/RobotoMono-SemiBoldItalic.ttf-663b2e32a029c0cd16eecf5663421e51.fontdata"]
+source_file="res://assets/fonts/CourierPrime-Bold.ttf"
+dest_files=["res://.godot/imported/CourierPrime-Bold.ttf-976e7168a9bd68d3075217c154f4000e.fontdata"]
 
 [params]
 

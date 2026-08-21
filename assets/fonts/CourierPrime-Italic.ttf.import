@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://qdi0wpjpen64"
-path="res://.godot/imported/RobotoMono-Light.ttf-b9539adb858015fa2243f68de7832cf5.fontdata"
+uid="uid://cevf6dxmn4vbu"
+path="res://.godot/imported/CourierPrime-Italic.ttf-21e835682841d7d697ff0e9e2d04814e.fontdata"
 
 [deps]
 
-source_file="res://assets/fonts/RobotoMono-Light.ttf"
-dest_files=["res://.godot/imported/RobotoMono-Light.ttf-b9539adb858015fa2243f68de7832cf5.fontdata"]
+source_file="res://assets/fonts/CourierPrime-Italic.ttf"
+dest_files=["res://.godot/imported/CourierPrime-Italic.ttf-21e835682841d7d697ff0e9e2d04814e.fontdata"]
 
 [params]
 
