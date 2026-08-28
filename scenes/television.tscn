@@ -1,0 +1,116 @@
+[gd_scene format=3 uid="uid://p35oge762nnh"]
+
+[ext_resource type="Texture2D" uid="uid://bii2hy676oklo" path="res://assets/UI/Frame 22.png" id="1_ccm7p"]
+[ext_resource type="Script" uid="uid://c6cqnjagpanvu" path="res://scripts/television.gd" id="2_p7rhp"]
+[ext_resource type="Texture2D" uid="uid://drk2qal4dc1ms" path="res://assets/button/INTEROGATION LOG.png" id="2_qcggj"]
+[ext_resource type="Texture2D" uid="uid://bmsvyudv4l8gi" path="res://assets/button/ID CARD.png" id="3_e67vq"]
+[ext_resource type="Texture2D" uid="uid://8txm3gt2q335" path="res://assets/button/INT INTEROGATION LOG.png" id="3_p7rhp"]
+[ext_resource type="Texture2D" uid="uid://o7sdm80jhlr7" path="res://assets/button/EMOTIONAL.png" id="6_0kdo7"]
+[ext_resource type="FontFile" uid="uid://bxdeha88xo6ug" path="res://assets/fonts/CourierPrime-Regular.ttf" id="6_5wq2a"]
+[ext_resource type="Texture2D" uid="uid://b0egiptuoplto" path="res://assets/button/FACTUAL.png" id="7_4l3id"]
+[ext_resource type="Texture2D" uid="uid://v4qms7w8mhgm" path="res://assets/button/INT EMOTIONAL.png" id="8_1igbn"]
+[ext_resource type="Texture2D" uid="uid://c3o6ousplpj8g" path="res://assets/button/TRAP.png" id="8_5wq2a"]
+[ext_resource type="Texture2D" uid="uid://2ltw77rxm80p" path="res://assets/button/CLARIFICATION.png" id="9_pke5g"]
+[ext_resource type="Texture2D" uid="uid://b0bh8t3xaiiee" path="res://assets/button/INT FACTUAL.png" id="10_gfk8r"]
+[ext_resource type="Texture2D" uid="uid://byc33drauru36" path="res://assets/button/INT TRAP.png" id="12_ia63r"]
+[ext_resource type="Texture2D" uid="uid://claacfllloyq7" path="res://assets/button/INT CLARIFICATION.png" id="14_pooaw"]
+
+[node name="Sprite2D" type="Sprite2D" unique_id=1612846764]
+position = Vector2(845.12775, 272)
+scale = Vector2(0.5961251, 0.5961251)
+texture = ExtResource("1_ccm7p")
+script = ExtResource("2_p7rhp")
+
+[node name="idcard" type="TextureButton" parent="." unique_id=932922295]
+offset_left = -344.10184
+offset_top = -40.25998
+offset_right = 208.03543
+offset_bottom = 40.26004
+mouse_filter = 1
+texture_normal = ExtResource("3_e67vq")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="intlog" type="TextureButton" parent="." unique_id=88623224]
+offset_left = -344.10184
+offset_top = -134.20001
+offset_right = 208.03543
+offset_bottom = -53.679993
+texture_normal = ExtResource("2_qcggj")
+texture_hover = ExtResource("3_p7rhp")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="LogTitle" type="Label" parent="." unique_id=88623227]
+modulate = Color(1, 1, 1, 0)
+offset_left = -344.10184
+offset_top = -174.46002
+offset_right = -48.861847
+offset_bottom = -93.94
+theme_override_colors/font_color = Color(0.2, 1, 0.35, 1)
+theme_override_fonts/font = ExtResource("6_5wq2a")
+theme_override_font_sizes/font_size = 28
+text = "INTEROGATION LOG"
+vertical_alignment = 1
+
+[node name="BackButton" type="Button" parent="." unique_id=2025474659]
+offset_left = 232.95825
+offset_top = -159.36255
+offset_right = 310.88083
+offset_bottom = -119.36255
+theme_override_colors/font_color = Color(0.3647059, 0.3647059, 0.3647059, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.95, 0.95, 1)
+theme_override_fonts/font = ExtResource("6_5wq2a")
+theme_override_font_sizes/font_size = 28
+text = "Back"
+
+[node name="LogScroll" type="ScrollContainer" parent="." unique_id=88623225]
+offset_left = -344.10184
+offset_top = -93.94
+offset_right = 123.89816
+offset_bottom = 134.20001
+pivot_offset = Vector2(276.07, 0)
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="LogButtonList" type="VBoxContainer" parent="LogScroll" unique_id=88623226]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="emotional" type="TextureButton" parent="LogScroll/LogButtonList" unique_id=174004945]
+custom_minimum_size = Vector2(460.114, 67.1)
+layout_mode = 2
+texture_normal = ExtResource("6_0kdo7")
+texture_hover = ExtResource("8_1igbn")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="factual" type="TextureButton" parent="LogScroll/LogButtonList" unique_id=2061930539]
+custom_minimum_size = Vector2(460.114, 67.1)
+layout_mode = 2
+texture_normal = ExtResource("7_4l3id")
+texture_hover = ExtResource("10_gfk8r")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="trap" type="TextureButton" parent="LogScroll/LogButtonList" unique_id=2142230674]
+custom_minimum_size = Vector2(460.114, 67.1)
+layout_mode = 2
+texture_normal = ExtResource("8_5wq2a")
+texture_hover = ExtResource("12_ia63r")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="clarification" type="TextureButton" parent="LogScroll/LogButtonList" unique_id=1167956875]
+custom_minimum_size = Vector2(460.114, 67.1)
+layout_mode = 2
+texture_normal = ExtResource("9_pke5g")
+texture_hover = ExtResource("14_pooaw")
+ignore_texture_size = true
+stretch_mode = 0
+
+[connection signal="button_down" from="intlog" to="." method="_on_intlog_button_down"]
+[connection signal="button_up" from="intlog" to="." method="_on_intlog_button_up"]
+[connection signal="focus_entered" from="intlog" to="." method="_on_intlog_focus_entered"]
+[connection signal="pressed" from="intlog" to="." method="_on_intlog_pressed"]

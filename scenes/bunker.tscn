@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://cdjdekedo1t6d"]
+
+[ext_resource type="Texture2D" uid="uid://dyd4u5j3ceost" path="res://assets/UI/Frame 3 (2).png" id="1_7c24m"]
+[ext_resource type="Texture2D" uid="uid://bcnhdlj1dthji" path="res://assets/UI/Tak berjudul181_20260823155716 1.png" id="2_hk1w7"]
+[ext_resource type="Texture2D" uid="uid://cnudefog2vylx" path="res://assets/UI/Frame 4.png" id="3_tyiie"]
+[ext_resource type="Texture2D" uid="uid://0agsaxwfeug3" path="res://assets/button/ACCEPT.png" id="5_64vmv"]
+[ext_resource type="Texture2D" uid="uid://crqow18ng6t2j" path="res://assets/button/INT ACCEPT.png" id="6_fge2j"]
+[ext_resource type="Texture2D" uid="uid://dsjc8p5hxlpf6" path="res://assets/button/REJECT.png" id="7_csyls"]
+[ext_resource type="Texture2D" uid="uid://ddehfpe0ffue6" path="res://assets/button/INT REJECT.png" id="8_mh480"]
+
+[node name="Node2D" type="Node2D" unique_id=1115165048]
+
+[node name="bgfull" type="Sprite2D" parent="." unique_id=415542860]
+position = Vector2(576.55554, 322.75)
+scale = Vector2(0.5994214, 0.59861106)
+texture = ExtResource("1_7c24m")
+
+[node name="bgpanel" type="Sprite2D" parent="." unique_id=1651038492]
+position = Vector2(363, 302.00003)
+scale = Vector2(0.59433967, 0.5943396)
+texture = ExtResource("2_hk1w7")
+
+[node name="borderpanel" type="Sprite2D" parent="bgpanel" unique_id=1683378891]
+position = Vector2(8.412702, 3.365018)
+texture = ExtResource("3_tyiie")
+
+[node name="TerimaButton" type="TextureButton" parent="." unique_id=866892319]
+offset_left = 32.0
+offset_top = 568.0
+offset_right = 360.0
+offset_bottom = 616.0
+texture_normal = ExtResource("5_64vmv")
+texture_hover = ExtResource("6_fge2j")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="TolakButton" type="TextureButton" parent="." unique_id=1332787039]
+offset_left = 371.0
+offset_top = 568.0
+offset_right = 700.1429
+offset_bottom = 616.0
+texture_normal = ExtResource("7_csyls")
+texture_hover = ExtResource("8_mh480")
+ignore_texture_size = true
+stretch_mode = 0

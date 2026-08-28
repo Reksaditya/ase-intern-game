@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cdjdekedo1t6d" path="res://scenes/bunker.tscn" id="1_bunker"]
+[ext_resource type="PackedScene" uid="uid://p35oge762nnh" path="res://scenes/television.tscn" id="2_television"]
+
+[node name="TempoGameplay" type="Node2D"]
+
+[node name="bunker" parent="." instance=ExtResource("1_bunker")]
+
+[node name="Sprite2D" parent="." instance=ExtResource("2_television")]
+position = Vector2(848, 264)
+scale = Vector2(0.58122206, 0.58122206)
