@@ -110,6 +110,9 @@ texture_hover = ExtResource("14_pooaw")
 ignore_texture_size = true
 stretch_mode = 0
 
+[connection signal="button_down" from="idcard" to="." method="_on_idcard_button_down"]
+[connection signal="button_up" from="idcard" to="." method="_on_idcard_button_up"]
+[connection signal="focus_entered" from="idcard" to="." method="_on_idcard_focus_entered"]
 [connection signal="button_down" from="intlog" to="." method="_on_intlog_button_down"]
 [connection signal="button_up" from="intlog" to="." method="_on_intlog_button_up"]
 [connection signal="focus_entered" from="intlog" to="." method="_on_intlog_focus_entered"]

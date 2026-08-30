@@ -1,11 +1,18 @@
 extends Sprite2D
 
+signal category_selected(category: String)
+
 @onready var intlog: TextureButton = $intlog
 @onready var idcard: TextureButton = $idcard
 @onready var log_title: Label = $LogTitle
 @onready var log_scroll: ScrollContainer = $LogScroll
 @onready var log_list: VBoxContainer = $LogScroll/LogButtonList
 @onready var back_button: Button = $BackButton
+
+@onready var emotional_btn: TextureButton = $LogScroll/LogButtonList/emotional
+@onready var factual_btn: TextureButton = $LogScroll/LogButtonList/factual
+@onready var trap_btn: TextureButton = $LogScroll/LogButtonList/trap
+@onready var clarification_btn: TextureButton = $LogScroll/LogButtonList/clarification
 
 @export var press_scale:Vector2 = Vector2(0.95, 0.95)
 
@@ -17,6 +24,7 @@ extends Sprite2D
 var tween: Tween
 var panel_tween: Tween
 var log_open: bool = false
+var docs_open: bool = false
 
 func _ready() -> void:
 	intlog.mouse_entered.connect(_on_hover)
@@ -27,11 +35,19 @@ func _ready() -> void:
 	back_button.visible = false
 	back_button.modulate.a = 0.0
 
+	# Setiap tombol kategori memancarkan category_selected dengan nama kategorinya
+	emotional_btn.pressed.connect(_on_category_pressed.bind("emotional"))
+	factual_btn.pressed.connect(_on_category_pressed.bind("factual"))
+	trap_btn.pressed.connect(_on_category_pressed.bind("trap"))
+	clarification_btn.pressed.connect(_on_category_pressed.bind("clarification"))
+
 	log_scroll.modulate.a = 0.0
 	log_scroll.scale = Vector2(0.9, 0.9)
 
 	call_deferred("_update_scroll_height")
 
+func _on_category_pressed(category: String) -> void:
+	category_selected.emit(category)
 
 func _update_scroll_height() -> void:
 	var count: int = log_list.get_child_count()
@@ -49,37 +65,26 @@ func _update_scroll_height() -> void:
 	total_height += spacing * max(visible_count - 1, 0)
 	log_scroll.custom_minimum_size.y = total_height
 
-
 func _on_intlog_pressed() -> void:
 	if log_open:
 		close_log_panel()
 	else:
 		open_log_panel()
 
-
 func _on_intlog_button_down() -> void:
-	if tween:
-		tween.kill()
-
 	tween = create_tween()
 	tween.set_trans(Tween.TRANS_SINE)
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(intlog, "scale", press_scale, 0.08)
 
-
 func _on_intlog_button_up() -> void:
-	if tween:
-		tween.kill()
-
 	tween = create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(intlog, "scale", Vector2.ONE, 0.12)
 
-
 func _on_intlog_focus_entered() -> void:
 	_on_hover()
-
 
 func open_log_panel() -> void:
 	log_open = true
@@ -117,7 +122,6 @@ func open_log_panel() -> void:
 
 	_animate_buttons_in()
 
-
 func close_log_panel() -> void:
 	log_open = false
 
@@ -144,7 +148,6 @@ func close_log_panel() -> void:
 		idcard.visible = true
 	)
 
-
 func _animate_buttons_in() -> void:
 	var children := log_list.get_children()
 
@@ -164,9 +167,6 @@ func _animate_buttons_in() -> void:
 
 
 func _on_hover():
-	if tween:
-		tween.kill()
-
 	tween = create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_OUT)
@@ -179,9 +179,6 @@ func _on_hover():
 	)
 
 func _on_exit():
-	if tween:
-		tween.kill()
-
 	tween = create_tween()
 	tween.set_trans(Tween.TRANS_SINE)
 	tween.set_ease(Tween.EASE_OUT)
@@ -192,3 +189,18 @@ func _on_exit():
 		Vector2.ONE,
 		0.15
 	)
+
+func _on_idcard_button_down() -> void:
+	tween = create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_OUT)
+	tween.tween_property(idcard, "scale", press_scale, 0.08)
+
+func _on_idcard_button_up() -> void:
+	tween = create_tween()
+	tween.set_trans(Tween.TRANS_BACK)
+	tween.set_ease(Tween.EASE_OUT)
+	tween.tween_property(idcard, "scale", Vector2.ONE, 0.12)
+
+func _on_idcard_focus_entered() -> void:
+	_on_hover()

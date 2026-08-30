@@ -7,8 +7,8 @@
 [node name="Node2D" type="Node2D" unique_id=1673700205]
 script = ExtResource("1_0wfyh")
 
-[node name="bunker" parent="." unique_id=1115165048 instance=ExtResource("2_0wfyh")]
+[node name="Bunker" parent="." unique_id=1115165048 instance=ExtResource("2_0wfyh")]
 
-[node name="Sprite2D" parent="." unique_id=1612846764 instance=ExtResource("3_sugp2")]
+[node name="Television" parent="." unique_id=1612846764 instance=ExtResource("3_sugp2")]
 position = Vector2(848, 264)
 scale = Vector2(0.58122206, 0.58122206)

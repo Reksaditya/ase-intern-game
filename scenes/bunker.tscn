@@ -1,14 +1,17 @@
 [gd_scene format=3 uid="uid://cdjdekedo1t6d"]
 
 [ext_resource type="Texture2D" uid="uid://dyd4u5j3ceost" path="res://assets/UI/Frame 3 (2).png" id="1_7c24m"]
+[ext_resource type="Script" uid="uid://htvg72wq2kt3" path="res://bunker.gd" id="1_q0tom"]
 [ext_resource type="Texture2D" uid="uid://bcnhdlj1dthji" path="res://assets/UI/Tak berjudul181_20260823155716 1.png" id="2_hk1w7"]
 [ext_resource type="Texture2D" uid="uid://cnudefog2vylx" path="res://assets/UI/Frame 4.png" id="3_tyiie"]
 [ext_resource type="Texture2D" uid="uid://0agsaxwfeug3" path="res://assets/button/ACCEPT.png" id="5_64vmv"]
 [ext_resource type="Texture2D" uid="uid://crqow18ng6t2j" path="res://assets/button/INT ACCEPT.png" id="6_fge2j"]
 [ext_resource type="Texture2D" uid="uid://dsjc8p5hxlpf6" path="res://assets/button/REJECT.png" id="7_csyls"]
+[ext_resource type="FontFile" uid="uid://bxdeha88xo6ug" path="res://assets/fonts/CourierPrime-Regular.ttf" id="8_hqi4v"]
 [ext_resource type="Texture2D" uid="uid://ddehfpe0ffue6" path="res://assets/button/INT REJECT.png" id="8_mh480"]
 
 [node name="Node2D" type="Node2D" unique_id=1115165048]
+script = ExtResource("1_q0tom")
 
 [node name="bgfull" type="Sprite2D" parent="." unique_id=415542860]
 position = Vector2(576.55554, 322.75)
@@ -43,3 +46,12 @@ texture_normal = ExtResource("7_csyls")
 texture_hover = ExtResource("8_mh480")
 ignore_texture_size = true
 stretch_mode = 0
+
+[node name="Dialog" type="Label" parent="." unique_id=1280235948]
+offset_left = 48.0
+offset_top = 488.0
+offset_right = 121.0
+offset_bottom = 511.0
+theme_override_colors/font_color = Color(0.2, 1, 0.34901962, 1)
+theme_override_fonts/font = ExtResource("8_hqi4v")
+text = "Berikan minimal dua pertanyaan untuk membuka tools"
