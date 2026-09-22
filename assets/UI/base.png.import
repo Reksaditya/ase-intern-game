@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bcnhdlj1dthji"
-path="res://.godot/imported/Tak berjudul181_20260823155716 1.png-c29b435c03d0dc8e7be69836bc42ce23.ctex"
+uid="uid://dyd4u5j3ceost"
+path="res://.godot/imported/base.png-5d8e369af47d34ae7c9394df85f6009c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/UI/Tak berjudul181_20260823155716 1.png"
-dest_files=["res://.godot/imported/Tak berjudul181_20260823155716 1.png-c29b435c03d0dc8e7be69836bc42ce23.ctex"]
+source_file="res://assets/UI/base.png"
+dest_files=["res://.godot/imported/base.png-5d8e369af47d34ae7c9394df85f6009c.ctex"]
 
 [params]
 

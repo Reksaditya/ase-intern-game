@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://cdjdekedo1t6d"]
 
-[ext_resource type="Texture2D" uid="uid://dyd4u5j3ceost" path="res://assets/UI/Frame 3 (2).png" id="1_7c24m"]
-[ext_resource type="Texture2D" uid="uid://bcnhdlj1dthji" path="res://assets/UI/Tak berjudul181_20260823155716 1.png" id="2_hk1w7"]
-[ext_resource type="Texture2D" uid="uid://cnudefog2vylx" path="res://assets/UI/Frame 4.png" id="3_tyiie"]
+[ext_resource type="Texture2D" uid="uid://dyd4u5j3ceost" path="res://assets/UI/base.png" id="1_7c24m"]
+[ext_resource type="Texture2D" uid="uid://bcnhdlj1dthji" path="res://assets/UI/window.png" id="2_hk1w7"]
+[ext_resource type="Texture2D" uid="uid://cnudefog2vylx" path="res://assets/UI/window_transparent.png" id="3_tyiie"]
 [ext_resource type="Texture2D" uid="uid://0agsaxwfeug3" path="res://assets/button/ACCEPT.png" id="5_64vmv"]
 [ext_resource type="Texture2D" uid="uid://crqow18ng6t2j" path="res://assets/button/INT ACCEPT.png" id="6_fge2j"]
 [ext_resource type="Texture2D" uid="uid://dsjc8p5hxlpf6" path="res://assets/button/REJECT.png" id="7_csyls"]

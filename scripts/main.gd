@@ -5,7 +5,6 @@ const INTERLUDE_SCENE: PackedScene = preload("res://scenes/interlude.tscn")
 const DAY_INTRO_SCENE: PackedScene = preload("res://scenes/day_intro.tscn")
 const MORNING_REPORT_SCENE: PackedScene = preload("res://scenes/morning_report.tscn")
 const TEMPO_GAMEPLAY_SCENE: PackedScene = preload("res://scenes/tempo_gameplay.tscn")
-const AFTERNOON_SCENE: PackedScene = preload("res://scenes/afternoon.tscn")
 const NIGHT_EVALUATION_SCENE: PackedScene = preload("res://scenes/night_evaluation.tscn")
 const FINAL_EVALUATION_SCENE: PackedScene = preload("res://scenes/final_evaluation.tscn")
 const ENDING_SCENE: PackedScene = preload("res://scenes/ending.tscn")
@@ -22,14 +21,20 @@ var _save_slots: Array[Dictionary] = []
 
 @onready var _main_menu := $MainMenu
 @onready var _save_menu := $SaveMenu
+@onready var _settings_menu := $SettingsMenu
+@onready var _brightness_modulate := $BrightnessModulate
 @onready var _save_content := $SaveMenu/Center/Content
+@onready var _brightness_slider := $SettingsMenu/Center/Content/BrightnessRow/BrightnessSlider
 
 
 func _ready() -> void:
 	_timeline = _build_timeline()
 	_load_save_slots()
 	$MainMenu/Buttons/PlayGameButton.pressed.connect(_open_save_menu)
+	$MainMenu/Buttons/SettingsButton.pressed.connect(_open_settings_menu)
 	$MainMenu/Buttons/QuitButton.pressed.connect(_quit_game)
+	$SettingsMenu/Center/Content/BackButton.pressed.connect(_show_main_menu)
+	_brightness_slider.value_changed.connect(_on_brightness_changed)
 	$SaveMenu/Center/Content/SaveSlot1.pressed.connect(_on_save_slot_pressed.bind(0))
 	$SaveMenu/Center/Content/SaveSlot2.pressed.connect(_on_save_slot_pressed.bind(1))
 	$SaveMenu/Center/Content/SaveSlot3.pressed.connect(_on_save_slot_pressed.bind(2))
@@ -42,6 +47,10 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _game_started:
+		if _settings_menu.visible and event.is_action_pressed("ui_cancel"):
+			_show_main_menu()
+			get_viewport().set_input_as_handled()
+			return
 		if _save_menu.visible and event.is_action_pressed("ui_cancel"):
 			_show_main_menu()
 			get_viewport().set_input_as_handled()
@@ -60,13 +69,26 @@ func _unhandled_input(event: InputEvent) -> void:
 func _open_save_menu() -> void:
 	_selected_save_slot = -1
 	_main_menu.hide()
+	_settings_menu.hide()
 	_save_menu.show()
 	_refresh_save_menu()
 
 
+func _open_settings_menu() -> void:
+	_main_menu.hide()
+	_save_menu.hide()
+	_settings_menu.show()
+	_brightness_slider.grab_focus()
+
+
 func _show_main_menu() -> void:
 	_save_menu.hide()
+	_settings_menu.hide()
 	_main_menu.show()
+
+
+func _on_brightness_changed(value: float) -> void:
+	_brightness_modulate.color = Color(value, value, value, 1.0)
 
 
 func _on_save_slot_pressed(slot_index: int) -> void:
