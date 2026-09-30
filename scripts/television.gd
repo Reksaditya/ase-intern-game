@@ -71,13 +71,21 @@ func _on_intlog_pressed() -> void:
 	else:
 		open_log_panel()
 
+
 func _on_intlog_button_down() -> void:
+	if tween:
+		tween.kill()
+
 	tween = create_tween()
 	tween.set_trans(Tween.TRANS_SINE)
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(intlog, "scale", press_scale, 0.08)
 
+
 func _on_intlog_button_up() -> void:
+	if tween:
+		tween.kill()
+
 	tween = create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_OUT)
@@ -85,6 +93,7 @@ func _on_intlog_button_up() -> void:
 
 func _on_intlog_focus_entered() -> void:
 	_on_hover()
+
 
 func open_log_panel() -> void:
 	log_open = true
@@ -167,6 +176,9 @@ func _animate_buttons_in() -> void:
 
 
 func _on_hover():
+	if tween:
+		tween.kill()
+
 	tween = create_tween()
 	tween.set_trans(Tween.TRANS_BACK)
 	tween.set_ease(Tween.EASE_OUT)
@@ -179,6 +191,9 @@ func _on_hover():
 	)
 
 func _on_exit():
+	if tween:
+		tween.kill()
+
 	tween = create_tween()
 	tween.set_trans(Tween.TRANS_SINE)
 	tween.set_ease(Tween.EASE_OUT)

@@ -1,0 +1,110 @@
+[gd_scene format=3 uid="uid://b2kgl1uefraf5"]
+
+[ext_resource type="FontFile" uid="uid://bxdeha88xo6ug" path="res://assets/fonts/CourierPrime-Regular.ttf" id="1_xtw8t"]
+[ext_resource type="FontFile" uid="uid://c3285r3n5l6cg" path="res://assets/fonts/CourierPrime-Bold.ttf" id="2_1gye6"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_odkhf"]
+font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_placeholder"]
+font_size = 17
+font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_h44e2"]
+font_size = 24
+font_color = Color(0.17128617, 0.18415022, 0.18158087, 1)
+
+[node name="MorningReport" type="Control" unique_id=102469646]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=802188768]
+light_mask = 0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="popup" type="ColorRect" parent="." unique_id=1085431713]
+layout_mode = 0
+offset_left = 295.0
+offset_top = 115.0
+offset_right = 859.1002
+offset_bottom = 525.0
+mouse_filter = 2
+color = Color(0.9098039, 0.89411765, 0.84705883, 1)
+
+[node name="Label" type="Label" parent="popup" unique_id=2063444505]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 93.0
+offset_right = 210.0
+offset_bottom = 116.0
+theme_override_fonts/font = ExtResource("1_xtw8t")
+text = "KOMANDAN SEKTOR 07"
+label_settings = SubResource("LabelSettings_odkhf")
+
+[node name="PlaceholderText" type="Label" parent="popup" unique_id=2129673098]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 135.0
+offset_right = 525.0
+offset_bottom = 350.0
+theme_override_fonts/font = ExtResource("1_xtw8t")
+text = "[PLACEHOLDER] Ringkasan pelanggaran protokol dari hari sebelumnya akan ditampilkan di sini.
+
+[PLACEHOLDER] Status indikasi penyusup untuk hari ini akan ditampilkan di sini.
+
+[PLACEHOLDER] Instruksi SOP baru akan ditampilkan di sini."
+label_settings = SubResource("LabelSettings_placeholder")
+autowrap_mode = 2
+
+[node name="line" type="Line2D" parent="popup" unique_id=124311910]
+position = Vector2(-296, -112)
+points = PackedVector2Array(329, 192, 833, 192)
+width = 1.5
+default_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
+
+[node name="header" type="Label" parent="popup" unique_id=617206416]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 29.0
+offset_right = 439.0
+offset_bottom = 63.0
+theme_override_fonts/font = ExtResource("2_1gye6")
+text = "MORNING REPORT - DAY 3"
+label_settings = SubResource("LabelSettings_h44e2")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="." unique_id=1384343958]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -68.0
+offset_right = 260.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.4, 0.4, 0.4, 1)
+theme_override_colors/font_hover_color = Color(0.55, 0.55, 0.55, 1)
+theme_override_fonts/font = ExtResource("1_xtw8t")
+theme_override_font_sizes/font_size = 16
+text = "[ CLICK EVERYWHERE TO CONTINUE ]"
+flat = true

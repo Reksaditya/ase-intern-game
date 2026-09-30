@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://ditt5bhe0otp1"]
+
+[ext_resource type="PackedScene" uid="uid://cdjdekedo1t6d" path="res://scenes/bunker.tscn" id="1_bunker"]
+[ext_resource type="Script" uid="uid://dyx2rirtgnrgr" path="res://scripts/tempo_gameplay.gd" id="1_sl1tr"]
+[ext_resource type="PackedScene" uid="uid://p35oge762nnh" path="res://scenes/television.tscn" id="2_television"]
+
+[node name="TempoGameplay" type="Node2D" unique_id=90887759]
+script = ExtResource("1_sl1tr")
+
+[node name="Bunker" parent="." unique_id=281717564 instance=ExtResource("1_bunker")]
+
+[node name="Television" parent="." unique_id=1256593478 instance=ExtResource("2_television")]
+position = Vector2(848, 264)
+scale = Vector2(0.58122206, 0.58122206)

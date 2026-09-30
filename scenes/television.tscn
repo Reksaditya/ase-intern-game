@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://p35oge762nnh"]
 
-[ext_resource type="Texture2D" uid="uid://bii2hy676oklo" path="res://assets/UI/Frame 22.png" id="1_ccm7p"]
+[ext_resource type="Texture2D" uid="uid://bii2hy676oklo" path="res://assets/UI/tv.png" id="1_ccm7p"]
 [ext_resource type="Script" uid="uid://c6cqnjagpanvu" path="res://scripts/television.gd" id="2_p7rhp"]
 [ext_resource type="Texture2D" uid="uid://drk2qal4dc1ms" path="res://assets/button/INTEROGATION LOG.png" id="2_qcggj"]
 [ext_resource type="Texture2D" uid="uid://bmsvyudv4l8gi" path="res://assets/button/ID CARD.png" id="3_e67vq"]
