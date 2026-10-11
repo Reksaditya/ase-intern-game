@@ -1,5 +1,8 @@
 extends Sprite2D
 
+signal question_asked(question_key: String)
+signal id_card_requested
+
 @onready var intlog: TextureButton = $intlog
 @onready var idcard: TextureButton = $idcard
 @onready var log_title: Label = $LogTitle
@@ -14,15 +17,25 @@ extends Sprite2D
 @export var button_appear_duration: float = 0.3
 @export var stagger_delay: float = 0.08
 
-var tween: Tween
+var button_tweens: Dictionary = {}
 var panel_tween: Tween
 var log_open: bool = false
 
 func _ready() -> void:
-	intlog.mouse_entered.connect(_on_hover)
-	intlog.mouse_exited.connect(_on_exit)
+	for button in [intlog, idcard]:
+		button.mouse_entered.connect(_on_hover.bind(button))
+		button.mouse_exited.connect(_on_exit.bind(button))
+		button.button_down.connect(_on_button_down.bind(button))
+		button.button_up.connect(_on_button_up.bind(button))
+		button.focus_entered.connect(_on_hover.bind(button))
+	intlog.pressed.connect(_on_intlog_pressed)
+	idcard.pressed.connect(_on_idcard_pressed)
 
 	back_button.pressed.connect(close_log_panel)
+	for question_key in ["emotional", "factual", "trap", "clarification"]:
+		var question_button := log_list.get_node_or_null(question_key) as BaseButton
+		if question_button:
+			question_button.pressed.connect(_on_question_button_pressed.bind(question_key))
 
 	back_button.visible = false
 	back_button.modulate.a = 0.0
@@ -31,6 +44,10 @@ func _ready() -> void:
 	log_scroll.scale = Vector2(0.9, 0.9)
 
 	call_deferred("_update_scroll_height")
+
+
+func _on_question_button_pressed(question_key: String) -> void:
+	question_asked.emit(question_key)
 
 
 func _update_scroll_height() -> void:
@@ -57,28 +74,8 @@ func _on_intlog_pressed() -> void:
 		open_log_panel()
 
 
-func _on_intlog_button_down() -> void:
-	if tween:
-		tween.kill()
-
-	tween = create_tween()
-	tween.set_trans(Tween.TRANS_SINE)
-	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(intlog, "scale", press_scale, 0.08)
-
-
-func _on_intlog_button_up() -> void:
-	if tween:
-		tween.kill()
-
-	tween = create_tween()
-	tween.set_trans(Tween.TRANS_BACK)
-	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(intlog, "scale", Vector2.ONE, 0.12)
-
-
-func _on_intlog_focus_entered() -> void:
-	_on_hover()
+func _on_idcard_pressed() -> void:
+	id_card_requested.emit()
 
 
 func open_log_panel() -> void:
@@ -163,32 +160,35 @@ func _animate_buttons_in() -> void:
 		t.tween_property(btn, "position:y", target_y, button_appear_duration)
 
 
-func _on_hover():
-	if tween:
-		tween.kill()
+func _on_button_down(button: TextureButton) -> void:
+	_animate_button(button, press_scale, 0.08, Tween.TRANS_SINE)
 
-	tween = create_tween()
-	tween.set_trans(Tween.TRANS_BACK)
-	tween.set_ease(Tween.EASE_OUT)
 
-	tween.tween_property(
-		intlog,
-		"scale",
-		Vector2(1.08, 1.08),
-		0.15
-	)
+func _on_button_up(button: TextureButton) -> void:
+	_animate_button(button, Vector2.ONE, 0.12, Tween.TRANS_BACK)
 
-func _on_exit():
-	if tween:
-		tween.kill()
 
-	tween = create_tween()
-	tween.set_trans(Tween.TRANS_SINE)
-	tween.set_ease(Tween.EASE_OUT)
+func _on_hover(button: TextureButton) -> void:
+	_animate_button(button, Vector2(1.08, 1.08), 0.15, Tween.TRANS_BACK)
 
-	tween.tween_property(
-		intlog,
-		"scale",
-		Vector2.ONE,
-		0.15
-	)
+
+func _on_exit(button: TextureButton) -> void:
+	_animate_button(button, Vector2.ONE, 0.15, Tween.TRANS_SINE)
+
+
+func _animate_button(
+	button: TextureButton,
+	target_scale: Vector2,
+	duration: float,
+	transition: Tween.TransitionType
+) -> void:
+	var button_id := button.get_instance_id()
+	var button_tween := button_tweens.get(button_id) as Tween
+	if button_tween:
+		button_tween.kill()
+
+	button_tween = create_tween()
+	button_tweens[button_id] = button_tween
+	button_tween.set_trans(transition)
+	button_tween.set_ease(Tween.EASE_OUT)
+	button_tween.tween_property(button, "scale", target_scale, duration)

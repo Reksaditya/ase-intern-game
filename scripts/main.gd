@@ -4,14 +4,18 @@ const TOTAL_DAYS := 5
 const INTERLUDE_SCENE: PackedScene = preload("res://scenes/interlude.tscn")
 const DAY_INTRO_SCENE: PackedScene = preload("res://scenes/day_intro.tscn")
 const MORNING_REPORT_SCENE: PackedScene = preload("res://scenes/morning_report.tscn")
-const TEMPO_GAMEPLAY_SCENE: PackedScene = preload("res://scenes/tempo_gameplay.tscn")
+const TEMPO_GAMEPLAY_SCENE: PackedScene = preload("res://scenes/gameplay.tscn")
 const NIGHT_EVALUATION_SCENE: PackedScene = preload("res://scenes/night_evaluation.tscn")
 const FINAL_EVALUATION_SCENE: PackedScene = preload("res://scenes/final_evaluation.tscn")
 const ENDING_SCENE: PackedScene = preload("res://scenes/ending.tscn")
 const SAVE_SLOT_COUNT := 4
 const SAVE_PATH_FORMAT := "user://save_slot_%d.json"
+const REPORT_TEXT_PATH := "res://data/report_text.json"
+const DAY1_MORNING_REPORT_PATH := "res://data/day1morning.json"
 
 var _timeline: Array[Dictionary] = []
+var _report_text: Dictionary = {}
+var _day1_morning_report: Dictionary = {}
 var _timeline_index := 0
 var _active_scene: Node
 var _game_started := false
@@ -29,6 +33,8 @@ var _save_slots: Array[Dictionary] = []
 
 func _ready() -> void:
 	_timeline = _build_timeline()
+	_report_text = _load_json_dictionary(REPORT_TEXT_PATH)
+	_day1_morning_report = _load_json_dictionary(DAY1_MORNING_REPORT_PATH)
 	_load_save_slots()
 	$MainMenu/Buttons/PlayGameButton.pressed.connect(_open_save_menu)
 	$MainMenu/Buttons/SettingsButton.pressed.connect(_open_settings_menu)
@@ -57,10 +63,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if is_instance_valid(_active_scene) and _active_scene.find_child("TerimaButton", true, false):
 		return
-	var should_advance := event.is_action_pressed("ui_accept")
-	if event is InputEventMouseButton:
+	var should_advance := false
+	if event is InputEventKey:
+		var key_event := event as InputEventKey
+		should_advance = key_event.pressed and not key_event.echo and (
+			key_event.keycode == KEY_ENTER or key_event.keycode == KEY_KP_ENTER
+		)
+	elif event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
-		should_advance = should_advance or mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed
+		should_advance = mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed
 	if should_advance:
 		_advance_timeline()
 		get_viewport().set_input_as_handled()
@@ -100,7 +111,7 @@ func _create_new_save() -> void:
 	if _game_started or _selected_save_slot < 0:
 		return
 	_active_save_slot = _selected_save_slot
-	_save_slots[_active_save_slot] = {}
+	_save_slots[_active_save_slot] = _new_save_data()
 	_start_game_at_timeline_index(0)
 
 
@@ -148,13 +159,13 @@ func _build_timeline() -> Array[Dictionary]:
 		steps.append({
 			"scene": MORNING_REPORT_SCENE,
 			"day": day,
-			"header": "MORNING REPORT - DAY %d",
+			"report": "day1_morning" if day == 1 else "day_report",
 		})
 		steps.append({"scene": TEMPO_GAMEPLAY_SCENE, "title": "Afternoon", "day": day})
 		steps.append({
 			"scene": NIGHT_EVALUATION_SCENE,
 			"day": day,
-			"header": "EVALUASI MALAM - HARI %d",
+			"report": "night_evaluation",
 		})
 
 	steps.append({"scene": FINAL_EVALUATION_SCENE, "title": "Final Evaluation"})
@@ -188,11 +199,59 @@ func _load_save_slots() -> void:
 			if file:
 				var parsed = JSON.parse_string(file.get_as_text())
 				if parsed is Dictionary and parsed.has("timeline_index"):
-					save_data = {
+						save_data = {
 						"timeline_index": int(parsed["timeline_index"]),
 						"completed": bool(parsed.get("completed", false)),
+						"suspicion": int(parsed.get("suspicion", 0)),
+						"infiltration": int(parsed.get("infiltration", 0)),
+						"accepted_count": maxi(0, int(parsed.get("accepted_count", 0))),
+						"declined_count": maxi(0, int(parsed.get("declined_count", 0))),
+						"empty_accepted_count": maxi(0, int(parsed.get("empty_accepted_count", 0))),
+						"empty_declined_count": maxi(0, int(parsed.get("empty_declined_count", 0))),
 					}
 		_save_slots.append(save_data)
+
+
+func _load_json_dictionary(path: String) -> Dictionary:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		push_error("Could not open JSON data: %s" % path)
+		return {}
+
+	var parsed = JSON.parse_string(file.get_as_text())
+	if not parsed is Dictionary:
+		push_error("JSON data at '%s' must contain an object." % path)
+		return {}
+	return parsed
+
+
+func _apply_report_text(scene: Node, report_key: String, day: int) -> void:
+	if report_key == "day1_morning":
+		if scene.has_method("set_report_text"):
+			scene.call("set_report_text", _day1_morning_report)
+		else:
+			push_error("The morning report scene cannot display report text.")
+		return
+
+	if not _report_text.has(report_key):
+		push_error("Report text data is missing '%s'." % report_key)
+		return
+
+	var report = _report_text[report_key]
+	if not report is Dictionary:
+		push_error("Report text data for '%s' must contain a JSON object." % report_key)
+		return
+
+	for node_path in report:
+		var text_node := scene.get_node_or_null(str(node_path))
+		var text := str(report[node_path]).format({"day": day})
+		if text_node is Label:
+			(text_node as Label).text = text
+		elif text_node is Button:
+			(text_node as Button).text = text
+		else:
+			push_error("Report text node '%s' was not found in %s." % [node_path, scene.name])
+			continue
 
 
 func _refresh_save_menu() -> void:
@@ -218,16 +277,65 @@ func _refresh_save_menu() -> void:
 func _save_current_progress() -> void:
 	if _active_save_slot < 0:
 		return
-	var completed := bool(_save_slots[_active_save_slot].get("completed", false))
-	var save_data := {"timeline_index": _timeline_index, "completed": completed}
+	var save_data: Dictionary = _save_slots[_active_save_slot].duplicate()
+	save_data["timeline_index"] = _timeline_index
+	save_data["completed"] = bool(save_data.get("completed", false))
 	_write_save_data(save_data)
 
 
 func _complete_active_save() -> void:
 	if _active_save_slot < 0:
 		return
-	var save_data := {"timeline_index": _timeline_index, "completed": true}
+	var save_data: Dictionary = _save_slots[_active_save_slot].duplicate()
+	save_data["timeline_index"] = _timeline_index
+	save_data["completed"] = true
 	_write_save_data(save_data)
+
+
+func _new_save_data() -> Dictionary:
+	return {
+		"timeline_index": 0,
+		"completed": false,
+		"suspicion": 0,
+		"infiltration": 0,
+		"accepted_count": 0,
+		"declined_count": 0,
+		"empty_accepted_count": 0,
+		"empty_declined_count": 0,
+	}
+
+
+func _on_admission_decision(is_accepted: bool) -> void:
+	if _active_save_slot >= 0:
+		var save_data: Dictionary = _save_slots[_active_save_slot].duplicate()
+		var decision_counter := "accepted_count" if is_accepted else "declined_count"
+		save_data[decision_counter] = int(save_data.get(decision_counter, 0)) + 1
+
+		var case_tracking: Dictionary = {}
+		if is_instance_valid(_active_scene) and _active_scene.has_method("get_case_tracking_data"):
+			var tracking_data: Variant = _active_scene.call("get_case_tracking_data")
+			if tracking_data is Dictionary:
+				case_tracking = tracking_data
+
+		if bool(case_tracking.get("is_empty", false)):
+			var empty_decision_counter := "empty_accepted_count" if is_accepted else "empty_declined_count"
+			save_data[empty_decision_counter] = int(save_data.get(empty_decision_counter, 0)) + 1
+
+		var all_decision_effects: Variant = case_tracking.get("decision_effects", {})
+		if all_decision_effects is Dictionary:
+			var decision_key := "accept" if is_accepted else "decline"
+			var decision_effects: Variant = all_decision_effects.get(decision_key, {})
+			if decision_effects is Dictionary:
+				for metric in ["suspicion", "infiltration"]:
+					var current_value := int(save_data.get(metric, 0))
+					var change := int(decision_effects.get(metric, 0))
+					save_data[metric] = clampi(current_value + change, 0, 100)
+
+		_write_save_data(save_data)
+	if is_instance_valid(_active_scene) and _active_scene.has_method("show_decision_outcome"):
+		_active_scene.call("show_decision_outcome", is_accepted)
+		return
+	_advance_timeline()
 
 
 func _write_save_data(save_data: Dictionary) -> void:
@@ -272,15 +380,19 @@ func _show_timeline_step() -> void:
 	if day_label and step.has("day"):
 		day_label.text = "HARI %d" % int(step["day"])
 
-	var report_header := _active_scene.get_node_or_null("popup/header") as Label
-	if report_header and step.has("header"):
-		report_header.text = str(step["header"]) % int(step.get("day", 1))
+	var report_key := str(step.get("report", ""))
+	if not report_key.is_empty():
+		_apply_report_text(_active_scene, report_key, int(step.get("day", 1)))
 
 	var continue_button := _active_scene.get_node_or_null("ContinueButton") as Button
 	if continue_button:
 		continue_button.pressed.connect(_advance_timeline)
+	if _active_scene.has_signal("outcome_finished"):
+		_active_scene.connect("outcome_finished", _advance_timeline)
 
 	for decision_name in ["TerimaButton", "TolakButton"]:
 		var decision_button := _active_scene.find_child(decision_name, true, false) as BaseButton
 		if decision_button:
-			decision_button.pressed.connect(_advance_timeline)
+			decision_button.pressed.connect(
+				_on_admission_decision.bind(decision_name == "TerimaButton")
+			)

@@ -1,0 +1,16 @@
+{
+  "day_report": {
+    "popup/Paper/Label": "KOMANDAN SEKTOR 07",
+    "popup/Paper/PlaceholderText": "[PLACEHOLDER] Ringkasan pelanggaran protokol dari hari sebelumnya akan ditampilkan di sini.\n\n[PLACEHOLDER] Status indikasi penyusup untuk hari ini akan ditampilkan di sini.\n\n[PLACEHOLDER] Instruksi SOP baru akan ditampilkan di sini.",
+    "popup/Paper/header": "MORNING REPORT - DAY {day}",
+    "ContinueButton": "[ CLICK OR PRESS ENTER TO CONTINUE ]"
+  },
+  "night_evaluation": {
+    "popup/SectionHeading": "RINGKASAN SHIFT",
+    "popup/ShiftSummary": "[PLACEHOLDER] Jumlah pemohon diperiksa akan ditampilkan di sini.\n[PLACEHOLDER] Jumlah diterima dan ditolak akan ditampilkan di sini.",
+    "popup/ShiftNotes": "[PLACEHOLDER] Catatan militer dan status gerbang akan ditampilkan di sini.",
+    "popup/MutedNightNotes": "[PLACEHOLDER] Catatan kondisi malam akan ditampilkan di sini.",
+    "popup/header": "EVALUASI MALAM - HARI {day}",
+    "ContinueButton": "[ CLICK OR PRESS ENTER TO CONTINUE ]"
+  }
+}

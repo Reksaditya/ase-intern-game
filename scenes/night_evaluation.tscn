@@ -57,7 +57,6 @@ offset_top = 93.0
 offset_right = 210.0
 offset_bottom = 116.0
 mouse_filter = 2
-text = "RINGKASAN SHIFT"
 label_settings = SubResource("LabelSettings_section")
 
 [node name="ShiftSummary" type="Label" parent="popup"]
@@ -67,7 +66,6 @@ offset_top = 135.0
 offset_right = 525.0
 offset_bottom = 225.0
 mouse_filter = 2
-text = "[PLACEHOLDER] Jumlah pemohon diperiksa akan ditampilkan di sini.\n[PLACEHOLDER] Jumlah diterima dan ditolak akan ditampilkan di sini."
 label_settings = SubResource("LabelSettings_body")
 autowrap_mode = 2
 
@@ -78,7 +76,6 @@ offset_top = 235.0
 offset_right = 525.0
 offset_bottom = 305.0
 mouse_filter = 2
-text = "[PLACEHOLDER] Catatan militer dan status gerbang akan ditampilkan di sini."
 label_settings = SubResource("LabelSettings_body")
 autowrap_mode = 2
 
@@ -89,7 +86,6 @@ offset_top = 325.0
 offset_right = 525.0
 offset_bottom = 400.0
 mouse_filter = 2
-text = "[PLACEHOLDER] Catatan kondisi malam akan ditampilkan di sini."
 label_settings = SubResource("LabelSettings_muted")
 autowrap_mode = 2
 
@@ -106,7 +102,6 @@ offset_top = 32.0
 offset_right = 452.0
 offset_bottom = 66.0
 mouse_filter = 2
-text = "EVALUASI MALAM - HARI 3"
 label_settings = SubResource("LabelSettings_header")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -131,5 +126,4 @@ theme_override_colors/font_hover_color = Color(0.55, 0.55, 0.55, 1)
 theme_override_colors/font_pressed_color = Color(0.4, 0.4, 0.4, 1)
 theme_override_fonts/font = ExtResource("2_regular")
 theme_override_font_sizes/font_size = 16
-text = "[ CLICK EVERYWHERE TO CONTINUE ]"
 flat = true
