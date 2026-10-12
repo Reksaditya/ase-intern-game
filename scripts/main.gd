@@ -2,6 +2,7 @@ extends Control
 
 const TOTAL_DAYS := 5
 const INTERLUDE_SCENE: PackedScene = preload("res://scenes/interlude.tscn")
+const PROLOGUE_SCENE: PackedScene = preload("res://scenes/prologue.tscn")
 const DAY_INTRO_SCENE: PackedScene = preload("res://scenes/day_intro.tscn")
 const MORNING_REPORT_SCENE: PackedScene = preload("res://scenes/morning_report.tscn")
 const TEMPO_GAMEPLAY_SCENE: PackedScene = preload("res://scenes/tempo_gameplay.tscn")
@@ -140,6 +141,7 @@ func _quit_game() -> void:
 func _build_timeline() -> Array[Dictionary]:
 	var steps: Array[Dictionary] = [
 		{"scene": INTERLUDE_SCENE, "title": "Interlude"},
+		{"scene": PROLOGUE_SCENE, "title": "Prologue"},
 		{"scene": DAY_INTRO_SCENE, "title": "DAY 1"},
 	]
 
@@ -261,6 +263,8 @@ func _show_timeline_step() -> void:
 	var step: Dictionary = _timeline[_timeline_index]
 	var packed_scene: PackedScene = step["scene"]
 	_active_scene = packed_scene.instantiate()
+	if step.has("day") and "day" in _active_scene:
+		_active_scene.set("day", int(step["day"]))
 	add_child(_active_scene)
 
 	var title_label := _active_scene.get_node_or_null("Title") as Label
@@ -279,7 +283,7 @@ func _show_timeline_step() -> void:
 	if continue_button:
 		continue_button.pressed.connect(_advance_timeline)
 
-	for decision_name in ["TerimaButton", "TolakButton"]:
-		var decision_button := _active_scene.find_child(decision_name, true, false) as BaseButton
-		if decision_button:
-			decision_button.pressed.connect(_advance_timeline)
+	# Scene gameplay mengurus tombol Terima/Tolak sendiri dan memancarkan
+	# shift_finished setelah semua karakter hari itu selesai diputuskan.
+	if _active_scene.has_signal("shift_finished"):
+		_active_scene.connect("shift_finished", _advance_timeline)

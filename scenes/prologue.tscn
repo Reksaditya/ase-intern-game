@@ -1,0 +1,93 @@
+[gd_scene format=3 uid="uid://balr1g3ohg3d0"]
+
+[ext_resource type="Script" uid="uid://dhb5schsxpdet" path="res://scripts/prologue.gd" id="1_prolog"]
+[ext_resource type="FontFile" uid="uid://bxdeha88xo6ug" path="res://assets/fonts/CourierPrime-Regular.ttf" id="2_reg"]
+[ext_resource type="AudioStream" uid="uid://b3xmuukdibb6t" path="res://assets/bgm/click_everywhere.mp3" id="3_8byya"]
+
+[node name="Prologue" type="Control" unique_id=1346689054]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_prolog")
+
+[node name="Background" type="ColorRect" parent="." unique_id=342258514]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.055, 0.067, 0.075, 1)
+
+[node name="Story" type="Label" parent="." unique_id=408122495]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -380.0
+offset_top = -200.0
+offset_right = 380.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.91, 0.89, 0.85, 1)
+theme_override_constants/line_spacing = 8
+theme_override_fonts/font = ExtResource("2_reg")
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="SkipHint" type="Label" parent="." unique_id=640789573]
+modulate = Color(1, 1, 1, 0.4)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -48.0
+offset_right = 260.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.91, 0.89, 0.85, 1)
+theme_override_fonts/font = ExtResource("2_reg")
+theme_override_font_sizes/font_size = 14
+text = "[ CLICK EVERYWHERE TO CONTINUE ]"
+horizontal_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="." unique_id=1956531278]
+visible = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -68.0
+offset_right = 260.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.4, 0.4, 0.4, 1)
+theme_override_colors/font_hover_color = Color(0.55, 0.55, 0.55, 1)
+theme_override_fonts/font = ExtResource("2_reg")
+theme_override_font_sizes/font_size = 16
+text = "[ CLICK EVERYWHERE TO CONTINUE ]"
+flat = true
+
+[node name="ClickSound" type="AudioStreamPlayer" parent="." unique_id=1392816098]
+stream = ExtResource("3_8byya")

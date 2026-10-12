@@ -1,6 +1,7 @@
 extends Sprite2D
 
 signal category_selected(category: String)
+signal idcard_requested
 
 @onready var intlog: TextureButton = $intlog
 @onready var idcard: TextureButton = $idcard
@@ -29,6 +30,8 @@ var docs_open: bool = false
 func _ready() -> void:
 	intlog.mouse_entered.connect(_on_hover)
 	intlog.mouse_exited.connect(_on_exit)
+
+	idcard.pressed.connect(func(): idcard_requested.emit())
 
 	back_button.pressed.connect(close_log_panel)
 

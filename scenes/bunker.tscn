@@ -23,6 +23,18 @@ position = Vector2(363, 302.00003)
 scale = Vector2(0.59433967, 0.5943396)
 texture = ExtResource("2_hk1w7")
 
+[node name="WindowClip" type="Control" parent="bgpanel" unique_id=1203103567]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 0
+offset_left = -526.0
+offset_top = -235.0
+offset_right = 528.0
+offset_bottom = 234.0
+mouse_filter = 2
+
+[node name="CharacterHolder" type="Node2D" parent="bgpanel/WindowClip" unique_id=1882698482]
+
 [node name="borderpanel" type="Sprite2D" parent="bgpanel" unique_id=1683378891]
 position = Vector2(8.412702, 3.365018)
 texture = ExtResource("3_tyiie")
@@ -47,13 +59,59 @@ texture_hover = ExtResource("8_mh480")
 ignore_texture_size = true
 stretch_mode = 0
 
-[node name="Dialog" type="Label" parent="." unique_id=1900000001]
-offset_left = 48.0
+[node name="DialogScroll" type="ScrollContainer" parent="." unique_id=1900000002]
+offset_left = 47.0
 offset_top = 488.0
-offset_right = 658.0
-offset_bottom = 958.0
+offset_right = 687.0
+offset_bottom = 544.0
+horizontal_scroll_mode = 0
+
+[node name="Dialog" type="Label" parent="DialogScroll" unique_id=1900000001]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.2, 1, 0.35, 1)
 theme_override_fonts/font = ExtResource("10_font")
 theme_override_font_sizes/font_size = 16
 text = "Tanyakan dua pertanyaan untuk mendapatkan tools"
+autowrap_mode = 3
+
+[node name="ScannerRow" type="HBoxContainer" parent="." unique_id=1900000003]
+visible = false
+offset_left = 728.0
+offset_top = 488.0
+offset_right = 1338.0
+offset_bottom = 522.0
+theme_override_constants/separation = 16
+
+[node name="PupilButton" type="Button" parent="ScannerRow" unique_id=1900000004]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.35, 1)
+theme_override_colors/font_pressed_color = Color(0.1, 0.5, 0.17, 1)
+theme_override_colors/font_hover_color = Color(0.6, 1, 0.7, 1)
+theme_override_fonts/font = ExtResource("10_font")
+theme_override_font_sizes/font_size = 16
+text = "SENTER PUPIL"
+flat = true
+
+[node name="BiometricButton" type="Button" parent="ScannerRow" unique_id=1900000005]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(0.2, 1, 0.35, 1)
+theme_override_colors/font_pressed_color = Color(0.1, 0.5, 0.17, 1)
+theme_override_colors/font_hover_color = Color(0.6, 1, 0.7, 1)
+theme_override_fonts/font = ExtResource("10_font")
+theme_override_font_sizes/font_size = 16
+text = "BIOMETRIC MONITOR"
+flat = true
+
+[node name="Label" type="Label" parent="." unique_id=1451050705]
+offset_left = 40.0
+offset_top = 87.0
+offset_right = 568.0
+offset_bottom = 123.0
+theme_override_colors/font_color = Color(0.2, 1, 0.34901962, 1)
+theme_override_fonts/font = ExtResource("10_font")
+theme_override_font_sizes/font_size = 14
+text = "SOP DASAR — Cek ID Card & Suhu Referensi. Belum ada threshold penolakan ketat hari ini."
 autowrap_mode = 3
