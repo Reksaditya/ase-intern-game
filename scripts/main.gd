@@ -5,17 +5,19 @@ const INTERLUDE_SCENE: PackedScene = preload("res://scenes/interlude.tscn")
 const DAY_INTRO_SCENE: PackedScene = preload("res://scenes/day_intro.tscn")
 const MORNING_REPORT_SCENE: PackedScene = preload("res://scenes/morning_report.tscn")
 const TEMPO_GAMEPLAY_SCENE: PackedScene = preload("res://scenes/gameplay.tscn")
-const NIGHT_EVALUATION_SCENE: PackedScene = preload("res://scenes/night_evaluation.tscn")
+const NIGHT_EVALUATION_SCENE: PackedScene = preload("res://scenes/night_eval.tscn")
 const FINAL_EVALUATION_SCENE: PackedScene = preload("res://scenes/final_evaluation.tscn")
 const ENDING_SCENE: PackedScene = preload("res://scenes/ending.tscn")
 const SAVE_SLOT_COUNT := 4
 const SAVE_PATH_FORMAT := "user://save_slot_%d.json"
 const REPORT_TEXT_PATH := "res://data/report_text.json"
-const DAY1_MORNING_REPORT_PATH := "res://data/day1morning.json"
+const DAY1_MORNING_REPORT_PATH := "res://data/morning_report1.json"
+const NIGHT_EVALUATION_REPORT_PATH := "res://data/night_eval1.json"
 
 var _timeline: Array[Dictionary] = []
 var _report_text: Dictionary = {}
 var _day1_morning_report: Dictionary = {}
+var _night_evaluation_report: Dictionary = {}
 var _timeline_index := 0
 var _active_scene: Node
 var _game_started := false
@@ -35,6 +37,7 @@ func _ready() -> void:
 	_timeline = _build_timeline()
 	_report_text = _load_json_dictionary(REPORT_TEXT_PATH)
 	_day1_morning_report = _load_json_dictionary(DAY1_MORNING_REPORT_PATH)
+	_night_evaluation_report = _load_json_dictionary(NIGHT_EVALUATION_REPORT_PATH)
 	_load_save_slots()
 	$MainMenu/Buttons/PlayGameButton.pressed.connect(_open_save_menu)
 	$MainMenu/Buttons/SettingsButton.pressed.connect(_open_settings_menu)
@@ -165,7 +168,7 @@ func _build_timeline() -> Array[Dictionary]:
 		steps.append({
 			"scene": NIGHT_EVALUATION_SCENE,
 			"day": day,
-			"report": "night_evaluation",
+			"report": "night_eval",
 		})
 
 	steps.append({"scene": FINAL_EVALUATION_SCENE, "title": "Final Evaluation"})
@@ -231,6 +234,27 @@ func _apply_report_text(scene: Node, report_key: String, day: int) -> void:
 			scene.call("set_report_text", _day1_morning_report)
 		else:
 			push_error("The morning report scene cannot display report text.")
+		return
+	if report_key == "night_eval":
+		if not scene.has_method("set_report_text"):
+			push_error("The night evaluation scene cannot display report text.")
+			return
+
+		var save_data: Dictionary = {}
+		if _active_save_slot >= 0 and _active_save_slot < _save_slots.size():
+			save_data = _save_slots[_active_save_slot]
+		var accepted_count := int(save_data.get("accepted_count", 0))
+		var declined_count := int(save_data.get("declined_count", 0))
+		var format_values := {
+			"day": day,
+			"diproses": accepted_count + declined_count,
+			"diterima": accepted_count,
+			"ditolak": declined_count,
+		}
+		var report := _night_evaluation_report.duplicate()
+		for field in ["label", "header", "continue_text", "body"]:
+			report[field] = str(report.get(field, "")).format(format_values)
+		scene.call("set_report_text", report)
 		return
 
 	if not _report_text.has(report_key):

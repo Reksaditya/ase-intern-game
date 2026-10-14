@@ -1,0 +1,130 @@
+{
+  "character_id": "D2P1",
+  "character_name": "Kent",
+  "day": 2,
+  "applicant_index": 1,
+  "is_empty": false,
+  "character_image": "res://assets/character/d2p1.png",
+  "id_card_image": "res://assets/character/d2p1_ID.png",
+  "pre_interaction": [
+    {
+      "type": "narration",
+      "text": "Seorang pria muda berdiri di balik kaca. Rambut hitam berantakan, jaket gelap dengan kerah cokelat tua dilapis kemeja putih di dalamnya. Tatapannya tenang, sedikit lelah, tapi ramah."
+    }
+  ],
+  "heartbeat": {
+    "base_bpm": 74.5,
+    "primary_wave_amplitude_bpm": 2.5,
+    "primary_wave_frequency": 0.7,
+    "secondary_wave_amplitude_bpm": 0.0,
+    "secondary_wave_frequency": 0.0,
+    "min_bpm": 72.0,
+    "max_bpm": 77.0,
+    "base_temperature_c": 36.5,
+    "primary_temperature_amplitude_c": 0.0,
+    "primary_temperature_frequency": 0.0,
+    "secondary_temperature_amplitude_c": 0.0,
+    "secondary_temperature_frequency": 0.0,
+    "min_temperature_c": 36.5,
+    "max_temperature_c": 36.5
+  },
+  "dialogs": [
+    {
+      "category": "Emosional",
+      "trigger": "emotional",
+      "player_prompt": "Apa yang paling kamu takutkan di luar sana?",
+      "speaker": "PEMOHON",
+      "text": "(mikir sebentar, pandangannya turun ke tangannya sendiri) \"Sendirian, kurasa.\" (senyum kecil, agak getir) \"Bukan takut mati — lebih takut gak sempat nolong orang lain yang mungkin masih butuh bantuan di jalan.\" (narik napas, ngangkat bahu pelan) \"Tapi ya, aku juga cuma manusia biasa. Kadang capek juga.\""
+    },
+    {
+      "category": "Faktual",
+      "trigger": "factual",
+      "player_prompt": "Ceritakan soal perjalananmu ke sini.",
+      "speaker": "PEMOHON",
+      "text": "\"Aku jalan dari reruntuhan distrik utara.\" (nunjuk kasar ke arah luar, kayak nunjukin arah walau gak kelihatan) \"Ada menara komunikasi yang masih berdiri setengah, aku pakai itu buat patokan arah.\" (jeda, ekspresinya melembut) \"Sempat ketemu beberapa orang di jalan, aku bagi sedikit air yang aku punya.\" (senyum kecil, agak malu) \"Nggak banyak sih, tapi ya... mustinya begitu, kan?\""
+    },
+    {
+      "category": "Jebakan",
+      "trigger": "trap",
+      "player_prompt": "Kalau kamu The Empty, apa kamu akan bilang sekarang?",
+      "speaker": "PEMOHON",
+      "text": "(ketawa pelan, gak defensif sama sekali) \"Haha, pertanyaan yang adil sih.\" (geleng kepala kecil, masih senyum) \"Aku bakal bilang aku manusia juga, pasti.\" (nada melembut, hampir simpatik) \"Tapi aku ngerti kenapa kamu harus nanya gitu — kerjaan kamu pasti berat, harus curiga ke semua orang.\""
+    },
+    {
+      "category": "Klarifikasi",
+      "trigger": "clarification",
+      "player_prompt": "Ada yang mau kamu tambahkan sebelum aku putuskan?",
+      "speaker": "PEMOHON",
+      "text": "(geleng pelan) \"Nggak ada, itu aja dariku.\" (menatap lurus ke kamera, sungguh-sungguh) \"Makasih udah mau dengerin, beneran.\" (senyum kecil terakhir sebelum diam) \"Apapun keputusanmu nanti, aku nggak akan nyalahin kamu kok.\""
+    }
+  ],
+  "diagnostics": {
+    "pupil_response": "responds to light; constricts clearly",
+    "heartbeat_bpm": 74.5,
+    "temperature_c": 36.5
+  },
+  "outcomes": {
+    "accept": [
+      {
+        "type": "narration",
+        "text": "Gerbang berderit terbuka."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(matanya sedikit berkaca, tapi tetep senyum) \"Terima kasih banyak — sungguh.\" (jeda sebentar, nadanya berubah jadi lebih hangat, hampir khawatir) \"Aku harap kamu juga baik-baik aja di sini. Tugas kayak gini pasti berat buat siapa pun yang jalanin.\""
+      },
+      {
+        "type": "narration",
+        "text": "Pria itu melangkah masuk, sempat menoleh sekali lagi dan mengangguk kecil sebelum pintu menutup di belakangnya."
+      }
+    ],
+    "decline": [
+      {
+        "type": "narration",
+        "text": "Gerbang tetap tertutup."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(diam sesaat, lalu mengangguk pelan — gak ada amarah sama sekali) \"...Nggak apa.\" (senyum kecil yang dipaksakan tapi tulus) \"Kamu cuma jalanin tugas, aku ngerti kok.\" (suara agak pelan di akhir) \"Semoga kamu tetap aman di dalam sana.\""
+      },
+      {
+        "type": "narration",
+        "text": "Dia mengangguk sopan, berbalik, dan berjalan menjauh ke arah reruntuhan tanpa sepatah kata pahit pun."
+      }
+    ]
+  },
+  "tool_reactions": {
+    "pupil_light": [
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(mengerjap pelan, sedikit silau, tapi gak protes) \"...Oke.\""
+      }
+    ],
+    "biometric_monitor": [
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(tersenyum kecil) \"Aku emang udah jalan lumayan jauh hari ini.\""
+      }
+    ]
+  },
+  "pupil_behaviours": {
+    "initial_diameter_mm": 6.5,
+    "hippus_amplitude_mm": 0.14,
+    "light_response_enabled": true,
+    "blink_enabled": true
+  },
+  "decision_effects": {
+    "accept": {
+      "suspicion": 0,
+      "infiltration": 0
+    },
+    "decline": {
+      "suspicion": 0,
+      "infiltration": 0
+    }
+  }
+}

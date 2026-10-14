@@ -1,0 +1,137 @@
+{
+  "character_id": "D3P2",
+  "character_name": "Bowo",
+  "day": 3,
+  "applicant_index": 2,
+  "is_empty": true,
+  "character_image": "res://assets/character/d3p2.png",
+  "id_card_image": "res://assets/character/d3p2_ID.png",
+  "pre_interaction": [
+    {
+      "type": "narration",
+      "text": "Seorang pria berdiri di balik kaca. Ia menarik napas panjang, merapikan kerah kemejanya, lalu mengangguk dengan penuh keseriusan kepada kamera."
+    },
+    {
+      "type": "dialogue",
+      "speaker": "PEMOHON",
+      "text": "(menunjuk dirinya sendiri, mantap) \"Nama saya Bowo. Umur empat puluh dua tahun. Mantan staf administrasi distrik.\" (mengangguk sekali) \"Dan saya datang ke sini bukan untuk meminta keistimewaan. Saya datang karena saya ingin hidup.\""
+    }
+  ],
+  "heartbeat": {
+    "base_bpm": 60.0,
+    "primary_wave_amplitude_bpm": 0.0,
+    "primary_wave_frequency": 0.0,
+    "secondary_wave_amplitude_bpm": 0.0,
+    "secondary_wave_frequency": 0.0,
+    "min_bpm": 60.0,
+    "max_bpm": 60.0,
+    "base_temperature_c": 21.8,
+    "primary_temperature_amplitude_c": 0.0,
+    "primary_temperature_frequency": 0.0,
+    "secondary_temperature_amplitude_c": 0.0,
+    "secondary_temperature_frequency": 0.0,
+    "min_temperature_c": 21.8,
+    "max_temperature_c": 21.8
+  },
+  "dialogs": [
+    {
+      "category": "Emosional",
+      "trigger": "emotional",
+      "player_prompt": "Apa yang paling kamu rindukan dari kehidupan sebelum semuanya hancur?",
+      "speaker": "PEMOHON",
+      "text": "(menatap ke bawah sebentar, lalu mengembuskan napas) \"Makan bersama.\" (tersenyum kecil) \"Sederhana, ya? Dulu saya pikir makan bersama itu hal biasa.\" (mengangkat satu tangan, mulai menjelaskan dengan semakin bersemangat) \"Tapi setelah semuanya hancur, saya baru mengerti. Orang yang lapar itu bukan cuma butuh makanan. Dia butuh merasa bahwa besok masih ada.\" (terdiam sebentar, kemudian menunjuk kamera) \"Makanya kalau nanti kita berhasil bikin dapur di bunker ini —\" (ia berhenti sendiri, berkedip) \"...Sebentar. Saya ditanya apa tadi?\" (tertawa kecil karena malu) \"Ah. Yang saya rindukan. Iya. Makan bersama.\""
+    },
+    {
+      "category": "Faktual",
+      "trigger": "factual",
+      "player_prompt": "Ceritakan apa yang kamu lakukan sebelum sampai ke gerbang ini.",
+      "speaker": "PEMOHON",
+      "text": "(langsung mengangkat jari telunjuk, seperti sedang menjelaskan laporan) \"Saya bekerja di bagian administrasi distrik. Tugas saya mencatat distribusi, mendata warga, memastikan dokumen sampai ke tempat yang benar.\" (berhenti sebentar untuk mengingat) \"Setelah kondisi memburuk, pekerjaan itu berubah. Data orang yang datang makin banyak, makanan makin sedikit, dan semua orang ingin didahulukan.\" (alisnya mengernyit) \"Di situ saya belajar satu hal. Kalau orang yang memegang keputusan cuma mau mendengar dirinya sendiri, administrasi yang paling rapi sekalipun tidak ada gunanya.\" (ia sadar sudah mulai melebar, lalu menunjuk dirinya sendiri) \"Maaf. Kembali ke pertanyaan.\" (berdeham) \"Saya bekerja sampai distrik itu akhirnya tidak bisa dipertahankan. Setelah itu saya bergerak menuju bunker ini bersama beberapa orang lain.\""
+    },
+    {
+      "category": "Jebakan",
+      "trigger": "trap",
+      "story_beat": "TITIK RETAK",
+      "player_prompt": "Kalau kamu diberi kesempatan memimpin orang-orang di bunker ini, apa kamu yakin semua keputusanmu akan benar?",
+      "speaker": "PEMOHON",
+      "text": "(tersenyum tenang, tanpa ragu sedikit pun) \"Tidak.\" (mengangguk) \"Pemimpin yang mengatakan dirinya tidak pernah salah justru tidak memahami tanggung jawab. Karena itu, saya akan mendengarkan masukan, mengevaluasi keputusan, dan memperbaiki kesalahan jika diperlukan.\" (jeda) \"Yang terpenting adalah keselamatan orang-orang di bawah tanggung jawab saya.\"",
+      "implementation_note": "Jawabannya tidak memiliki jeda gugup, salah ucap, atau kehilangan alur. Penyampaiannya terlalu mulus dan terstruktur dibandingkan versi Human."
+    },
+    {
+      "category": "Klarifikasi",
+      "trigger": "clarification",
+      "player_prompt": "Kalau begitu, apa yang akan kamu lakukan kalau ada orang di bunker yang paling membutuhkan bantuan?",
+      "speaker": "PEMOHON",
+      "text": "(langsung menjawab, lalu semakin bersemangat) \"Kita dahulukan.\" (menepuk dadanya pelan) \"Bukan yang paling keras suaranya. Bukan yang paling dekat dengan orang yang mengambil keputusan. Yang paling membutuhkan.\" (ia mulai menghitung dengan jari) \"Anak-anak, orang tua, orang sakit, orang yang kehilangan keluarganya —\" (berhenti) \"Dan kalau stok makanan kita cukup...\" (matanya tiba-tiba berbinar) \"...kita bisa buat jadwal makan bareng tiap minggu. Namanya... JMB.\" (jeda) \"Jadwal Makan Bareng.\" (tersenyum bangga) \"JMB.\" (hening dua detik) \"...Itu singkatannya jelek banget ya.\" (tertawa kecil, lalu mengangkat kedua tangan) \"Ya sudah. Pokoknya makan bareng aja, gak usah pakai singkatan.\""
+    }
+  ],
+  "diagnostics": {
+    "pupil_response": "static; no response to light",
+    "heartbeat_bpm": 60,
+    "temperature_c": 21.8
+  },
+  "outcomes": {
+    "accept": [
+      {
+        "type": "narration",
+        "text": "Gerbang berderit terbuka."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(mengangguk sopan) \"Terima kasih.\" (ia melangkah masuk dengan tenang) \"Kalau ada pekerjaan yang perlu dilakukan, saya akan membantu.\""
+      },
+      {
+        "type": "narration",
+        "text": "Ia masuk ke bunker. Kopiah di kepalanya tetap berada pada posisi yang sama, meskipun langkahnya cukup panjang dan cepat."
+      }
+    ],
+    "decline": [
+      {
+        "type": "narration",
+        "text": "Gerbang tetap tertutup."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(tersenyum tipis, mengangguk) \"Saya mengerti.\" (ia menatap kamera beberapa detik) \"Keputusan yang sulit memang harus tetap dibuat.\" (jeda) \"Semoga Anda tidak menyesal.\""
+      },
+      {
+        "type": "narration",
+        "text": "Ia berbalik dan berjalan pergi. Beberapa langkah kemudian, gerakannya berhenti. Wajahnya tidak lagi mempertahankan ekspresi manusia — kulit wajahnya perlahan menjadi kekosongan hitam pekat, mata-hidung-mulut lenyap seluruhnya, hanya menyisakan beberapa pasang mata kecil yang berkedip pada ritme tidak sinkron. Tubuh, pakaian, dan kopiahnya tetap sama. Sosok itu berjalan menjauh tanpa suara."
+      }
+    ]
+  },
+  "tool_reactions": {
+    "pupil_light": [
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(tetap tersenyum, tidak menyipitkan mata) \"Silakan lanjutkan.\""
+      }
+    ],
+    "biometric_monitor": [
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(melihat monitor dengan tenang) \"Apakah hasilnya cukup?\""
+      }
+    ]
+  },
+  "pupil_behaviours": {
+    "initial_diameter_mm": 6.5,
+    "hippus_amplitude_mm": 0.0,
+    "light_response_enabled": false,
+    "blink_enabled": false
+  },
+  "decision_effects": {
+    "accept": {
+      "suspicion": 20,
+      "infiltration": 25
+    },
+    "decline": {
+      "suspicion": -5,
+      "infiltration": 0
+    }
+  }
+}

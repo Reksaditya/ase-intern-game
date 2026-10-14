@@ -1,0 +1,142 @@
+{
+  "character_id": "D2P2",
+  "character_name": "Bowo",
+  "day": 2,
+  "applicant_index": 2,
+  "is_empty": false,
+  "character_image": "res://assets/character/d2p2.png",
+  "id_card_image": "res://assets/character/d2p2_ID.png",
+  "pre_interaction": [
+    {
+      "type": "narration",
+      "text": "Seorang pria berdiri di balik kaca. Ia menarik napas panjang, merapikan kerah kemejanya, lalu mengangguk dengan penuh keseriusan kepada kamera."
+    },
+    {
+      "type": "dialogue",
+      "speaker": "PEMOHON",
+      "text": "(menunjuk dirinya sendiri, mantap) \"Nama saya Bowo. Umur empat puluh dua tahun. Mantan staf administrasi distrik.\" (mengangguk sekali) \"Dan saya datang ke sini bukan untuk meminta keistimewaan. Saya datang karena saya ingin hidup.\""
+    }
+  ],
+  "heartbeat": {
+    "base_bpm": 96.5,
+    "primary_wave_amplitude_bpm": 1.5,
+    "primary_wave_frequency": 0.7,
+    "secondary_wave_amplitude_bpm": 0.0,
+    "secondary_wave_frequency": 0.0,
+    "min_bpm": 95.0,
+    "max_bpm": 98.0,
+    "base_temperature_c": 36.6,
+    "primary_temperature_amplitude_c": 0.0,
+    "primary_temperature_frequency": 0.0,
+    "secondary_temperature_amplitude_c": 0.0,
+    "secondary_temperature_frequency": 0.0,
+    "min_temperature_c": 36.6,
+    "max_temperature_c": 36.6
+  },
+  "dialogs": [
+    {
+      "category": "Emosional",
+      "trigger": "emotional",
+      "player_prompt": "Apa yang paling kamu rindukan dari kehidupan sebelum semuanya hancur?",
+      "speaker": "PEMOHON",
+      "text": "(menatap ke bawah sebentar, lalu mengembuskan napas) \"Makan bersama.\" (tersenyum kecil) \"Sederhana, ya? Dulu saya pikir makan bersama itu hal biasa.\" (mengangkat satu tangan, mulai menjelaskan dengan semakin bersemangat) \"Tapi setelah semuanya hancur, saya baru mengerti. Orang yang lapar itu bukan cuma butuh makanan. Dia butuh merasa bahwa besok masih ada.\" (terdiam sebentar, kemudian menunjuk kamera) \"Makanya kalau nanti kita berhasil bikin dapur di bunker ini —\" (ia berhenti sendiri, berkedip) \"...Sebentar. Saya ditanya apa tadi?\" (tertawa kecil karena malu) \"Ah. Yang saya rindukan. Iya. Makan bersama.\""
+    },
+    {
+      "category": "Faktual",
+      "trigger": "factual",
+      "player_prompt": "Ceritakan apa yang kamu lakukan sebelum sampai ke gerbang ini.",
+      "speaker": "PEMOHON",
+      "text": "(langsung mengangkat jari telunjuk, seperti sedang menjelaskan laporan) \"Saya bekerja di bagian administrasi distrik. Tugas saya mencatat distribusi, mendata warga, memastikan dokumen sampai ke tempat yang benar.\" (berhenti sebentar untuk mengingat) \"Setelah kondisi memburuk, pekerjaan itu berubah. Data orang yang datang makin banyak, makanan makin sedikit, dan semua orang ingin didahulukan.\" (alisnya mengernyit) \"Di situ saya belajar satu hal. Kalau orang yang memegang keputusan cuma mau mendengar dirinya sendiri, administrasi yang paling rapi sekalipun tidak ada gunanya.\" (ia sadar sudah mulai melebar, lalu menunjuk dirinya sendiri) \"Maaf. Kembali ke pertanyaan.\" (berdeham) \"Saya bekerja sampai distrik itu akhirnya tidak bisa dipertahankan. Setelah itu saya bergerak menuju bunker ini bersama beberapa orang lain.\""
+    },
+    {
+      "category": "Jebakan",
+      "trigger": "trap",
+      "story_beat": "TITIK RETAK",
+      "player_prompt": "Kalau kamu diberi kesempatan memimpin orang-orang di bunker ini, apa kamu yakin semua keputusanmu akan benar?",
+      "speaker": "PEMOHON",
+      "text": "(langsung hendak menjawab, tetapi berhenti di tengah gerakan tangannya; terlihat mencari kata yang tepat) \"...Tidak.\" (jeda cukup lama) \"Kalau saya bilang saya selalu benar, itu justru berarti saya tidak belajar apa-apa.\" (ia menarik napas, lalu tersenyum kecil) \"Saya pernah terlalu yakin dengan keputusan sendiri. Saya pernah bicara terlalu banyak sampai lupa mendengar orang lain.\" (menatap kamera lebih serius) \"Dan kalau saya salah, ya saya harus bilang salah.\" (jeda) \"Kesalahan yang diakui bisa diperbaiki. Kesalahan yang dipertahankan cuma karena gengsi... itu yang membahayakan orang.\" (ia mengangguk pelan) \"Jadi tidak. Saya tidak yakin saya akan selalu benar. Yang bisa saya janjikan adalah saya mau mendengar.\""
+    },
+    {
+      "category": "Klarifikasi",
+      "trigger": "clarification",
+      "player_prompt": "Kalau begitu, apa yang akan kamu lakukan kalau ada orang di bunker yang paling membutuhkan bantuan?",
+      "speaker": "PEMOHON",
+      "text": "(langsung menjawab, lalu semakin bersemangat) \"Kita dahulukan.\" (menepuk dadanya pelan) \"Bukan yang paling keras suaranya. Bukan yang paling dekat dengan orang yang mengambil keputusan. Yang paling membutuhkan.\" (ia mulai menghitung dengan jari) \"Anak-anak, orang tua, orang sakit, orang yang kehilangan keluarganya —\" (berhenti) \"Dan kalau stok makanan kita cukup...\" (matanya tiba-tiba berbinar) \"...kita bisa buat jadwal makan bareng tiap minggu. Namanya... JMB.\" (jeda) \"Jadwal Makan Bareng.\" (tersenyum bangga) \"JMB.\" (hening dua detik) \"...Itu singkatannya jelek banget ya.\" (tertawa kecil, lalu mengangkat kedua tangan) \"Ya sudah. Pokoknya makan bareng aja, gak usah pakai singkatan.\"",
+      "implementation_note": "Bowo mulai menunjukkan perubahan karakter melalui kesediaan mengakui kesalahan dan memikirkan kelompok yang rentan. Gaya bicaranya tetap mudah melebar dan kadang keceplosan."
+    }
+  ],
+  "diagnostics": {
+    "pupil_response": "responds to light; constricts clearly",
+    "heartbeat_bpm": 96.5,
+    "temperature_c": 36.6
+  },
+  "outcomes": {
+    "accept": [
+      {
+        "type": "narration",
+        "text": "Gerbang berderit terbuka."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(diam beberapa detik, lalu ekspresinya melunak) \"Terima kasih.\" (ia mengangguk pelan) \"Saya nggak akan bilang saya bisa menyelesaikan semuanya.\" (jeda) \"Tapi kalau ada orang di dalam sana yang lebih butuh daripada saya...\" (menatap ke arah bunker) \"...tolong ingatkan saya untuk mendengarkan mereka dulu.\""
+      },
+      {
+        "type": "narration",
+        "text": "Bowo melangkah masuk. Sebelum gerbang tertutup, ia sempat berbalik."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(mengangkat satu tangan kecil) \"Dan kalau ada dapur...\" (jeda) \"...saya bisa bantu menghitung.\" (berpikir) \"Walaupun mungkin jangan kasih saya bagian matematika.\""
+      }
+    ],
+    "decline": [
+      {
+        "type": "narration",
+        "text": "Gerbang tetap tertutup."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(terdiam lama, lalu mengangguk perlahan) \"...Baik.\" (ia menarik napas) \"Saya tidak suka keputusan ini.\" (jeda) \"Tapi kalau keputusanmu benar berdasarkan apa yang kamu lihat...\" (ia mengangguk sekali) \"...saya harus menghormatinya.\" (berbalik, lalu berhenti) \"Dan kalau ternyata saya salah?\" (tersenyum kecil) \"Ya... berarti saya harus belajar dari situ.\""
+      },
+      {
+        "type": "narration",
+        "text": "Ia berjalan meninggalkan gerbang. Langkahnya berat, tetapi tidak marah."
+      }
+    ]
+  },
+  "tool_reactions": {
+    "pupil_light": [
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(langsung menyipitkan mata, memalingkan wajah sedikit) \"Wah—silau. Silakan, silakan. Saya ngerti, ini prosedur.\""
+      }
+    ],
+    "biometric_monitor": [
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(melihat angka di monitor, lalu mengangguk puas) \"Sembilan puluh lima.\" (jeda) \"Normal.\" (ia mengangkat satu jari) \"Kalau tadi saya bilang seratus sembilan puluh lima, itu baru masalah.\" (berhenti) \"Walaupun...\" (keningnya berkerut, mulai menghitung sendiri) \"Sembilan puluh lima dibagi dua itu... empat puluh delapan.\" (hening) \"...Bukan.\" (ia menutup mata sebentar) \"Empat puluh tujuh koma lima.\" (hening lagi) \"Ya. Segitu.\" (tertawa kecil, malu) \"Maaf. Saya gugup. Matematika bukan bidang saya.\""
+      }
+    ]
+  },
+  "pupil_behaviours": {
+    "initial_diameter_mm": 6.5,
+    "hippus_amplitude_mm": 0.14,
+    "light_response_enabled": true,
+    "blink_enabled": true
+  },
+  "decision_effects": {
+    "accept": {
+      "suspicion": 20,
+      "infiltration": 0
+    },
+    "decline": {
+      "suspicion": 0,
+      "infiltration": 0
+    }
+  }
+}

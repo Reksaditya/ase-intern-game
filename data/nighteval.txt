@@ -1,0 +1,16 @@
+--------------------------------------------------
+   [CETAKAN SISTEM] EVALUASI SHIFT MALAM
+   Hari Operasional: 1 / 5
+--------------------------------------------------
+RINGKASAN SHIFT SIANG
+Pemohon Diproses  : 2
+Diterima          : {diterima}
+Ditolak           : {ditolak}
+
+CATATAN KEJADIAN
+Gerbang ditutup. Badai asam masih mengetuk pelat baja, pelan dan tidak berhenti. Malam ini terasa nyaris normal.
+Gerbang sunyi lebih lama dari biasanya. Di luar sana, tidak ada cara untuk tahu apa yang bergerak.
+
+--------------------------------------------------
+Gerbang terkunci. Menunggu shift berikutnya.
+--------------------------------------------------

@@ -1,0 +1,123 @@
+{
+  "character_id": "D5P1",
+  "character_name": "Jurgen",
+  "day": 5,
+  "applicant_index": 1,
+  "is_empty": false,
+  "character_image": "res://assets/character/d5p1.png",
+  "id_card_image": "res://assets/character/d5p1_ID.png",
+  "pre_interaction": [
+    {
+      "type": "narration",
+      "text": "Seorang pria bertubuh kekar berdiri tegak di jendela inspeksi. Hujan asam menetes dari tepi topi jeraminya dan ia tidak menyekanya. Kedua tangan bersarung tergantung di sisi tubuh."
+    },
+    {
+      "type": "dialogue",
+      "speaker": "PEMOHON",
+      "text": "(menatap lurus ke depan) \"Jurgen Santoso. Petani. Saya minta izin masuk.\""
+    }
+  ],
+  "heartbeat": {
+    "base_bpm": 67.5,
+    "primary_wave_amplitude_bpm": 2.5,
+    "primary_wave_frequency": 0.7,
+    "secondary_wave_amplitude_bpm": 0.0,
+    "secondary_wave_frequency": 0.0,
+    "min_bpm": 65.0,
+    "max_bpm": 70.0,
+    "base_temperature_c": 30.4,
+    "primary_temperature_amplitude_c": 0.0,
+    "primary_temperature_frequency": 0.0,
+    "secondary_temperature_amplitude_c": 0.0,
+    "secondary_temperature_frequency": 0.0,
+    "min_temperature_c": 30.4,
+    "max_temperature_c": 30.4
+  },
+  "dialogs": [
+    {
+      "category": "Emosional",
+      "trigger": "emotional",
+      "player_prompt": "Sebelum berangkat, kamu sempat menengok ladangmu sekali lagi?",
+      "speaker": "PEMOHON",
+      "text": "(diam, rahangnya mengeras) \"Sempat.\" (jeda) \"Jagung saya baru setinggi lutut. Sudah hitam semua. Saya berdiri di situ sebentar. Itu saja.\""
+    },
+    {
+      "category": "Faktual",
+      "trigger": "factual",
+      "player_prompt": "Ceritakan hari terakhirmu di ladang. Mulai dari pagi.",
+      "speaker": "PEMOHON",
+      "text": "(mengernyit, menghitung) \"Pagi, saya periksa bedengan. Sudah rusak. Lalu —\" (berhenti) \"Bukan. Sebelum itu saya cari kaleng benih di gudang. Baru bedengan.\" (menggeleng tegas) \"Siang saya kubur ternak yang mati. Sore badai datang. Malamnya saya pergi.\""
+    },
+    {
+      "category": "Jebakan",
+      "trigger": "trap",
+      "player_prompt": "Kalau besok ada orang lain di gerbang ini yang mengaku Jurgen Santoso, dengan kartu yang sama, apa yang akan kamu katakan?",
+      "speaker": "PEMOHON",
+      "text": "(diam, matanya menyipit) \"Itu mustahil.\" (jeda, rahangnya mengeras) \"Kalau ada, dia penipu. Bawa dia ke depan saya.\""
+    },
+    {
+      "category": "Klarifikasi",
+      "trigger": "clarification",
+      "player_prompt": "Anggap aku tidak mendengar apa-apa tadi. Ceritakan lagi dari awal, singkat saja.",
+      "speaker": "PEMOHON",
+      "text": "(mendengus) \"Ladang habis. Saya berjalan empat hari. Benih saya hilang di jalan. Saya sampai di sini.\" (jeda) \"Hanya itu. Tidak ada yang saya sembunyikan.\""
+    }
+  ],
+  "diagnostics": {
+    "pupil_response": "responds to light; constricts",
+    "heartbeat_bpm": 67.5,
+    "temperature_c": 30.4
+  },
+  "outcomes": {
+    "accept": [
+      {
+        "type": "narration",
+        "text": "Gerbang berderit terbuka."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(mengangguk sekali, giginya masih bergemeletuk) \"Saya berutang pada Anda.\""
+      },
+      {
+        "type": "narration",
+        "text": "Ia melangkah masuk, tegak, meski tubuhnya menggigil."
+      }
+    ],
+    "decline": [
+      {
+        "type": "narration",
+        "text": "Gerbang tetap tertutup."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(diam sejenak, lalu mengangguk keras) \"Saya mengerti. Aturan adalah aturan.\""
+      },
+      {
+        "type": "narration",
+        "text": "Ia berbalik pergi. Tubuhnya menggigil sampai sosoknya hilang di balik hujan."
+      }
+    ]
+  },
+  "tool_reactions": {
+    "pupil_light": [],
+    "biometric_monitor": []
+  },
+  "pupil_behaviours": {
+    "initial_diameter_mm": 6.5,
+    "hippus_amplitude_mm": 0.14,
+    "light_response_enabled": true,
+    "blink_enabled": true
+  },
+  "decision_effects": {
+    "accept": {
+      "suspicion": 20,
+      "infiltration": 0
+    },
+    "decline": {
+      "suspicion": 0,
+      "infiltration": 0
+    }
+  }
+}

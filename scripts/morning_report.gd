@@ -74,7 +74,7 @@ func _ready() -> void:
 func set_report_text(report: Dictionary) -> void:
 	var body := str(report.get("body", ""))
 	if body.strip_edges().is_empty():
-		push_error("The Day 1 morning report must contain body text.")
+		push_error("The report must contain body text.")
 		return
 
 	_report_label.text = str(report.get("label", ""))

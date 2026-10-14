@@ -1,0 +1,131 @@
+{
+  "character_id": "D1P2",
+  "character_name": "Lizz",
+  "day": 1,
+  "applicant_index": 2,
+  "is_empty": false,
+  "character_image": "res://assets/character/d1p2.png",
+  "id_card_image": "res://assets/character/d1p2_ID.png",
+  "pre_interaction": [
+    {
+      "type": "narration",
+      "text": "Seorang gadis berdiri di balik kaca, tersenyum kecil sebelum diminta. Kedua tangannya terlipat rapi di depan, seolah sudah terbiasa menunggu dengan sabar."
+    }
+  ],
+  "heartbeat": {
+    "base_bpm": 76.5,
+    "primary_wave_amplitude_bpm": 2.5,
+    "primary_wave_frequency": 0.7,
+    "secondary_wave_amplitude_bpm": 0.0,
+    "secondary_wave_frequency": 0.0,
+    "min_bpm": 74.0,
+    "max_bpm": 79.0,
+    "base_temperature_c": 36.8,
+    "primary_temperature_amplitude_c": 0.0,
+    "primary_temperature_frequency": 0.0,
+    "secondary_temperature_amplitude_c": 0.0,
+    "secondary_temperature_frequency": 0.0,
+    "min_temperature_c": 36.8,
+    "max_temperature_c": 36.8
+  },
+  "dialogs": [
+    {
+      "category": "Emosional",
+      "trigger": "emotional",
+      "player_prompt": "Apa yang bikin kamu masih bisa senyum di tengah semua ini?",
+      "speaker": "PEMOHON",
+      "text": "(memiringkan kepala sedikit, benar-benar memikirkan jawabannya) \"Karena kalau bukan aku yang tersenyum duluan, orang lain jadi nggak punya alasan buat percaya semuanya bakal baik-baik saja.\" (senyumnya melebar sedikit, hangat) \"Jadi aku yang mulai aja.\""
+    },
+    {
+      "category": "Faktual",
+      "trigger": "factual",
+      "player_prompt": "Ceritakan soal orang-orang yang kamu bantu sebelum sampai sini.",
+      "speaker": "PEMOHON",
+      "text": "(mengangkat bahu kecil, ringan) \"Banyak. Aku nggak pernah hitung, sih — nggak penting juga dihitung.\" (tangannya terlipat lagi rapi di depan) \"Yang penting waktu itu mereka nggak sendirian, itu aja sudah cukup buat aku.\""
+    },
+    {
+      "category": "Jebakan",
+      "trigger": "trap",
+      "story_beat": "TITIK RETAK",
+      "player_prompt": "Pernah nggak kamu ngerasa capek jadi baik terus? Boleh jujur.",
+      "speaker": "PEMOHON",
+      "text": "(senyumnya sempat memudar sedikit, matanya berpaling ke bawah sebentar) \"...Iya.\" (jeda, suaranya lebih pelan dari biasanya) \"Kadang. Terutama pas capek banget dan orang tetep butuh aku 'baik-baik aja' di depan mereka.\" (narik napas, senyumnya balik lagi tapi lebih kecil, lebih jujur) \"Tapi ya... aku nggak tau harus jadi apa lagi kalau bukan ini. Jadi aku tetep coba aja.\""
+    },
+    {
+      "category": "Klarifikasi",
+      "trigger": "clarification",
+      "player_prompt": "Ada lagi yang mau kamu sampaikan sebelum aku putuskan?",
+      "speaker": "PEMOHON",
+      "text": "(membungkuk sedikit, sopan) \"Cuma mau bilang terima kasih, ya. Sudah mau dengerin aku sampai sini.\" (tersenyum, menatap lurus ke kamera) \"Semoga harimu — atau apa pun sisa hari yang masih ada — nggak terlalu berat.\""
+    }
+  ],
+  "diagnostics": {
+    "pupil_response": "responds to light; constricts clearly",
+    "heartbeat_bpm": 76.5,
+    "temperature_c": 36.8
+  },
+  "outcomes": {
+    "accept": [
+      {
+        "type": "narration",
+        "text": "Gerbang berderit terbuka."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(matanya berkaca sedikit, senyumnya gemetar) \"Terima kasih banyak.\" (suara agak pecah) \"Aku janji bakal bantu siapa pun yang butuh di dalam sana juga.\""
+      },
+      {
+        "type": "narration",
+        "text": "Ia melangkah masuk, sempat mengusap sudut matanya sebentar sebelum pintu menutup."
+      }
+    ],
+    "decline": [
+      {
+        "type": "narration",
+        "text": "Gerbang tetap tertutup."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(diam sesaat, senyumnya benar-benar hilang untuk pertama kalinya — lalu dipaksakan lagi, gemetar) \"...Oke.\" (suara kecil, agak bergetar) \"Nggak apa. Kamu cuma jalanin tugas.\" (menunduk sebentar sebelum berbalik) \"Semoga kamu tetap baik-baik aja di dalam sana.\""
+      },
+      {
+        "type": "narration",
+        "text": "Ia berjalan pergi dengan langkah yang lebih pelan dari biasanya, sesekali mengusap wajahnya dengan lengan baju."
+      }
+    ]
+  },
+  "tool_reactions": {
+    "pupil_light": [
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(berkedip pelan, sedikit silau) \"Ah— maaf, refleks.\""
+      }
+    ],
+    "biometric_monitor": [
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(tersenyum kecil) \"Aku emang udah jalan lumayan jauh hari ini.\""
+      }
+    ]
+  },
+  "pupil_behaviours": {
+    "initial_diameter_mm": 6.5,
+    "hippus_amplitude_mm": 0.14,
+    "light_response_enabled": true,
+    "blink_enabled": true
+  },
+  "decision_effects": {
+    "accept": {
+      "suspicion": 0,
+      "infiltration": 0
+    },
+    "decline": {
+      "suspicion": 0,
+      "infiltration": 0
+    }
+  }
+}

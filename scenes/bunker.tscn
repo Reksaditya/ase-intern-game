@@ -20,6 +20,18 @@ position = Vector2(363, 302.00003)
 scale = Vector2(0.59433967, 0.5943396)
 texture = ExtResource("2_hk1w7")
 
+[node name="WindowClip" type="Control" parent="bgpanel"]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 0
+offset_left = -526.0
+offset_top = -235.0
+offset_right = 528.0
+offset_bottom = 234.0
+mouse_filter = 2
+
+[node name="CharacterHolder" type="Node2D" parent="bgpanel/WindowClip"]
+
 [node name="borderpanel" type="Sprite2D" parent="bgpanel" unique_id=1683378891]
 position = Vector2(8.412702, 3.365018)
 texture = ExtResource("3_tyiie")

@@ -27,15 +27,17 @@ border_color = Color(0.74, 0.72, 0.66, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_odkhf"]
 font = ExtResource("1_m15n0")
+font_size = 14
 font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_placeholder"]
 font = ExtResource("2_nbn0a")
+font_size = 14
 font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_h44e2"]
 font = ExtResource("2_nbn0a")
-font_size = 24
+font_size = 20
 font_color = Color(0.17128617, 0.18415022, 0.18158087, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_bezel"]

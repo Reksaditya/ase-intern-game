@@ -1,0 +1,124 @@
+{
+  "character_id": "D3P1",
+  "character_name": "Kiara",
+  "day": 3,
+  "applicant_index": 1,
+  "is_empty": false,
+  "character_image": "res://assets/character/d3p1.png",
+  "id_card_image": "res://assets/character/d3p1_ID.png",
+  "pre_interaction": [
+    {
+      "type": "narration",
+      "text": "Seorang wanita berdiri di balik kaca, rambut merah pendeknya berantakan tertiup angin dari luar. Jaket kulitnya terbuka, satu kaki mengetuk-ngetuk lantai gak sabaran, tatapannya lompat-lompat dari kamera ke sekitar lalu balik lagi — kayak lagi nahan diri buat gak ngomong duluan."
+    }
+  ],
+  "heartbeat": {
+    "base_bpm": 86.0,
+    "primary_wave_amplitude_bpm": 2.0,
+    "primary_wave_frequency": 0.7,
+    "secondary_wave_amplitude_bpm": 0.0,
+    "secondary_wave_frequency": 0.0,
+    "min_bpm": 84.0,
+    "max_bpm": 88.0,
+    "base_temperature_c": 37.1,
+    "primary_temperature_amplitude_c": 0.0,
+    "primary_temperature_frequency": 0.0,
+    "secondary_temperature_amplitude_c": 0.0,
+    "secondary_temperature_frequency": 0.0,
+    "min_temperature_c": 37.1,
+    "max_temperature_c": 37.1
+  },
+  "dialogs": [
+    {
+      "category": "Emosional",
+      "trigger": "emotional",
+      "player_prompt": "Kenapa kamu masih di sini? Banyak yang udah nyerah duluan.",
+      "speaker": "PEMOHON",
+      "text": "\"Nyerah?\" (ketawa pendek, sinis) \"Nyerah itu buat orang yang nungguin ada yang nolongin.\" (jeda, lalu mendadak lebih cepet dan keras) \"Gue gak nungguin siapa-siapa. Gue jalan sendiri, gue yang mutusin kapan berenti, bukan dunia yang mutusin buat gue —\" (berhenti mendadak, sadar suaranya naik) \"...ya intinya gitu. Lo nanya kenapa gue masih di sini? Karena gue belum siap berenti aja. Simple.\""
+    },
+    {
+      "category": "Faktual",
+      "trigger": "factual",
+      "player_prompt": "Rute yang kamu ambil ke sini gimana caranya bisa secepat itu?",
+      "speaker": "PEMOHON",
+      "text": "\"Oh itu —\" (langsung nyala, nada berubah drastis jadi excited) \"—itu gara-gara gue potong lewat jalur bawah jembatan yang katanya udah collapse, orang-orang pada takut lewat situ, tapi gue udah hafal tiap retakan aspalnya —\" (ngomong makin cepet, tangannya ikut gerak-gerak nunjukin arah) \"—terus di sana ada tikungan gila, kalo lo gak pinter counter-steer lo bisa nyusruk ke reruntuhan, tapi gue —\" (berhenti tiba-tiba, ekspresi berubah datar lagi) \"...kenapa gue excited banget jelasin ini. Aneh. Lupain.\""
+    },
+    {
+      "category": "Jebakan",
+      "trigger": "trap",
+      "player_prompt": "Kalau tiba-tiba gerbang ini gak pernah dibuka buat kamu, apa yang bakal kamu lakuin?",
+      "speaker": "PEMOHON",
+      "text": "(diam sebentar, lalu senyum miring yang gak enak dilihat) \"Ya udah, gue gas lagi aja. Cari gerbang lain.\" (nada mendadak lebih pelan, hampir kayak ngomong sendiri) \"...atau kalo emang gak ada gerbang lain, ya gue abisin sisa bensin sampe abis, terus liat apa yang kejadian.\" (ketawa kecil yang gak match sama sekali dengan kalimatnya) \"Gue bercanda. Kayaknya. Entah.\""
+    },
+    {
+      "category": "Klarifikasi",
+      "trigger": "clarification",
+      "player_prompt": "Ada yang mau kamu sampaikan sebelum aku putuskan?",
+      "speaker": "PEMOHON",
+      "text": "\"Kagak. Buka aja kalo emang mau, jangan lama-lama —\" (baru aja mau selesai ngomong, tiba-tiba matanya kelilipan sesuatu di luar jendela) \"—EH TUNGGU itu KUCING?? di luar situ??\" (nunjuk-nunjuk panik, terus sadar dan buru-buru narik tangannya balik) \"...oke gapapa, abaikan, itu gak penting. Yang penting —\" (mikir sebentar, ilang fokus lagi) \"—kalo misal di dalem ada gitar nganggur bilangin gue, sama kalo ada cake, gue gak nolak. Udah itu aja. UDAH ITU AJA. Kenapa gue jadi ngomong panjang lagi.\""
+    }
+  ],
+  "diagnostics": {
+    "pupil_response": "responds to light; constricts clearly",
+    "heartbeat_bpm": 86,
+    "temperature_c": 37.1
+  },
+  "outcomes": {
+    "accept": [
+      {
+        "type": "narration",
+        "text": "Gerbang berderit terbuka."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(berhenti sebentar, kayak gak nyangka) \"...Yaudah.\" (lalu buru-buru, seolah takut kalimat sebelumnya kedengeran terlalu lembek) \"Makasih. Beneran. Gue serius, meski —\" (garuk leher, gak lanjutin) \"—ah lupain, makasih aja.\""
+      },
+      {
+        "type": "narration",
+        "text": "Dia melangkah masuk. Motornya ditinggal berdiri sendiri di luar — satu-satunya barang yang kelihatan paling dia jaga sepanjang dia ngomong."
+      }
+    ],
+    "decline": [
+      {
+        "type": "narration",
+        "text": "Gerbang tetap tertutup."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(diem sebentar, lalu ketawa — ketawa yang gak nyampe ke mata) \"...Fine.\" (nada makin cepet dan agak liar) \"Gak butuh drama segala, motor gue masih nyala, gue tinggal cari tempat lain —\" (mendadak berhenti, suara jadi jauh lebih pelan) \"—selalu ada tempat lain kan? Ya kan?\""
+      },
+      {
+        "type": "narration",
+        "text": "Dia balik ke arah motornya yang masih terparkir di reruntuhan, naik, lalu ngebut ninggalin gerbang tanpa noleh lagi — tapi suara mesinnya menjauh lebih lama dari biasanya, seolah dia sempat berhenti sebentar di kejauhan sebelum benar-benar pergi."
+      }
+    ]
+  },
+  "tool_reactions": {
+    "pupil_light": [
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(mundur reflex) \"WOI—\" (langsung diem, ngelus dada) \"...oke itu emang perlu ya. Maaf. Reflex.\""
+      }
+    ],
+    "biometric_monitor": []
+  },
+  "pupil_behaviours": {
+    "initial_diameter_mm": 6.5,
+    "hippus_amplitude_mm": 0.14,
+    "light_response_enabled": true,
+    "blink_enabled": true
+  },
+  "decision_effects": {
+    "accept": {
+      "suspicion": 20,
+      "infiltration": 0
+    },
+    "decline": {
+      "suspicion": 0,
+      "infiltration": 0
+    }
+  }
+}

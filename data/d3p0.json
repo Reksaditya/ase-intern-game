@@ -1,0 +1,38 @@
+{
+  "character_id": "D3P0",
+  "character_name": "Komandan",
+  "day": 3,
+  "applicant_index": 0,
+  "is_empty": false,
+  "character_image": null,
+  "id_card_image": null,
+  "pre_interaction": [
+    {
+      "type": "dialogue",
+      "speaker": "KOMANDAN",
+      "text": "Gelombang dingin ekstrem semalam. Beberapa penyintas yang datang kemungkinan mengalami hipotermia — tapi catatan pemeriksaan biometrik kita dari dua hari terakhir menunjukkan pola suhu tubuh yang sangat rendah, jauh di luar kondisi hipotermia biasa. Kita gak bisa abaikan itu. Mulai hari ini: tolak siapapun dengan suhu di bawah 31 derajat. Aturan BPM tetap berlaku."
+    }
+  ],
+  "heartbeat": {},
+  "dialogs": [],
+  "diagnostics": {},
+  "outcomes": {
+    "accept": [],
+    "decline": []
+  },
+  "tool_reactions": {
+    "pupil_light": [],
+    "biometric_monitor": []
+  },
+  "pupil_behaviours": {},
+  "decision_effects": {
+    "accept": {
+      "suspicion": 0,
+      "infiltration": 0
+    },
+    "decline": {
+      "suspicion": 0,
+      "infiltration": 0
+    }
+  }
+}

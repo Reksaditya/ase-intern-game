@@ -1,0 +1,122 @@
+{
+  "character_id": "D5P3",
+  "character_name": "Agnes",
+  "day": 5,
+  "applicant_index": 3,
+  "is_empty": true,
+  "character_image": "res://assets/character/d5p3.png",
+  "id_card_image": "res://assets/character/d5p3_ID.png",
+  "pre_interaction": [
+    {
+      "type": "narration",
+      "text": "Seorang wanita berdiri dengan postur agak canggung, matanya menjelajah ke segala arah kecuali ke arah kamera. Tangannya memegang map berisi kertas-kertas penuh coretan angka."
+    }
+  ],
+  "heartbeat": {
+    "base_bpm": 60.0,
+    "primary_wave_amplitude_bpm": 0.0,
+    "primary_wave_frequency": 0.0,
+    "secondary_wave_amplitude_bpm": 0.0,
+    "secondary_wave_frequency": 0.0,
+    "min_bpm": 60.0,
+    "max_bpm": 60.0,
+    "base_temperature_c": 30.2,
+    "primary_temperature_amplitude_c": 0.0,
+    "primary_temperature_frequency": 0.0,
+    "secondary_temperature_amplitude_c": 0.0,
+    "secondary_temperature_frequency": 0.0,
+    "min_temperature_c": 30.2,
+    "max_temperature_c": 30.2
+  },
+  "dialogs": [
+    {
+      "category": "Emosional",
+      "trigger": "emotional",
+      "story_beat": "TITIK RETAK",
+      "player_prompt": "Apa yang terjadi di lab tempatmu bekerja?",
+      "speaker": "PEMOHON",
+      "text": "\"Oh — itu! Itu menarik sekali sebenarnya, karena runtuhnya bukan random, polanya —\" (terus lanjut tanpa jeda) \"—saya orang terakhir yang keluar dari sana, semua rekan divisi saya udah dipindah bulan sebelumnya, katanya saya 'terlalu sulit diajak kerja bareng', tapi itu gak masalah karena saya tetap berhasil selamatin datanya sebelum reruntuhan itu datang —\" (terus lanjut cerita dengan nada ceria yang konsisten, gak ada penurunan volume sedikit pun) \"—dan itu yang penting, kan? Data-nya selamat.\"",
+      "implementation_note": "Tidak ada momen suara mengecil seperti versi Human. Cerita tentang kesepian dan ditinggal rekan kerja disampaikan dengan nada ceria yang sama rata dari awal sampai akhir."
+    },
+    {
+      "category": "Faktual",
+      "trigger": "factual",
+      "player_prompt": "Kamu bawa apa waktu keluar dari lab?",
+      "speaker": "PEMOHON",
+      "text": "(mata berbinar, membuka map dengan semangat tiba-tiba) \"Ini! Ini data yang tersisa — bukan sampel fisik, tapi kalau kalian punya server yang masih hidup, ini bisa direkonstruksi ulang. Tiga tahun kerja, dan — tunggu, saya belum jelasin protokolnya, oke jadi —\" (mulai bicara sangat cepat soal detail teknis yang gak diminta)"
+    },
+    {
+      "category": "Jebakan",
+      "trigger": "trap",
+      "player_prompt": "Kamu yakin kamu manusia? Coba jawab tanpa mikir dulu.",
+      "speaker": "PEMOHON",
+      "text": "(diam sebentar — lama, gak wajar lamanya) \"...Pertanyaan itu asumsinya salah. 'Tanpa mikir' itu gak eksis buat saya, saya selalu mikir, itu bukan indikator yang valid —\" (baru sadar nadanya defensif) \"Maaf. Saya — iya. Saya manusia. Saya cuma gak suka pertanyaan yang premisnya cacat.\""
+    },
+    {
+      "category": "Klarifikasi",
+      "trigger": "clarification",
+      "player_prompt": "Ada yang mau kamu tambahkan sebelum aku putuskan?",
+      "speaker": "PEMOHON",
+      "text": "(menatap map di tangannya lama, lalu balik ke kamera, mendadak lebih tenang) \"Saya tahu cara saya ngomong bikin orang ragu. Saya udah biasa itu — orang-orang di lab juga bilang gitu.\" (senyum kecil, agak getir) \"Tapi teori saya belum pernah salah. Cuma orang-orang yang gak pernah mau dengerin sampai selesai.\" (nada balik ceria) \"Terserah kalian mau percaya cara mikir saya atau enggak. Datanya tetap nyata.\""
+    }
+  ],
+  "diagnostics": {
+    "pupil_response": "static; no response to light",
+    "heartbeat_bpm": 60,
+    "temperature_c": 30.2
+  },
+  "outcomes": {
+    "accept": [
+      {
+        "type": "narration",
+        "text": "Gerbang berderit terbuka."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(menyodorkan map dengan senyum yang sama rata dari tadi) \"Terima kasih. Sungguh.\" (melangkah masuk sambil masih menggumamkan angka-angka pelan ke dirinya sendiri, iramanya gak pernah berubah)"
+      }
+    ],
+    "decline": [
+      {
+        "type": "narration",
+        "text": "Gerbang tetap tertutup."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(diam sebentar, mengangguk pelan) \"...Kalkulasinya emang gak pernah menguntungkan orang kayak saya.\""
+      },
+      {
+        "type": "narration",
+        "text": "Lalu, alih-alih memudar jadi kekosongan seperti yang lain — wajahnya justru memanjang. Telinga yang tadinya tersembunyi rapi di rambutnya berdiri tegak, membesar. Suara \"Kalkulasinya emang gak —\" berubah di tengah kalimat jadi ringkikan yang bingung, seolah dia sendiri kaget kenapa suaranya berubah. Map penuh coretan angka jatuh berhamburan, terinjak keempat kaki yang baru saja terbentuk. Untuk sesaat, dia — sekarang seekor kuda coklat kemerahan dengan jepit heksagon biru yang masih nyangkut aneh di surainya — menatap gerbang dengan ekspresi yang entah kenapa masih terlihat sedikit tersinggung. Lalu ia berbalik dan berlari menjauh ke reruntuhan dengan derap kaki yang jauh lebih berisik dari langkah manusia mana pun sepanjang game ini."
+      }
+    ]
+  },
+  "tool_reactions": {
+    "pupil_light": [
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(gak berkedip, gak kaget sama sekali) \"Sudah selesai?\""
+      }
+    ],
+    "biometric_monitor": []
+  },
+  "pupil_behaviours": {
+    "initial_diameter_mm": 6.5,
+    "hippus_amplitude_mm": 0.0,
+    "light_response_enabled": false,
+    "blink_enabled": false
+  },
+  "decision_effects": {
+    "accept": {
+      "suspicion": 20,
+      "infiltration": 25
+    },
+    "decline": {
+      "suspicion": -5,
+      "infiltration": 0
+    }
+  }
+}
