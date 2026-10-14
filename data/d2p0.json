@@ -6,6 +6,7 @@
   "is_empty": false,
   "character_image": null,
   "id_card_image": null,
+  "anomaly_character_image": null,
   "pre_interaction": [
     {
       "type": "dialogue",

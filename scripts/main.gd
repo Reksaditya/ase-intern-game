@@ -1,6 +1,11 @@
 extends Control
 
 const TOTAL_DAYS := 5
+const TIMELINE_VERSION := 3
+const DAY5_NIGHT_EVALUATION_OLD_INDEX := 16
+const VERSION_2_TO_3_TIMELINE_INDEX_MAP := [
+	0, 1, 2, 3, 5, 6, 7, 10, 11, 12, 14, 15, 16, 19, 20, 21, 24, 25,
+]
 const INTERLUDE_SCENE: PackedScene = preload("res://scenes/interlude.tscn")
 const DAY_INTRO_SCENE: PackedScene = preload("res://scenes/day_intro.tscn")
 const MORNING_REPORT_SCENE: PackedScene = preload("res://scenes/morning_report.tscn")
@@ -11,13 +16,15 @@ const ENDING_SCENE: PackedScene = preload("res://scenes/ending.tscn")
 const SAVE_SLOT_COUNT := 4
 const SAVE_PATH_FORMAT := "user://save_slot_%d.json"
 const REPORT_TEXT_PATH := "res://data/report_text.json"
-const DAY1_MORNING_REPORT_PATH := "res://data/morning_report1.json"
-const NIGHT_EVALUATION_REPORT_PATH := "res://data/night_eval1.json"
+const MORNING_REPORT_PATH_FORMAT := "res://data/morning_report%d.json"
+const NIGHT_EVALUATION_PATH_FORMAT := "res://data/night_eval%d.json"
+const CHARACTER_DATA_PATH_FORMAT := "res://data/d%dp%d.json"
 
 var _timeline: Array[Dictionary] = []
 var _report_text: Dictionary = {}
-var _day1_morning_report: Dictionary = {}
-var _night_evaluation_report: Dictionary = {}
+var _morning_reports: Array[Dictionary] = []
+var _night_evaluation_reports: Array[Dictionary] = []
+var _commander_briefings: Dictionary = {}
 var _timeline_index := 0
 var _active_scene: Node
 var _game_started := false
@@ -36,8 +43,7 @@ var _save_slots: Array[Dictionary] = []
 func _ready() -> void:
 	_timeline = _build_timeline()
 	_report_text = _load_json_dictionary(REPORT_TEXT_PATH)
-	_day1_morning_report = _load_json_dictionary(DAY1_MORNING_REPORT_PATH)
-	_night_evaluation_report = _load_json_dictionary(NIGHT_EVALUATION_REPORT_PATH)
+	_load_report_data()
 	_load_save_slots()
 	$MainMenu/Buttons/PlayGameButton.pressed.connect(_open_save_menu)
 	$MainMenu/Buttons/SettingsButton.pressed.connect(_open_settings_menu)
@@ -152,6 +158,21 @@ func _quit_game() -> void:
 	get_tree().quit()
 
 
+func _load_report_data() -> void:
+	_morning_reports.clear()
+	_night_evaluation_reports.clear()
+	_commander_briefings.clear()
+	for day in range(1, TOTAL_DAYS + 1):
+		_morning_reports.append(_load_json_dictionary(MORNING_REPORT_PATH_FORMAT % day))
+		var briefing_path := CHARACTER_DATA_PATH_FORMAT % [day, 0]
+		if FileAccess.file_exists(briefing_path):
+			_commander_briefings[day] = _load_json_dictionary(briefing_path)
+		if day < TOTAL_DAYS:
+			_night_evaluation_reports.append(
+				_load_json_dictionary(NIGHT_EVALUATION_PATH_FORMAT % day)
+			)
+
+
 func _build_timeline() -> Array[Dictionary]:
 	var steps: Array[Dictionary] = [
 		{"scene": INTERLUDE_SCENE, "title": "Interlude"},
@@ -162,14 +183,28 @@ func _build_timeline() -> Array[Dictionary]:
 		steps.append({
 			"scene": MORNING_REPORT_SCENE,
 			"day": day,
-			"report": "day1_morning" if day == 1 else "day_report",
+			"report": "morning_report",
 		})
-		steps.append({"scene": TEMPO_GAMEPLAY_SCENE, "title": "Afternoon", "day": day})
-		steps.append({
-			"scene": NIGHT_EVALUATION_SCENE,
-			"day": day,
-			"report": "night_eval",
-		})
+		var applicant_index := 1
+		while true:
+			var character_data_path := CHARACTER_DATA_PATH_FORMAT % [day, applicant_index]
+			if not FileAccess.file_exists(character_data_path):
+				break
+			steps.append({
+				"scene": TEMPO_GAMEPLAY_SCENE,
+				"title": "Afternoon",
+				"day": day,
+				"character_data_path": character_data_path,
+			})
+			applicant_index += 1
+		if applicant_index == 1:
+			push_error("No applicant character data found for day %d." % day)
+		if day < TOTAL_DAYS:
+			steps.append({
+				"scene": NIGHT_EVALUATION_SCENE,
+				"day": day,
+				"report": "night_eval",
+			})
 
 	steps.append({"scene": FINAL_EVALUATION_SCENE, "title": "Final Evaluation"})
 	steps.append({"scene": ENDING_SCENE, "title": "Ending"})
@@ -202,8 +237,15 @@ func _load_save_slots() -> void:
 			if file:
 				var parsed = JSON.parse_string(file.get_as_text())
 				if parsed is Dictionary and parsed.has("timeline_index"):
-						save_data = {
-						"timeline_index": int(parsed["timeline_index"]),
+					var stored_timeline_version := int(parsed.get("timeline_version", 1))
+					var timeline_index := _migrate_timeline_index(
+						stored_timeline_version,
+						int(parsed["timeline_index"])
+					)
+					var daily_decisions: Variant = parsed.get("daily_decisions", {})
+					save_data = {
+						"timeline_index": timeline_index,
+						"timeline_version": TIMELINE_VERSION,
 						"completed": bool(parsed.get("completed", false)),
 						"suspicion": int(parsed.get("suspicion", 0)),
 						"infiltration": int(parsed.get("infiltration", 0)),
@@ -211,8 +253,23 @@ func _load_save_slots() -> void:
 						"declined_count": maxi(0, int(parsed.get("declined_count", 0))),
 						"empty_accepted_count": maxi(0, int(parsed.get("empty_accepted_count", 0))),
 						"empty_declined_count": maxi(0, int(parsed.get("empty_declined_count", 0))),
+						"daily_decisions": daily_decisions if daily_decisions is Dictionary else {},
 					}
 		_save_slots.append(save_data)
+
+
+func _migrate_timeline_index(version: int, index: int) -> int:
+	var migrated_index := index
+	if version < 2 and migrated_index >= DAY5_NIGHT_EVALUATION_OLD_INDEX:
+		migrated_index = maxi(DAY5_NIGHT_EVALUATION_OLD_INDEX, migrated_index - 1)
+	if version < 3:
+		var legacy_index := clampi(
+			migrated_index,
+			0,
+			VERSION_2_TO_3_TIMELINE_INDEX_MAP.size() - 1
+		)
+		migrated_index = VERSION_2_TO_3_TIMELINE_INDEX_MAP[legacy_index]
+	return migrated_index
 
 
 func _load_json_dictionary(path: String) -> Dictionary:
@@ -229,31 +286,56 @@ func _load_json_dictionary(path: String) -> Dictionary:
 
 
 func _apply_report_text(scene: Node, report_key: String, day: int) -> void:
-	if report_key == "day1_morning":
-		if scene.has_method("set_report_text"):
-			scene.call("set_report_text", _day1_morning_report)
-		else:
+	if report_key == "morning_report":
+		if not scene.has_method("set_report_text"):
 			push_error("The morning report scene cannot display report text.")
+			return
+		if day < 1 or day > _morning_reports.size():
+			push_error("Morning report data is missing for day %d." % day)
+			return
+
+		var report := _morning_reports[day - 1].duplicate()
+		var format_values := _morning_report_values(_active_save_data())
+		var commander_instruction := _commander_instruction_for_day(day)
+		if not commander_instruction.is_empty():
+			var body := str(report.get("body", ""))
+			report["body"] = body.replace(
+				commander_instruction,
+				"{instruksi_komandan}"
+			)
+			format_values["instruksi_komandan"] = commander_instruction
+		report = _format_report(report, format_values)
+		scene.call("set_report_text", report)
 		return
+
 	if report_key == "night_eval":
 		if not scene.has_method("set_report_text"):
 			push_error("The night evaluation scene cannot display report text.")
 			return
+		if day < 1 or day > _night_evaluation_reports.size():
+			push_error("Night evaluation data is missing for day %d." % day)
+			return
 
-		var save_data: Dictionary = {}
-		if _active_save_slot >= 0 and _active_save_slot < _save_slots.size():
-			save_data = _save_slots[_active_save_slot]
-		var accepted_count := int(save_data.get("accepted_count", 0))
-		var declined_count := int(save_data.get("declined_count", 0))
+		var report := _night_evaluation_reports[day - 1].duplicate()
+		var save_data := _active_save_data()
+		var daily_decisions: Variant = save_data.get("daily_decisions", {})
+		var day_decisions: Dictionary = {}
+		if daily_decisions is Dictionary:
+			var stored_day_decisions: Variant = daily_decisions.get(str(day), {})
+			if stored_day_decisions is Dictionary:
+				day_decisions = stored_day_decisions
+		var baris2 := str(report.get("baris2", ""))
+		if baris2.is_empty():
+			var band := _infiltration_band(int(save_data.get("infiltration", 0)))
+			var branch_key := "baris2_waspada" if band != "Rendah" else "baris2_rendah"
+			baris2 = str(report.get(branch_key, ""))
 		var format_values := {
-			"day": day,
-			"diproses": accepted_count + declined_count,
-			"diterima": accepted_count,
-			"ditolak": declined_count,
+			"diterima": int(day_decisions.get("accepted_count", 0)),
+			"ditolak": int(day_decisions.get("declined_count", 0)),
+			"baris1": str(report.get("baris1", "")),
+			"baris2": baris2,
 		}
-		var report := _night_evaluation_report.duplicate()
-		for field in ["label", "header", "continue_text", "body"]:
-			report[field] = str(report.get(field, "")).format(format_values)
+		report = _format_report(report, format_values)
 		scene.call("set_report_text", report)
 		return
 
@@ -276,6 +358,59 @@ func _apply_report_text(scene: Node, report_key: String, day: int) -> void:
 		else:
 			push_error("Report text node '%s' was not found in %s." % [node_path, scene.name])
 			continue
+
+
+func _format_report(report: Dictionary, values: Dictionary) -> Dictionary:
+	var formatted := report.duplicate()
+	for field in ["label", "header", "continue_text", "body"]:
+		if formatted.has(field):
+			formatted[field] = str(formatted[field]).format(values)
+	return formatted
+
+
+func _active_save_data() -> Dictionary:
+	if _active_save_slot >= 0 and _active_save_slot < _save_slots.size():
+		return _save_slots[_active_save_slot]
+	return {}
+
+
+func _morning_report_values(save_data: Dictionary) -> Dictionary:
+	var infiltration_band := _infiltration_band(int(save_data.get("infiltration", 0)))
+	var suspicion := int(save_data.get("suspicion", 0))
+	var violation_band := "Rendah"
+	var required_questions := 2
+	if suspicion >= 40:
+		violation_band = "Kritis"
+		required_questions = 4
+	elif suspicion >= 20:
+		violation_band = "Waspada"
+		required_questions = 3
+	return {
+		"band_infiltrasi": infiltration_band,
+		"band_pelanggaran": violation_band,
+		"syarat": required_questions,
+	}
+
+
+func _commander_instruction_for_day(day: int) -> String:
+	var briefing: Variant = _commander_briefings.get(day, {})
+	if not briefing is Dictionary:
+		return ""
+	var events: Variant = briefing.get("pre_interaction", [])
+	if not events is Array:
+		return ""
+	for event in events:
+		if event is Dictionary and str(event.get("speaker", "")) == "KOMANDAN":
+			return str(event.get("text", ""))
+	return ""
+
+
+func _infiltration_band(value: int) -> String:
+	if value >= 75:
+		return "Kritis"
+	if value >= 50:
+		return "Waspada"
+	return "Rendah"
 
 
 func _refresh_save_menu() -> void:
@@ -319,6 +454,7 @@ func _complete_active_save() -> void:
 func _new_save_data() -> Dictionary:
 	return {
 		"timeline_index": 0,
+		"timeline_version": TIMELINE_VERSION,
 		"completed": false,
 		"suspicion": 0,
 		"infiltration": 0,
@@ -326,6 +462,7 @@ func _new_save_data() -> Dictionary:
 		"declined_count": 0,
 		"empty_accepted_count": 0,
 		"empty_declined_count": 0,
+		"daily_decisions": {},
 	}
 
 
@@ -334,6 +471,20 @@ func _on_admission_decision(is_accepted: bool) -> void:
 		var save_data: Dictionary = _save_slots[_active_save_slot].duplicate()
 		var decision_counter := "accepted_count" if is_accepted else "declined_count"
 		save_data[decision_counter] = int(save_data.get(decision_counter, 0)) + 1
+
+		var daily_decisions: Dictionary = {}
+		var stored_daily_decisions: Variant = save_data.get("daily_decisions", {})
+		if stored_daily_decisions is Dictionary:
+			daily_decisions = stored_daily_decisions.duplicate()
+		var current_day := int(_timeline[_timeline_index].get("day", 1))
+		var day_key := str(current_day)
+		var day_decisions: Dictionary = {}
+		var stored_day_decisions: Variant = daily_decisions.get(day_key, {})
+		if stored_day_decisions is Dictionary:
+			day_decisions = stored_day_decisions.duplicate()
+		day_decisions[decision_counter] = int(day_decisions.get(decision_counter, 0)) + 1
+		daily_decisions[day_key] = day_decisions
+		save_data["daily_decisions"] = daily_decisions
 
 		var case_tracking: Dictionary = {}
 		if is_instance_valid(_active_scene) and _active_scene.has_method("get_case_tracking_data"):
@@ -394,6 +545,9 @@ func _show_timeline_step() -> void:
 	var step: Dictionary = _timeline[_timeline_index]
 	var packed_scene: PackedScene = step["scene"]
 	_active_scene = packed_scene.instantiate()
+	var character_data_path := str(step.get("character_data_path", ""))
+	if not character_data_path.is_empty():
+		_active_scene.set("character_data_path", character_data_path)
 	add_child(_active_scene)
 
 	var title_label := _active_scene.get_node_or_null("Title") as Label

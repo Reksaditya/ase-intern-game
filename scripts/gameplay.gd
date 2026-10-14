@@ -58,6 +58,7 @@ var _character_move_tween: Tween
 var _character_bob_tween: Tween
 var _character_settle_tween: Tween
 var _character_half_width := 150.0
+var character_data_path := CHARACTER_DATA_PATH
 
 
 func _ready() -> void:
@@ -76,7 +77,7 @@ func _ready() -> void:
 	decline_button.disabled = true
 	pupil.set_process(false)
 	heartbeat_temperature.set_process(false)
-	_current_character = _load_character_data()
+	_current_character = _load_character_data(character_data_path)
 	pupil.call("set_character_data", _current_character)
 	heartbeat_temperature.call("set_character_data", _current_character)
 	await _animate_character_in()
@@ -545,14 +546,14 @@ func _refresh_diagnostic_access() -> void:
 	)
 
 
-func _load_character_data() -> Dictionary:
-	var file := FileAccess.open(CHARACTER_DATA_PATH, FileAccess.READ)
+func _load_character_data(path: String) -> Dictionary:
+	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
-		push_error("Could not open character data: %s" % CHARACTER_DATA_PATH)
+		push_error("Could not open character data: %s" % path)
 		return {}
 
 	var parsed = JSON.parse_string(file.get_as_text())
 	if not parsed is Dictionary:
-		push_error("Character data must contain a JSON object.")
+		push_error("Character data at '%s' must contain a JSON object." % path)
 		return {}
 	return parsed

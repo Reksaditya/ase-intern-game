@@ -4,8 +4,9 @@
   "day": 5,
   "applicant_index": 2,
   "is_empty": true,
-  "character_image": "res://assets/character/d5p2.png",
-  "id_card_image": "res://assets/character/d5p2_ID.png",
+  "character_image": "res://assets/character/jurgen.png",
+  "id_card_image": "res://assets/character/jurgen_ID.png",
+  "anomaly_character_image": null,
   "pre_interaction": [
     {
       "type": "narration",

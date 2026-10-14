@@ -4,8 +4,9 @@
   "day": 1,
   "applicant_index": 1,
   "is_empty": true,
-  "character_image": "res://assets/character/d1p1.png",
-  "id_card_image": "res://assets/character/d1p1_ID.png",
+  "character_image": "res://assets/character/kiara.png",
+  "id_card_image": "res://assets/character/kiara_ID.png",
+  "anomaly_character_image": null,
   "pre_interaction": [
     {
       "type": "narration",

@@ -4,8 +4,9 @@
   "day": 2,
   "applicant_index": 2,
   "is_empty": false,
-  "character_image": "res://assets/character/d2p2.png",
-  "id_card_image": "res://assets/character/d2p2_ID.png",
+  "character_image": "res://assets/character/wowo.png",
+  "id_card_image": "res://assets/character/wowo_id.png",
+  "anomaly_character_image": null,
   "pre_interaction": [
     {
       "type": "narration",
