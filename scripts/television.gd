@@ -1,7 +1,7 @@
 extends Sprite2D
 
 signal category_selected(category: String)
-signal idcard_requested
+signal id_card_requested
 
 @onready var intlog: TextureButton = $intlog
 @onready var idcard: TextureButton = $idcard
@@ -15,25 +15,32 @@ signal idcard_requested
 @onready var trap_btn: TextureButton = $LogScroll/LogButtonList/trap
 @onready var clarification_btn: TextureButton = $LogScroll/LogButtonList/clarification
 
-@export var press_scale:Vector2 = Vector2(0.95, 0.95)
+@export var press_scale: Vector2 = Vector2(0.95, 0.95)
 
 @export var visible_button_count: int = 3
 @export var panel_appear_duration: float = 0.35
 @export var button_appear_duration: float = 0.3
 @export var stagger_delay: float = 0.08
 
-var tween: Tween
+var button_tweens: Dictionary = {}
 var panel_tween: Tween
 var log_open: bool = false
-var docs_open: bool = false
+
 
 func _ready() -> void:
-	intlog.mouse_entered.connect(_on_hover)
-	intlog.mouse_exited.connect(_on_exit)
+	# Semua koneksi sinyal dibuat di sini (bukan di panel Node > Signals),
+	# jadi tidak ada koneksi ganda. _connect_once() menjaga agar aman
+	# walaupun scene masih menyimpan koneksi lama.
+	for button in [intlog, idcard]:
+		_connect_once(button.mouse_entered, _on_hover.bind(button))
+		_connect_once(button.mouse_exited, _on_exit.bind(button))
+		_connect_once(button.button_down, _on_button_down.bind(button))
+		_connect_once(button.button_up, _on_button_up.bind(button))
+		_connect_once(button.focus_entered, _on_hover.bind(button))
+	_connect_once(intlog.pressed, _on_intlog_pressed)
+	_connect_once(idcard.pressed, _on_idcard_pressed)
 
-	idcard.pressed.connect(func(): idcard_requested.emit())
-
-	back_button.pressed.connect(close_log_panel)
+	_connect_once(back_button.pressed, close_log_panel)
 
 	back_button.visible = false
 	back_button.modulate.a = 0.0
@@ -49,8 +56,19 @@ func _ready() -> void:
 
 	call_deferred("_update_scroll_height")
 
+
+func _connect_once(sig: Signal, callable: Callable) -> void:
+	if not sig.is_connected(callable):
+		sig.connect(callable)
+
+
 func _on_category_pressed(category: String) -> void:
 	category_selected.emit(category)
+
+
+func _on_idcard_pressed() -> void:
+	id_card_requested.emit()
+
 
 func _update_scroll_height() -> void:
 	var count: int = log_list.get_child_count()
@@ -68,34 +86,12 @@ func _update_scroll_height() -> void:
 	total_height += spacing * max(visible_count - 1, 0)
 	log_scroll.custom_minimum_size.y = total_height
 
+
 func _on_intlog_pressed() -> void:
 	if log_open:
 		close_log_panel()
 	else:
 		open_log_panel()
-
-
-func _on_intlog_button_down() -> void:
-	if tween:
-		tween.kill()
-
-	tween = create_tween()
-	tween.set_trans(Tween.TRANS_SINE)
-	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(intlog, "scale", press_scale, 0.08)
-
-
-func _on_intlog_button_up() -> void:
-	if tween:
-		tween.kill()
-
-	tween = create_tween()
-	tween.set_trans(Tween.TRANS_BACK)
-	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(intlog, "scale", Vector2.ONE, 0.12)
-
-func _on_intlog_focus_entered() -> void:
-	_on_hover()
 
 
 func open_log_panel() -> void:
@@ -134,6 +130,7 @@ func open_log_panel() -> void:
 
 	_animate_buttons_in()
 
+
 func close_log_panel() -> void:
 	log_open = false
 
@@ -160,6 +157,7 @@ func close_log_panel() -> void:
 		idcard.visible = true
 	)
 
+
 func _animate_buttons_in() -> void:
 	var children := log_list.get_children()
 
@@ -178,47 +176,37 @@ func _animate_buttons_in() -> void:
 		t.tween_property(btn, "position:y", target_y, button_appear_duration)
 
 
-func _on_hover():
-	if tween:
-		tween.kill()
+# --- Animasi tombol intlog & idcard (hover / tekan) -------------------------
 
-	tween = create_tween()
-	tween.set_trans(Tween.TRANS_BACK)
-	tween.set_ease(Tween.EASE_OUT)
+func _on_button_down(button: TextureButton) -> void:
+	_animate_button(button, press_scale, 0.08, Tween.TRANS_SINE)
 
-	tween.tween_property(
-		intlog,
-		"scale",
-		Vector2(1.08, 1.08),
-		0.15
-	)
 
-func _on_exit():
-	if tween:
-		tween.kill()
+func _on_button_up(button: TextureButton) -> void:
+	_animate_button(button, Vector2.ONE, 0.12, Tween.TRANS_BACK)
 
-	tween = create_tween()
-	tween.set_trans(Tween.TRANS_SINE)
-	tween.set_ease(Tween.EASE_OUT)
 
-	tween.tween_property(
-		intlog,
-		"scale",
-		Vector2.ONE,
-		0.15
-	)
+func _on_hover(button: TextureButton) -> void:
+	_animate_button(button, Vector2(1.08, 1.08), 0.15, Tween.TRANS_BACK)
 
-func _on_idcard_button_down() -> void:
-	tween = create_tween()
-	tween.set_trans(Tween.TRANS_SINE)
-	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(idcard, "scale", press_scale, 0.08)
 
-func _on_idcard_button_up() -> void:
-	tween = create_tween()
-	tween.set_trans(Tween.TRANS_BACK)
-	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(idcard, "scale", Vector2.ONE, 0.12)
+func _on_exit(button: TextureButton) -> void:
+	_animate_button(button, Vector2.ONE, 0.15, Tween.TRANS_SINE)
 
-func _on_idcard_focus_entered() -> void:
-	_on_hover()
+
+func _animate_button(
+	button: TextureButton,
+	target_scale: Vector2,
+	duration: float,
+	transition: Tween.TransitionType
+) -> void:
+	var button_id := button.get_instance_id()
+	var button_tween := button_tweens.get(button_id) as Tween
+	if button_tween:
+		button_tween.kill()
+
+	button_tween = create_tween()
+	button_tweens[button_id] = button_tween
+	button_tween.set_trans(transition)
+	button_tween.set_ease(Tween.EASE_OUT)
+	button_tween.tween_property(button, "scale", target_scale, duration)

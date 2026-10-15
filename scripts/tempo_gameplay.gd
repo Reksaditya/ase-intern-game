@@ -32,7 +32,7 @@ var infiltration := 0
 func _ready() -> void:
 	bunker.apply_day_rules(_rules_for_day(day))
 	television.category_selected.connect(_on_category_selected)
-	television.idcard_requested.connect(bunker.show_id_card)
+	television.id_card_requested.connect(bunker.show_id_card)
 	bunker.character_left.connect(_on_character_left)
 	await get_tree().create_timer(0.6).timeout
 	bunker.spawn_character(_next_index)

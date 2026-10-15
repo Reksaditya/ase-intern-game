@@ -1,0 +1,40 @@
+[NARASI] Seorang wanita berdiri di balik kaca, rambut merah pendeknya berantakan tertiup angin dari luar. Jaket kulitnya terbuka, satu kaki mengetuk-ngetuk lantai gak sabaran, tatapannya lompat-lompat dari kamera ke sekitar lalu balik lagi — kayak lagi nahan diri buat gak ngomong duluan. Sepasang anting kuning kecil berkilau samar kena cahaya gerbang.
+
+
+Pertanyaan 1 — Emosional
+[PLAYER PILIH] "Kenapa kamu masih di sini? Banyak yang udah nyerah duluan."
+[PEMOHON] (ketawa pendek, sinis) "Nyerah? Itu kata buat orang yang masih nunggu ada yang jemput." (nada naik tiba-tiba) "Gue gak gitu. Motor gue masih idup, ban masih bundar, ya gue jalan aja terus—" (berhenti, narik napas) "...lo nanya alasan? Gak ada. Gue cuma belum capek."
+
+Pertanyaan 2 — Faktual (TITIK RETAK)
+[PLAYER PILIH] "Sepanjang jalan ke sini, kamu lewat mana aja?"
+[PEMOHON] "Dari check point lama di sisi timur," (langsung cepet) "turun lewat jalur rel yang relnya udah copot separo, terus motong ke bekas SPBU yang tangkinya masih ada sisa bensin dikit-dikit, gue selalu mampir situ buat isi ulang—" (terus ngoceh, makin detail, gak ada jeda sekalipun) "—abis itu lewat jembatan gantung yang miring 15 derajat, banyak orang takut lewat situ, padahal asal lo jaga kecepatan konstan itu jalur paling aman, terus turun ke terowongan bawah tanah yang—" (terus lanjut dengan runtutan yang makin panjang & presisi, tanpa capek, tanpa ilang fokus sedikit pun)
+(Catatan implementasi: TIDAK ADA titik "kenapa gue excited banget, lupain" seperti versi lain. Detail makin presisi & runtut, seolah membaca peta, bukan mengingat perjalanan yang capek.)
+
+Pertanyaan 3 — Jebakan
+[PLAYER PILIH] "Kalau tiba-tiba gerbang ini gak pernah dibuka buat kamu, apa yang bakal kamu lakuin?"
+[PEMOHON] (diam sebentar, senyum miring) "Ya gas lagi aja lah. Dunia luas, gerbang ini kagak satu-satunya." (nada ngelirih) "...atau kalo emang abis semua opsi, ya gue liat aja sampe bensin gue abis." (ketawa kecil, gak nyambung sama nada sebelumnya) "Bercanda. Mungkin. Gatau juga sih."
+
+Pertanyaan 4 — Klarifikasi
+[PLAYER PILIH] "Ada yang mau kamu sampaikan sebelum aku putuskan?"
+[PEMOHON] "Kagak, buruan aja—" (kepalanya nengok cepet ke arah luar) "—itu ada suara motor lain gak sih barusan?? Atau perasaan gue doang—" (buru-buru balik badan) "...lupain, gapapa. Intinya kalo di dalem ada muffin nganggur, gue gak nolak. Udah."
+
+[SISTEM — Setelah 2 Pertanyaan Terjawab]
+[SISTEM] Alat Pemindai Terbuka.
+
+[SENTER PUPIL]
+[SISTEM] PUPIL: STATIS. Tidak ada respons terhadap cahaya.
+[PEMOHON] (gak mundur, gak berkedip) "...oke itu emang perlu ya."
+
+[BIOMETRIC MONITOR]
+[SISTEM] BPM: 60 — Flat.
+[SISTEM] SUHU: 26.9°C — Dingin, di bawah ambang manusia normal.
+
+[KEPUTUSAN: TERIMA] (Suspicion +20%, Empty Infiltration +25%)
+[NARASI] Gerbang berderit terbuka.
+[PEMOHON] "...Yaudah. Makasih." (garuk leher) "—ah lupain, makasih aja."
+[NARASI] Dia melangkah masuk. Motor bututnya ditinggal di luar.
+
+[KEPUTUSAN: TOLAK] (Suspicion -5%)
+[NARASI] Gerbang tetap tertutup.
+[PEMOHON] (ketawa yang gak nyampe mata) "...Fine. Motor gue masih nyala—" (berhenti total)
+[NARASI] Senyum sinisnya masih nempel sepersekian detik — lalu putus sekaligus. Wajahnya gelap dari dalam, anting kuning yang tadi dipakai jatuh berdenting pelan ke lantai saat wujudnya berubah. Ia berjalan pergi tanpa noleh.

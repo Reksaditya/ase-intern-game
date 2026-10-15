@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://ditt5bhe0otp1"]
+[gd_scene format=3 uid="uid://dmb2lupuhkiwv"]
 
 [ext_resource type="PackedScene" uid="uid://cdjdekedo1t6d" path="res://scenes/bunker.tscn" id="1_bunker"]
 [ext_resource type="Script" uid="uid://dyx2rirtgnrgr" path="res://scripts/tempo_gameplay.gd" id="1_sl1tr"]
