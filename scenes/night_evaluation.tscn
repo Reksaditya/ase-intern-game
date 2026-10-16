@@ -1,4 +1,4 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dnex55xeog6rw"]
 
 [ext_resource type="FontFile" uid="uid://bmsrpfli7wk6a" path="res://assets/fonts/RobotoMono-Italic.ttf" id="1_italic"]
 [ext_resource type="FontFile" uid="uid://c7jtwt6md44kx" path="res://assets/fonts/RobotoMono-Regular.ttf" id="2_regular"]
@@ -22,7 +22,7 @@ font = ExtResource("2_regular")
 font_size = 24
 font_color = Color(0.17128617, 0.18415022, 0.18158087, 1)
 
-[node name="NightEvaluation" type="Control"]
+[node name="NightEvaluation" type="Control" unique_id=85582169]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,7 +31,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=806352335]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,7 +41,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="popup" type="ColorRect" parent="."]
+[node name="popup" type="ColorRect" parent="." unique_id=1034163981]
 layout_mode = 0
 offset_left = 295.0
 offset_top = 115.0
@@ -50,63 +50,58 @@ offset_bottom = 525.0
 mouse_filter = 2
 color = Color(0.9098039, 0.89411765, 0.84705883, 1)
 
-[node name="SectionHeading" type="Label" parent="popup"]
+[node name="SectionHeading" type="Label" parent="popup" unique_id=1261054360]
 layout_mode = 0
 offset_left = 33.0
 offset_top = 93.0
 offset_right = 210.0
 offset_bottom = 116.0
-mouse_filter = 2
 label_settings = SubResource("LabelSettings_section")
 
-[node name="ShiftSummary" type="Label" parent="popup"]
+[node name="ShiftSummary" type="Label" parent="popup" unique_id=879244357]
 layout_mode = 0
 offset_left = 33.0
 offset_top = 135.0
 offset_right = 525.0
 offset_bottom = 225.0
-mouse_filter = 2
 label_settings = SubResource("LabelSettings_body")
 autowrap_mode = 2
 
-[node name="ShiftNotes" type="Label" parent="popup"]
+[node name="ShiftNotes" type="Label" parent="popup" unique_id=2144893416]
 layout_mode = 0
 offset_left = 33.0
 offset_top = 235.0
 offset_right = 525.0
 offset_bottom = 305.0
-mouse_filter = 2
 label_settings = SubResource("LabelSettings_body")
 autowrap_mode = 2
 
-[node name="MutedNightNotes" type="Label" parent="popup"]
+[node name="MutedNightNotes" type="Label" parent="popup" unique_id=754337034]
 layout_mode = 0
 offset_left = 33.0
 offset_top = 325.0
 offset_right = 525.0
 offset_bottom = 400.0
-mouse_filter = 2
 label_settings = SubResource("LabelSettings_muted")
 autowrap_mode = 2
 
-[node name="line" type="Line2D" parent="popup"]
+[node name="line" type="Line2D" parent="popup" unique_id=37843225]
 position = Vector2(-296, -112)
 points = PackedVector2Array(329, 192, 833, 192)
 width = 1.5
 default_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
 
-[node name="header" type="Label" parent="popup"]
+[node name="header" type="Label" parent="popup" unique_id=407524874]
 layout_mode = 0
 offset_left = 134.0
 offset_top = 32.0
 offset_right = 452.0
 offset_bottom = 66.0
-mouse_filter = 2
 label_settings = SubResource("LabelSettings_header")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ContinueButton" type="Button" parent="."]
+[node name="ContinueButton" type="Button" parent="." unique_id=1489805438]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -122,8 +117,8 @@ grow_vertical = 0
 focus_mode = 0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.55, 0.55, 0.55, 1)
 theme_override_colors/font_pressed_color = Color(0.4, 0.4, 0.4, 1)
+theme_override_colors/font_hover_color = Color(0.55, 0.55, 0.55, 1)
 theme_override_fonts/font = ExtResource("2_regular")
 theme_override_font_sizes/font_size = 16
 flat = true
