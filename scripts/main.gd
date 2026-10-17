@@ -1,6 +1,7 @@
 extends Control
 
 const TOTAL_DAYS := 5
+const TOTAL_HUMANS := 6
 const TIMELINE_VERSION := 3
 const DAY5_NIGHT_EVALUATION_OLD_INDEX := 16
 const VERSION_2_TO_3_TIMELINE_INDEX_MAP := [
@@ -19,6 +20,13 @@ const REPORT_TEXT_PATH := "res://data/report_text.json"
 const MORNING_REPORT_PATH_FORMAT := "res://data/morning_report%d.json"
 const NIGHT_EVALUATION_PATH_FORMAT := "res://data/night_eval%d.json"
 const CHARACTER_DATA_PATH_FORMAT := "res://data/d%dp%d.json"
+const ENDING_DATA_PATHS := {
+	"humanity_sanctuary": "res://data/ending_humanity_sanctuary.json",
+	"cold_military_fortress_a": "res://data/ending_cold_military_fortress_a.json",
+	"cold_military_fortress_b": "res://data/ending_cold_military_fortress_b.json",
+	"silent_outbreak": "res://data/ending_silent_outbreak.json",
+	"traitors_fate": "res://data/ending_traitors_fate.json",
+}
 
 var _timeline: Array[Dictionary] = []
 var _report_text: Dictionary = {}
@@ -75,6 +83,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		return
 	if is_instance_valid(_active_scene) and _active_scene.find_child("TerimaButton", true, false):
+		return
+	if (
+		is_instance_valid(_active_scene)
+		and _active_scene.has_method("can_advance")
+		and not bool(_active_scene.call("can_advance"))
+	):
 		return
 	var should_advance := false
 	if event is InputEventKey:
@@ -231,7 +245,7 @@ func _build_timeline() -> Array[Dictionary]:
 			})
 
 	steps.append({"scene": FINAL_EVALUATION_SCENE, "title": "Final Evaluation"})
-	steps.append({"scene": ENDING_SCENE, "title": "Ending"})
+	steps.append({"scene": ENDING_SCENE, "title": "Ending", "is_ending": true})
 	return steps
 
 
@@ -246,6 +260,16 @@ func _advance_timeline() -> void:
 		_refresh_save_menu()
 		_show_main_menu()
 		return
+
+	var current_step: Dictionary = _timeline[_timeline_index]
+	if str(current_step.get("report", "")) == "night_eval":
+		var night_ending_key := _ending_key_for_night_evaluation(_active_save_data())
+		if not night_ending_key.is_empty():
+			_timeline_index = _timeline.size() - 1
+			_save_current_progress()
+			_show_timeline_step()
+			return
+
 	_timeline_index += 1
 	_save_current_progress()
 	_show_timeline_step()
@@ -396,6 +420,55 @@ func _active_save_data() -> Dictionary:
 	if _active_save_slot >= 0 and _active_save_slot < _save_slots.size():
 		return _save_slots[_active_save_slot]
 	return {}
+
+
+func _ending_key_for_night_evaluation(save_data: Dictionary) -> String:
+	if int(save_data.get("infiltration", 0)) >= 100:
+		return "silent_outbreak"
+	if int(save_data.get("suspicion", 0)) >= 100:
+		return "traitors_fate"
+	return ""
+
+
+func _ending_key_for_final_evaluation(save_data: Dictionary) -> String:
+	var infiltration := int(save_data.get("infiltration", 0))
+	var suspicion := int(save_data.get("suspicion", 0))
+	if infiltration >= 100:
+		return "silent_outbreak"
+	if suspicion >= 100:
+		return "traitors_fate"
+	if infiltration >= 50:
+		return "silent_outbreak"
+	if _human_saved_count(save_data) >= 5:
+		return "humanity_sanctuary"
+	return "cold_military_fortress_a" if suspicion < 20 else "cold_military_fortress_b"
+
+
+func _human_saved_count(save_data: Dictionary) -> int:
+	var accepted_count := int(save_data.get("accepted_count", 0))
+	var empty_accepted_count := int(save_data.get("empty_accepted_count", 0))
+	return clampi(accepted_count - empty_accepted_count, 0, TOTAL_HUMANS)
+
+
+func _ending_data_for_save(save_data: Dictionary) -> Dictionary:
+	var ending_key := _ending_key_for_final_evaluation(save_data)
+	var ending_path := str(ENDING_DATA_PATHS.get(ending_key, ""))
+	if ending_path.is_empty():
+		push_error("No ending data path is configured for '%s'." % ending_key)
+		return {}
+
+	var ending_data := _load_json_dictionary(ending_path)
+	if ending_data.is_empty():
+		return {}
+
+	var format_values := {
+		"indikasi_penyusup": str(clampi(int(save_data.get("infiltration", 0)), 0, 100)) + "%",
+		"pelanggaran_tercatat": str(clampi(int(save_data.get("suspicion", 0)), 0, 100)) + "%",
+		"manusia_terselamatkan": _human_saved_count(save_data),
+	}
+	ending_data["body"] = str(ending_data.get("body", "")).format(format_values)
+	ending_data["ending_key"] = ending_key
+	return ending_data
 
 
 func _morning_report_values(save_data: Dictionary) -> Dictionary:
@@ -572,6 +645,11 @@ func _show_timeline_step() -> void:
 	var character_data_path := str(step.get("character_data_path", ""))
 	if not character_data_path.is_empty():
 		_active_scene.set("character_data_path", character_data_path)
+	if bool(step.get("is_ending", false)):
+		if _active_scene.has_method("set_ending_data"):
+			_active_scene.call("set_ending_data", _ending_data_for_save(_active_save_data()))
+		else:
+			push_error("The ending scene cannot display ending data.")
 	add_child(_active_scene)
 
 	var title_label := _active_scene.get_node_or_null("Title") as Label

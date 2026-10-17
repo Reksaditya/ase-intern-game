@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="FontFile" uid="uid://c7jtwt6md44kx" path="res://assets/fonts/RobotoMono-Regular.ttf" id="1_font"]
+[ext_resource type="Script" uid="uid://12qr2osg3nbk" path="res://scripts/ending.gd" id="2_ending"]
 
 [node name="Ending" type="Control"]
 layout_mode = 3
@@ -10,6 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("2_ending")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -19,25 +21,42 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.055, 0.067, 0.075, 1)
+color = Color(0, 0, 0, 1)
 
-[node name="Title" type="Label" parent="."]
+[node name="StoryScroll" type="ScrollContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -500
-offset_top = -66.6667
-offset_right = 500
-offset_bottom = 66.6667
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 160.0
+offset_top = 105.0
+offset_right = -160.0
+offset_bottom = -105.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.91, 0.89, 0.85, 1)
-theme_override_fonts/font = ExtResource("1_font")
-theme_override_font_sizes/font_size = 80
-text = "Ending"
-horizontal_alignment = 1
-vertical_alignment = 1
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="DocumentContent" type="VBoxContainer" parent="StoryScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StoryText" type="RichTextLabel" parent="StoryScroll/DocumentContent"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/default_color = Color(0.84, 0.86, 0.83, 1)
+theme_override_fonts/normal_font = ExtResource("1_font")
+theme_override_font_sizes/normal_font_size = 27
+bbcode_enabled = false
+scroll_active = false
+scroll_following = false
+autowrap_mode = 2
+fit_content = true
+selection_enabled = false
+
+[node name="BottomPadding" type="Control" parent="StoryScroll/DocumentContent"]
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+mouse_filter = 2
