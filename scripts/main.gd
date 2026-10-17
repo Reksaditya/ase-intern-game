@@ -31,6 +31,7 @@ var _game_started := false
 var _active_save_slot := -1
 var _selected_save_slot := -1
 var _save_slots: Array[Dictionary] = []
+var _windowed_size := Vector2i.ZERO
 
 @onready var _main_menu := $MainMenu
 @onready var _save_menu := $SaveMenu
@@ -38,9 +39,11 @@ var _save_slots: Array[Dictionary] = []
 @onready var _brightness_modulate := $BrightnessModulate
 @onready var _save_content := $SaveMenu/Center/Content
 @onready var _brightness_slider := $SettingsMenu/Center/Content/BrightnessRow/BrightnessSlider
+@onready var _fullscreen_toggle := $SettingsMenu/Center/Content/FullscreenRow/FullscreenToggle
 
 
 func _ready() -> void:
+	_windowed_size = get_window().size
 	_timeline = _build_timeline()
 	_report_text = _load_json_dictionary(REPORT_TEXT_PATH)
 	_load_report_data()
@@ -50,6 +53,7 @@ func _ready() -> void:
 	$MainMenu/Buttons/QuitButton.pressed.connect(_quit_game)
 	$SettingsMenu/Center/Content/BackButton.pressed.connect(_show_main_menu)
 	_brightness_slider.value_changed.connect(_on_brightness_changed)
+	_fullscreen_toggle.toggled.connect(_on_fullscreen_toggled)
 	$SaveMenu/Center/Content/SaveSlot1.pressed.connect(_on_save_slot_pressed.bind(0))
 	$SaveMenu/Center/Content/SaveSlot2.pressed.connect(_on_save_slot_pressed.bind(1))
 	$SaveMenu/Center/Content/SaveSlot3.pressed.connect(_on_save_slot_pressed.bind(2))
@@ -98,6 +102,7 @@ func _open_settings_menu() -> void:
 	_main_menu.hide()
 	_save_menu.hide()
 	_settings_menu.show()
+	_fullscreen_toggle.set_pressed_no_signal(_is_window_fullscreen())
 	_brightness_slider.grab_focus()
 
 
@@ -109,6 +114,25 @@ func _show_main_menu() -> void:
 
 func _on_brightness_changed(value: float) -> void:
 	_brightness_modulate.color = Color(value, value, value, 1.0)
+
+
+func _on_fullscreen_toggled(enabled: bool) -> void:
+	var window := get_window()
+	if enabled:
+		if window.mode == Window.MODE_WINDOWED:
+			_windowed_size = window.size
+		window.mode = Window.MODE_FULLSCREEN
+		return
+
+	window.mode = Window.MODE_WINDOWED
+	await get_tree().process_frame
+	if _windowed_size.x > 0 and _windowed_size.y > 0:
+		window.size = _windowed_size
+
+
+func _is_window_fullscreen() -> bool:
+	var mode := get_window().mode
+	return mode == Window.MODE_FULLSCREEN or mode == Window.MODE_EXCLUSIVE_FULLSCREEN
 
 
 func _on_save_slot_pressed(slot_index: int) -> void:

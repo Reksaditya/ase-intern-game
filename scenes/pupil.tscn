@@ -4,19 +4,19 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pupil"]
 bg_color = Color(0.055, 0.07, 0.09, 0.98)
-content_margin_left = 12.0
-content_margin_top = 10.0
-content_margin_right = 12.0
-content_margin_bottom = 12.0
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
+content_margin_left = 20
+content_margin_top = 16.6667
+content_margin_right = 20
+content_margin_bottom = 20
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
 border_color = Color(0.25, 0.32, 0.34, 0.9)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+corner_radius_top_left = 13
+corner_radius_top_right = 13
+corner_radius_bottom_right = 13
+corner_radius_bottom_left = 13
 
 [node name="Pupil" type="PanelContainer"]
 anchors_preset = 8
@@ -24,10 +24,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -230.0
-offset_top = -165.0
-offset_right = 230.0
-offset_bottom = 165.0
+offset_left = -383.3333
+offset_top = -275
+offset_right = 383.3333
+offset_bottom = 275
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
@@ -36,11 +36,11 @@ script = ExtResource("1_pupil_script")
 
 [node name="Layout" type="VBoxContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 13
 
 [node name="Header" type="HBoxContainer" parent="Layout"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 10
 
 [node name="SubjectLabel" type="Label" parent="Layout/Header"]
 unique_name_in_owner = true
@@ -48,18 +48,19 @@ custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.8, 0.83, 0.84, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 23
 text = "SUBJECT: Unknown"
 vertical_alignment = 1
 
 [node name="CloseButton" type="Button" parent="Layout/Header"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(34, 0)
+custom_minimum_size = Vector2(56.6667, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 27
 text = "X"
 
 [node name="EyeStage" type="Control" parent="Layout"]
-custom_minimum_size = Vector2(0, 240)
+custom_minimum_size = Vector2(0, 400)
 layout_mode = 2
 mouse_filter = 2
 clip_contents = true

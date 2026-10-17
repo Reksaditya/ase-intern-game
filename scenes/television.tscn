@@ -17,8 +17,8 @@
 [ext_resource type="Texture2D" uid="uid://dj7wi63447upd" path="res://assets/button/INT ID CARD.png" id="15_idcard_hover"]
 
 [node name="Sprite2D" type="Sprite2D" unique_id=1612846764]
-position = Vector2(845.12775, 272)
-scale = Vector2(0.5961251, 0.5961251)
+position = Vector2(1413.3334, 440.0)
+scale = Vector2(1.0, 1.0)
 texture = ExtResource("1_ccm7p")
 script = ExtResource("2_p7rhp")
 

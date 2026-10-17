@@ -1,7 +1,7 @@
 extends Control
 
 const MAX_PAGE_CHARACTERS := 300
-const PAGE_BOTTOM_MARGIN := 20.0
+const PAGE_BOTTOM_MARGIN := 33.3333
 const SKIP_HOLD_DURATION := 1.0
 const SKIP_DECAY_RATE := 3.0
 const SKIP_DOT_INTERVAL := 0.15
@@ -65,7 +65,7 @@ func _ready() -> void:
 	_active_tween = feed_tween
 	var revealed_height := 0.0
 	while revealed_height < paper_size.y:
-		revealed_height = minf(revealed_height + rng.randf_range(7.0, 19.0), paper_size.y)
+		revealed_height = minf(revealed_height + rng.randf_range(11.6667, 31.6667), paper_size.y)
 		var step_duration := rng.randf_range(0.025, 0.075)
 		var viewport_step := feed_tween.tween_property(
 			_paper_viewport,
@@ -77,7 +77,7 @@ func _ready() -> void:
 		feed_tween.parallel().tween_property(
 			_paper,
 			"position:y",
-			rng.randf_range(-1.8, 1.8),
+			rng.randf_range(-3.0, 3.0),
 			step_duration
 		).set_trans(Tween.TRANS_LINEAR)
 		if rng.randf() < 0.4:
@@ -225,17 +225,17 @@ func _on_printing_complete() -> void:
 	exit_tween.tween_property(
 		_paper_viewport,
 		"position:y",
-		get_viewport_rect().size.y + 100.0,
+		size.y + 166.6667,
 		0.7
 	).set_trans(Tween.TRANS_LINEAR)
 	exit_tween.tween_callback(_show_report_closeup)
 
 
 func _show_report_closeup() -> void:
-	var viewport_size := get_viewport_rect().size
+	var viewport_size := size
 	var paper_size := _paper_viewport.size
 	var target_position := (viewport_size - paper_size) * 0.5
-	target_position.y -= 30.0
+	target_position.y -= 50.0
 
 	move_child(_paper_viewport, get_child_count() - 1)
 	_paper_viewport.pivot_offset = paper_size * 0.5
@@ -275,9 +275,9 @@ func _skip_printing() -> void:
 	_paper.position.y = 0.0
 	_paper_viewport.size = _paper_size
 
-	var viewport_size := get_viewport_rect().size
+	var viewport_size := size
 	var target_position := (viewport_size - _paper_size) * 0.5
-	target_position.y -= 30.0
+	target_position.y -= 50.0
 
 	move_child(_paper_viewport, get_child_count() - 1)
 	_paper_viewport.pivot_offset = _paper_size * 0.5

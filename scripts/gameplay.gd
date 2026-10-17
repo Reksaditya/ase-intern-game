@@ -9,7 +9,9 @@ const LINE_PAUSE := 0.7
 const PLAYER_NAME := "KAMU"
 const CHARACTER_DATA_PATH := "res://data/d1p1.json"
 const CHARACTER_HEIGHT := 640.0
-const CHARACTER_TOP_MARGIN := -20.0
+const CHARACTER_WINDOW_HEIGHT_RATIO := 0.9
+const CHARACTER_TOP_MARGIN := 0.0
+const CHARACTER_VERTICAL_OFFSET := 52.0
 const CHARACTER_EXIT_MARGIN := 40.0
 const CHARACTER_ENTER_DURATION := 2.4
 const CHARACTER_EXIT_DURATION := 2.0
@@ -19,25 +21,30 @@ const CHARACTER_SWAY_DEGREES := 1.2
 const CHARACTER_HOLD_AFTER_OUTCOME := 0.9
 const EMPTY_CHARACTER_EXIT_TINT := Color(0.1, 0.1, 0.14, 1.0)
 
-@onready var pupil: Control = $HUD/Pupil
+@onready var pupil: Control = $HUD/DesignCanvas/Pupil
 @onready var television: Node = $Sprite2D
 @onready var character_window: Control = $bunker/bgpanel/WindowClip
 @onready var character_holder: Node2D = $bunker/bgpanel/WindowClip/CharacterHolder
 @onready var accept_button: BaseButton = $bunker/TerimaButton
 @onready var decline_button: BaseButton = $bunker/TolakButton
-@onready var pupil_button: Button = $HUD/DiagnosticTools/Layout/PupilButton
-@onready var heartbeat_temperature: Control = $HUD/HeartbeatTemperature
-@onready var heartbeat_temperature_button: Button = $HUD/DiagnosticTools/Layout/HeartbeatTemperatureButton
-@onready var dialogue_output: RichTextLabel = $HUD/DialogueOutput
-@onready var outcome_continue_button: Button = $HUD/OutcomeContinueButton
-@onready var transcript_click_area: Button = $HUD/TranscriptClickArea
-@onready var transcript_overlay: ColorRect = $HUD/TranscriptOverlay
-@onready var transcript_scroll: ScrollContainer = $HUD/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/TranscriptScroll
-@onready var transcript_output: RichTextLabel = $HUD/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/TranscriptScroll/TranscriptText
-@onready var close_transcript_button: Button = $HUD/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/Header/CloseButton
-@onready var id_card_overlay: ColorRect = $HUD/IDCardOverlay
-@onready var id_card_image: TextureRect = $HUD/IDCardOverlay/CardImage
-@onready var id_card_close_button: Button = $HUD/IDCardOverlay/CloseButton
+@onready var pupil_button: Button = $HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton
+@onready var pupil_status_dot: Label = $HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton/ButtonContent/StatusDot
+@onready var pupil_app_name: Label = $HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton/ButtonContent/AppName
+@onready var pupil_action: Label = $HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton/ButtonContent/Action
+@onready var heartbeat_temperature: Control = $HUD/DesignCanvas/HeartbeatTemperature
+@onready var heartbeat_temperature_button: Button = $HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton
+@onready var heartbeat_status_dot: Label = $HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton/ButtonContent/StatusDot
+@onready var heartbeat_app_name: Label = $HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton/ButtonContent/AppName
+@onready var heartbeat_action: Label = $HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton/ButtonContent/Action
+@onready var dialogue_output: RichTextLabel = $HUD/DesignCanvas/DialogueOutput
+@onready var transcript_click_area: Button = $HUD/DesignCanvas/TranscriptClickArea
+@onready var transcript_overlay: ColorRect = $HUD/DesignCanvas/TranscriptOverlay
+@onready var transcript_scroll: ScrollContainer = $HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/TranscriptScroll
+@onready var transcript_output: RichTextLabel = $HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/TranscriptScroll/TranscriptText
+@onready var close_transcript_button: Button = $HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/Header/CloseButton
+@onready var id_card_overlay: ColorRect = $HUD/DesignCanvas/IDCardOverlay
+@onready var id_card_image: TextureRect = $HUD/DesignCanvas/IDCardOverlay/CardImage
+@onready var id_card_close_button: Button = $HUD/DesignCanvas/IDCardOverlay/CloseButton
 @onready var id_card_button: TextureButton = $Sprite2D/idcard
 
 var _current_character: Dictionary = {}
@@ -69,7 +76,6 @@ func _ready() -> void:
 	pupil.connect("tool_reaction_requested", _show_tool_reactions)
 	heartbeat_temperature_button.pressed.connect(_open_heartbeat_temperature)
 	heartbeat_temperature.connect("close_requested", _close_heartbeat_temperature)
-	outcome_continue_button.pressed.connect(func(): outcome_finished.emit())
 	transcript_click_area.pressed.connect(_open_transcript)
 	close_transcript_button.pressed.connect(_close_transcript)
 	id_card_close_button.pressed.connect(_close_id_card)
@@ -196,7 +202,6 @@ func show_decision_outcome(is_accepted: bool) -> void:
 	var all_outcomes: Variant = _current_character.get("outcomes", {})
 	var outcome_events: Variant = all_outcomes.get(outcome_name, []) if all_outcomes is Dictionary else []
 	_clear_recent_dialogue()
-	outcome_continue_button.disabled = true
 	if outcome_events is Array:
 		for event in outcome_events:
 			if event is Dictionary:
@@ -208,13 +213,12 @@ func show_decision_outcome(is_accepted: bool) -> void:
 			decision_button.disabled = true
 
 	pupil.hide()
+	pupil.set_process(false)
 	heartbeat_temperature.hide()
-	$HUD/DiagnosticTools.hide()
-	outcome_continue_button.show()
+	heartbeat_temperature.set_process(false)
+	$HUD/DesignCanvas/DiagnosticTools.hide()
 	if not _recent_event_is_revealing and _pending_recent_events.is_empty():
 		_finish_outcome_presentation()
-	else:
-		outcome_continue_button.grab_focus()
 
 
 func _append_outcome_event(event: Dictionary) -> void:
@@ -317,8 +321,7 @@ func _finish_outcome_presentation() -> void:
 		return
 	_outcome_exit_started = true
 	await _animate_character_out()
-	outcome_continue_button.disabled = false
-	outcome_continue_button.grab_focus()
+	outcome_finished.emit()
 
 
 func _animate_character_in() -> void:
@@ -334,21 +337,41 @@ func _animate_character_in() -> void:
 	if texture == null:
 		push_error("Character image is not a texture: %s" % image_path)
 		return
-	if character_window.size.x <= 0.0:
+	if character_window.size.x <= 0.0 or character_window.size.y <= 0.0:
 		await get_tree().process_frame
+	var image := texture.get_image()
+	if image == null:
+		push_error("Could not read character image: %s" % image_path)
+		return
+	var visible_region := image.get_used_rect()
+	if visible_region.size.x <= 0 or visible_region.size.y <= 0:
+		push_error("Character image has no visible pixels: %s" % image_path)
+		return
 
 	_character_pivot = Node2D.new()
 	_character_sprite = Sprite2D.new()
 	_character_sprite.texture = texture
-	var sprite_scale := CHARACTER_HEIGHT / float(texture.get_height())
+	_character_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	_character_sprite.region_enabled = true
+	_character_sprite.region_filter_clip_enabled = true
+	_character_sprite.region_rect = Rect2(
+		Vector2(visible_region.position),
+		Vector2(visible_region.size)
+	)
+	var character_height := minf(
+		CHARACTER_HEIGHT,
+		character_window.size.y * CHARACTER_WINDOW_HEIGHT_RATIO
+	)
+	var sprite_scale := character_height / float(visible_region.size.y)
 	_character_sprite.scale = Vector2(sprite_scale, sprite_scale)
-	_character_half_width = float(texture.get_width()) * sprite_scale * 0.5
+	_character_half_width = float(visible_region.size.x) * sprite_scale * 0.5
 	_character_pivot.add_child(_character_sprite)
 	character_holder.add_child(_character_pivot)
 
 	var stand_y := (
 		CHARACTER_TOP_MARGIN
-		+ CHARACTER_HEIGHT * 0.5
+		+ character_height * 0.5
+		+ CHARACTER_VERTICAL_OFFSET
 		+ float(_current_character.get("offset_y", 0.0))
 	)
 	_character_pivot.position = Vector2(
@@ -538,12 +561,21 @@ func _refresh_diagnostic_access() -> void:
 	var unlocked := _diagnostics_unlocked()
 	pupil_button.disabled = not unlocked
 	heartbeat_temperature_button.disabled = not unlocked
-	pupil_button.text = "PUPIL REFLEX" if unlocked else "PUPIL REFLEX  |  LOCKED"
-	heartbeat_temperature_button.text = (
-		"HEARTBEAT + TEMPERATURE"
-		if unlocked
-		else "HEARTBEAT + TEMPERATURE  |  LOCKED"
-	)
+	pupil_action.text = "LAUNCH ↵" if unlocked else "LOCKED"
+	heartbeat_action.text = "EXECUTE ↵" if unlocked else "LOCKED"
+	var app_color := Color(0.28, 0.38, 0.42, 0.85)
+	var action_color := Color(0.21, 0.30, 0.33, 0.75)
+	var dot_color := Color(0.17, 0.31, 0.35, 0.8)
+	if unlocked:
+		app_color = Color(0.24, 0.68, 0.75, 1.0)
+		action_color = Color(0.22, 0.57, 0.65, 1.0)
+		dot_color = Color(0.18, 0.68, 0.77, 1.0)
+	for label in [pupil_app_name, heartbeat_app_name]:
+		label.add_theme_color_override("font_color", app_color)
+	for label in [pupil_action, heartbeat_action]:
+		label.add_theme_color_override("font_color", action_color)
+	for label in [pupil_status_dot, heartbeat_status_dot]:
+		label.add_theme_color_override("font_color", dot_color)
 
 
 func _load_character_data(path: String) -> Dictionary:

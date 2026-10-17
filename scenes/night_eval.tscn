@@ -6,47 +6,47 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_printer"]
 bg_color = Color(0.16, 0.19, 0.18, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.34, 0.39, 0.36, 1)
+corner_radius_top_left = 17
+corner_radius_top_right = 17
+corner_radius_bottom_right = 17
+corner_radius_bottom_left = 17
+shadow_size = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_paper"]
+bg_color = Color(0.9098039, 0.89411765, 0.84705883, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.34, 0.39, 0.36, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-shadow_size = 18
-
-[sub_resource type="StyleBoxFlat" id="StyleBox_paper"]
-bg_color = Color(0.9098039, 0.89411765, 0.84705883, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
 border_color = Color(0.74, 0.72, 0.66, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_odkhf"]
 font = ExtResource("1_m15n0")
-font_size = 14
+font_size = 23
 font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_placeholder"]
 font = ExtResource("2_nbn0a")
-font_size = 14
+font_size = 23
 font_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_h44e2"]
 font = ExtResource("2_nbn0a")
-font_size = 20
+font_size = 33
 font_color = Color(0.17128617, 0.18415022, 0.18158087, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_bezel"]
 bg_color = Color(0.11, 0.14, 0.13, 1)
-border_width_top = 2
-border_width_bottom = 2
+border_width_top = 3
+border_width_bottom = 3
 border_color = Color(0.31, 0.36, 0.33, 1)
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="NightEval" type="Control" unique_id=102469646]
 layout_mode = 3
@@ -71,95 +71,95 @@ color = Color(0, 0, 0, 1)
 
 [node name="PrinterShell" type="Panel" parent="." unique_id=1656013475]
 layout_mode = 0
-offset_left = 228.0
-offset_top = 42.0
-offset_right = 926.0
-offset_bottom = 242.0
+offset_left = 380
+offset_top = 70
+offset_right = 1543.3333
+offset_bottom = 403.3333
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_printer")
 
 [node name="PrinterInset" type="ColorRect" parent="." unique_id=1140259964]
 layout_mode = 0
-offset_left = 250.0
-offset_top = 59.0
-offset_right = 904.0
-offset_bottom = 164.0
+offset_left = 416.6667
+offset_top = 98.3333
+offset_right = 1506.6667
+offset_bottom = 273.3333
 mouse_filter = 2
 color = Color(0.105, 0.13, 0.12, 1)
 
 [node name="FeedIndicator" type="ColorRect" parent="." unique_id=1520396399]
 layout_mode = 0
-offset_left = 877.0
-offset_top = 78.0
-offset_right = 891.0
-offset_bottom = 92.0
+offset_left = 1461.6667
+offset_top = 130
+offset_right = 1485
+offset_bottom = 153.3333
 mouse_filter = 2
 color = Color(0.91, 0.62, 0.29, 1)
 
 [node name="popup" type="Control" parent="." unique_id=437931468]
 clip_contents = true
 anchors_preset = 0
-offset_left = 295.0
-offset_top = 194.0
-offset_right = 859.0
-offset_bottom = 604.0
+offset_left = 491.6667
+offset_top = 323.3333
+offset_right = 1431.6667
+offset_bottom = 1006.6667
 mouse_filter = 2
 
 [node name="Paper" type="Panel" parent="popup" unique_id=242524147]
 layout_mode = 0
-offset_right = 564.0
-offset_bottom = 410.0
+offset_right = 940
+offset_bottom = 683.3333
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_paper")
 
 [node name="Label" type="Label" parent="popup/Paper" unique_id=2063444505]
 layout_mode = 0
-offset_left = 33.0
-offset_top = 93.0
-offset_right = 350.0
-offset_bottom = 116.0
+offset_left = 55
+offset_top = 155
+offset_right = 583.3333
+offset_bottom = 193.3333
 label_settings = SubResource("LabelSettings_odkhf")
 
 [node name="PlaceholderText" type="Label" parent="popup/Paper" unique_id=9423605]
 layout_mode = 0
-offset_left = 33.0
-offset_top = 135.0
-offset_right = 525.0
-offset_bottom = 390.0
+offset_left = 55
+offset_top = 225
+offset_right = 875
+offset_bottom = 650
 label_settings = SubResource("LabelSettings_placeholder")
 autowrap_mode = 2
 
 [node name="line" type="Line2D" parent="popup/Paper" unique_id=124311910]
-position = Vector2(-296, -112)
-points = PackedVector2Array(329, 192, 833, 192)
-width = 1.5
+position = Vector2(-493.3333, -186.6667)
+points = PackedVector2Array(548.3333, 320, 1388.3333, 320)
+width = 2.5
 default_color = Color(0.17254902, 0.18431373, 0.18039216, 1)
 
 [node name="header" type="Label" parent="popup/Paper" unique_id=617206416]
 layout_mode = 0
-offset_left = 33.0
-offset_top = 32.0
-offset_right = 531.0
-offset_bottom = 66.0
+offset_left = 55
+offset_top = 53.3333
+offset_right = 885
+offset_bottom = 110
 label_settings = SubResource("LabelSettings_h44e2")
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="PrinterBezel" type="Panel" parent="." unique_id=834182462]
 layout_mode = 0
-offset_left = 228.0
-offset_top = 176.0
-offset_right = 926.0
-offset_bottom = 224.0
+offset_left = 380
+offset_top = 293.3333
+offset_right = 1543.3333
+offset_bottom = 373.3333
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_bezel")
 
 [node name="OutputSlot" type="ColorRect" parent="." unique_id=1402033620]
 layout_mode = 0
-offset_left = 277.0
-offset_top = 184.0
-offset_right = 877.0
-offset_bottom = 210.0
+offset_left = 461.6667
+offset_top = 306.6667
+offset_right = 1461.6667
+offset_bottom = 350
 mouse_filter = 2
 color = Color(0.025, 0.035, 0.032, 1)
 
@@ -170,10 +170,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -260.0
-offset_top = -68.0
-offset_right = 260.0
-offset_bottom = -24.0
+offset_left = -433.3333
+offset_top = -113.3333
+offset_right = 433.3333
+offset_bottom = -40
 grow_horizontal = 2
 grow_vertical = 0
 focus_mode = 0
@@ -182,50 +182,50 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(0.4, 0.4, 0.4, 1)
 theme_override_colors/font_hover_color = Color(0.55, 0.55, 0.55, 1)
 theme_override_fonts/font = ExtResource("2_nbn0a")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 flat = true
 
 [node name="PreviousPageButton" type="Button" parent="." unique_id=2027208578]
 layout_mode = 0
-offset_left = 22.0
-offset_top = 306.0
-offset_right = 212.0
-offset_bottom = 346.0
+offset_left = 36.6667
+offset_top = 510
+offset_right = 353.3333
+offset_bottom = 576.6667
 focus_mode = 0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0.82, 0.84, 0.8, 1)
 theme_override_colors/font_pressed_color = Color(0.4, 0.58, 0.44, 1)
 theme_override_colors/font_hover_color = Color(0.55, 0.72, 0.58, 1)
 theme_override_fonts/font = ExtResource("2_nbn0a")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 text = "< PREVIOUS"
 flat = true
 
 [node name="PageIndicator" type="Label" parent="." unique_id=1322946238]
 layout_mode = 0
-offset_left = 476.0
-offset_top = 8.0
-offset_right = 676.0
-offset_bottom = 36.0
+offset_left = 793.3333
+offset_top = 13.3333
+offset_right = 1126.6667
+offset_bottom = 60
 theme_override_colors/font_color = Color(0.82, 0.84, 0.8, 1)
 theme_override_fonts/font = ExtResource("2_nbn0a")
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 23
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="NextPageButton" type="Button" parent="." unique_id=1994018473]
 layout_mode = 0
-offset_left = 940.0
-offset_top = 306.0
-offset_right = 1130.0
-offset_bottom = 346.0
+offset_left = 1566.6667
+offset_top = 510
+offset_right = 1883.3333
+offset_bottom = 576.6667
 focus_mode = 0
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0.82, 0.84, 0.8, 1)
 theme_override_colors/font_pressed_color = Color(0.4, 0.58, 0.44, 1)
 theme_override_colors/font_hover_color = Color(0.55, 0.72, 0.58, 1)
 theme_override_fonts/font = ExtResource("2_nbn0a")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 text = "NEXT >"
 flat = true
 
@@ -236,14 +236,14 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 24.0
-offset_top = -48.0
-offset_right = 224.0
-offset_bottom = -24.0
+offset_left = 40
+offset_top = -80
+offset_right = 373.3333
+offset_bottom = -40
 grow_vertical = 0
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.95, 0.93, 0.88, 1)
 theme_override_fonts/font = ExtResource("2_nbn0a")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 text = "skipping"
 vertical_alignment = 1

@@ -35,12 +35,12 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Buttons" type="VBoxContainer" parent="MainMenu"]
-custom_minimum_size = Vector2(280, 0)
+custom_minimum_size = Vector2(466.6667, 0)
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 17
 
 [node name="PlayGameButton" type="Button" parent="MainMenu/Buttons"]
-custom_minimum_size = Vector2(280, 44)
+custom_minimum_size = Vector2(466.6667, 73.3333)
 layout_mode = 2
 focus_mode = 1
 mouse_default_cursor_shape = 2
@@ -48,12 +48,12 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 30
 text = "Play Game"
 flat = true
 
 [node name="SettingsButton" type="Button" parent="MainMenu/Buttons"]
-custom_minimum_size = Vector2(280, 44)
+custom_minimum_size = Vector2(466.6667, 73.3333)
 layout_mode = 2
 focus_mode = 1
 mouse_default_cursor_shape = 2
@@ -61,12 +61,12 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 30
 text = "Settings"
 flat = true
 
 [node name="QuitButton" type="Button" parent="MainMenu/Buttons"]
-custom_minimum_size = Vector2(280, 44)
+custom_minimum_size = Vector2(466.6667, 73.3333)
 layout_mode = 2
 focus_mode = 0
 mouse_default_cursor_shape = 2
@@ -74,7 +74,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 30
 text = "Quit"
 flat = true
 
@@ -96,20 +96,20 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Content" type="VBoxContainer" parent="SaveMenu/Center"]
-custom_minimum_size = Vector2(420, 0)
+custom_minimum_size = Vector2(700, 0)
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 20
 
 [node name="Title" type="Label" parent="SaveMenu/Center/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 37
 text = "SAVE FILES"
 horizontal_alignment = 1
 
 [node name="SaveSlot1" type="Button" parent="SaveMenu/Center/Content"]
-custom_minimum_size = Vector2(420, 48)
+custom_minimum_size = Vector2(700, 80)
 layout_mode = 2
 focus_mode = 1
 mouse_default_cursor_shape = 2
@@ -117,12 +117,12 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 text = "SAVE FILE 1 - EMPTY"
 flat = true
 
 [node name="SaveSlot2" type="Button" parent="SaveMenu/Center/Content"]
-custom_minimum_size = Vector2(420, 48)
+custom_minimum_size = Vector2(700, 80)
 layout_mode = 2
 focus_mode = 1
 mouse_default_cursor_shape = 2
@@ -130,12 +130,12 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 text = "SAVE FILE 2 - EMPTY"
 flat = true
 
 [node name="SaveSlot3" type="Button" parent="SaveMenu/Center/Content"]
-custom_minimum_size = Vector2(420, 48)
+custom_minimum_size = Vector2(700, 80)
 layout_mode = 2
 focus_mode = 1
 mouse_default_cursor_shape = 2
@@ -143,12 +143,12 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 text = "SAVE FILE 3 - EMPTY"
 flat = true
 
 [node name="SaveSlot4" type="Button" parent="SaveMenu/Center/Content"]
-custom_minimum_size = Vector2(420, 48)
+custom_minimum_size = Vector2(700, 80)
 layout_mode = 2
 focus_mode = 1
 mouse_default_cursor_shape = 2
@@ -156,17 +156,17 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 text = "SAVE FILE 4 - EMPTY"
 flat = true
 
 [node name="Actions" type="HBoxContainer" parent="SaveMenu/Center/Content"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 20
 alignment = 1
 
 [node name="NewButton" type="Button" parent="SaveMenu/Center/Content/Actions"]
-custom_minimum_size = Vector2(132, 44)
+custom_minimum_size = Vector2(220, 73.3333)
 layout_mode = 2
 focus_mode = 1
 mouse_default_cursor_shape = 2
@@ -175,13 +175,13 @@ theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_colors/font_disabled_color = Color(0.35, 0.35, 0.35, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 text = "New"
 disabled = true
 flat = true
 
 [node name="LoadButton" type="Button" parent="SaveMenu/Center/Content/Actions"]
-custom_minimum_size = Vector2(132, 44)
+custom_minimum_size = Vector2(220, 73.3333)
 layout_mode = 2
 focus_mode = 1
 mouse_default_cursor_shape = 2
@@ -190,13 +190,13 @@ theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_colors/font_disabled_color = Color(0.35, 0.35, 0.35, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 text = "Load"
 disabled = true
 flat = true
 
 [node name="DeleteButton" type="Button" parent="SaveMenu/Center/Content/Actions"]
-custom_minimum_size = Vector2(132, 44)
+custom_minimum_size = Vector2(220, 73.3333)
 layout_mode = 2
 focus_mode = 1
 mouse_default_cursor_shape = 2
@@ -205,7 +205,7 @@ theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_colors/font_disabled_color = Color(0.35, 0.35, 0.35, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 text = "Delete"
 disabled = true
 flat = true
@@ -228,26 +228,26 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Content" type="VBoxContainer" parent="SettingsMenu/Center"]
-custom_minimum_size = Vector2(420, 0)
+custom_minimum_size = Vector2(700, 0)
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 20
 
 [node name="BrightnessRow" type="HBoxContainer" parent="SettingsMenu/Center/Content"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 20
 alignment = 1
 
 [node name="BrightnessLabel" type="Label" parent="SettingsMenu/Center/Content/BrightnessRow"]
-custom_minimum_size = Vector2(120, 32)
+custom_minimum_size = Vector2(200, 53.3333)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 30
 text = "Brightness"
 vertical_alignment = 1
 
 [node name="BrightnessSlider" type="HSlider" parent="SettingsMenu/Center/Content/BrightnessRow"]
-custom_minimum_size = Vector2(280, 32)
+custom_minimum_size = Vector2(466.6667, 53.3333)
 layout_mode = 2
 focus_mode = 1
 mouse_default_cursor_shape = 2
@@ -256,8 +256,28 @@ max_value = 2.0
 step = 0.01
 value = 1.0
 
+[node name="FullscreenRow" type="HBoxContainer" parent="SettingsMenu/Center/Content"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="FullscreenLabel" type="Label" parent="SettingsMenu/Center/Content/FullscreenRow"]
+custom_minimum_size = Vector2(200, 53.3333)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 30
+text = "Fullscreen"
+vertical_alignment = 1
+
+[node name="FullscreenToggle" type="CheckButton" parent="SettingsMenu/Center/Content/FullscreenRow"]
+custom_minimum_size = Vector2(466.6667, 53.3333)
+layout_mode = 2
+focus_mode = 1
+mouse_default_cursor_shape = 2
+
 [node name="BackButton" type="Button" parent="SettingsMenu/Center/Content"]
-custom_minimum_size = Vector2(132, 44)
+custom_minimum_size = Vector2(220, 73.3333)
 layout_mode = 2
 size_flags_horizontal = 4
 focus_mode = 1
@@ -266,6 +286,6 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 27
 text = "Back"
 flat = true

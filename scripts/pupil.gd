@@ -53,13 +53,16 @@ func _input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
-	var mouse_global := get_global_mouse_position()
-	var eye_center := eye_rect.global_position + eye_rect.size * 0.5
-	var beam_radius := float(pupil_behaviours.get("beam_radius_px", 200.0))
+	if eye_rect.size.x <= 0.0 or eye_rect.size.y <= 0.0:
+		return
+	var mouse_local := eye_rect.get_local_mouse_position()
+	var eye_center := eye_rect.size * 0.5
+	var viewport_scale := get_viewport_rect().size.x / 1152.0
+	var beam_radius := float(pupil_behaviours.get("beam_radius_px", 200.0)) * viewport_scale
 	var light_intensity := float(pupil_behaviours.get("light_intensity", 1.35))
 	var ambient_lux := float(pupil_behaviours.get("ambient_lux", 0.425))
 	var light_response_enabled := bool(pupil_behaviours.get("light_response_enabled", true))
-	var beam_coverage := clampf(1.0 - mouse_global.distance_to(eye_center) / beam_radius, 0.0, 1.0)
+	var beam_coverage := clampf(1.0 - mouse_local.distance_to(eye_center) / beam_radius, 0.0, 1.0)
 	if beam_coverage >= 0.8 and not _light_reaction_emitted:
 		_light_reaction_emitted = true
 		tool_reaction_requested.emit("pupil_light")
@@ -89,7 +92,7 @@ func _process(delta: float) -> void:
 	var max_diameter := float(pupil_behaviours.get("max_diameter_mm", 8.0))
 	var displayed_diameter := clampf(current_diameter_mm + hippus, min_diameter, max_diameter)
 	var pupil_scale := remap(displayed_diameter, min_diameter, max_diameter, 0.18, 0.78)
-	var eye_uv := (mouse_global - eye_rect.global_position) / eye_rect.size
+	var eye_uv := mouse_local / eye_rect.size
 	eye_material.set_shader_parameter("pupil_scale", pupil_scale)
 	eye_material.set_shader_parameter("eye_aspect", eye_rect.size.x / eye_rect.size.y)
 	eye_material.set_shader_parameter("light_pos", eye_uv)
