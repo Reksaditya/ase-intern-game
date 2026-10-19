@@ -186,7 +186,6 @@ func _start_game_at_timeline_index(start_index: int) -> void:
 	_game_started = true
 	_timeline = _build_timeline()
 	_timeline_index = clampi(start_index, 0, _timeline.size() - 1)
-	_save_current_progress()
 	_main_menu.hide()
 	_save_menu.hide()
 	_show_timeline_step()
@@ -271,8 +270,28 @@ func _advance_timeline() -> void:
 			return
 
 	_timeline_index += 1
-	_save_current_progress()
+	var next_step: Dictionary = _timeline[_timeline_index]
+	if _is_day_end_transition(current_step, next_step):
+		_save_current_progress()
 	_show_timeline_step()
+
+
+func _return_to_main_menu() -> void:
+	get_tree().paused = false
+	if is_instance_valid(_active_scene):
+		_active_scene.queue_free()
+	_active_scene = null
+	_game_started = false
+	_active_save_slot = -1
+	_selected_save_slot = -1
+	_load_save_slots()
+	_refresh_save_menu()
+	_show_main_menu()
+
+
+func _is_day_end_transition(current_step: Dictionary, next_step: Dictionary) -> bool:
+	var current_day := int(current_step.get("day", 0))
+	return current_day > 0 and int(next_step.get("day", 0)) != current_day
 
 
 func _load_save_slots() -> void:
@@ -603,7 +622,7 @@ func _on_admission_decision(is_accepted: bool) -> void:
 					var change := int(decision_effects.get(metric, 0))
 					save_data[metric] = clampi(current_value + change, 0, 100)
 
-		_write_save_data(save_data)
+		_save_slots[_active_save_slot] = save_data
 	if is_instance_valid(_active_scene) and _active_scene.has_method("show_decision_outcome"):
 		_active_scene.call("show_decision_outcome", is_accepted)
 		return
@@ -669,6 +688,8 @@ func _show_timeline_step() -> void:
 		continue_button.pressed.connect(_advance_timeline)
 	if _active_scene.has_signal("outcome_finished"):
 		_active_scene.connect("outcome_finished", _advance_timeline)
+	if _active_scene.has_signal("return_to_main_menu"):
+		_active_scene.connect("return_to_main_menu", _return_to_main_menu)
 
 	for decision_name in ["TerimaButton", "TolakButton"]:
 		var decision_button := _active_scene.find_child(decision_name, true, false) as BaseButton

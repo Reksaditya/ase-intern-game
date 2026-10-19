@@ -1,6 +1,7 @@
 extends Node2D
 
 signal outcome_finished
+signal return_to_main_menu
 
 const MINIMUM_ANSWERS_BEFORE_SCAN := 2
 const TYPE_SPEED := 0.025
@@ -46,6 +47,7 @@ const EMPTY_CHARACTER_EXIT_TINT := Color(0.1, 0.1, 0.14, 1.0)
 @onready var id_card_image: TextureRect = $HUD/DesignCanvas/IDCardOverlay/CardImage
 @onready var id_card_close_button: Button = $HUD/DesignCanvas/IDCardOverlay/CloseButton
 @onready var id_card_button: TextureButton = $Sprite2D/idcard
+@onready var pause_overlay: ColorRect = $HUD/DesignCanvas/PauseOverlay
 
 var _current_character: Dictionary = {}
 var _asked_question_ids: Dictionary = {}
@@ -79,6 +81,8 @@ func _ready() -> void:
 	transcript_click_area.pressed.connect(_open_transcript)
 	close_transcript_button.pressed.connect(_close_transcript)
 	id_card_close_button.pressed.connect(_close_id_card)
+	pause_overlay.connect("resume_requested", _resume_from_pause)
+	pause_overlay.connect("main_menu_requested", _return_to_main_menu)
 	accept_button.disabled = true
 	decline_button.disabled = true
 	pupil.set_process(false)
@@ -106,12 +110,25 @@ func _input(event: InputEvent) -> void:
 		return
 	if transcript_overlay.visible:
 		return
+	if event.is_action_pressed("ui_cancel"):
+		if pupil.visible or heartbeat_temperature.visible:
+			return
+		pause_overlay.call("open_menu")
+		get_tree().paused = true
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
+		var dialogue_scrollbar := dialogue_output.get_v_scroll_bar()
+		var clicked_dialogue_scrollbar := (
+			dialogue_scrollbar.visible
+			and dialogue_scrollbar.get_global_rect().has_point(mouse_event.position)
+		)
 		if (
 			mouse_event.pressed
 			and mouse_event.button_index == MOUSE_BUTTON_LEFT
 			and transcript_click_area.get_global_rect().has_point(mouse_event.position)
+			and not clicked_dialogue_scrollbar
 		):
 			if _recent_event_is_revealing or not _pending_recent_events.is_empty():
 				_skip_recent_dialogue()
@@ -307,13 +324,13 @@ func _start_recent_event_reveal() -> void:
 
 
 func _wait_recent_line_pause(generation: int) -> void:
-	var remaining := LINE_PAUSE
-	var last_tick := Time.get_ticks_usec()
-	while remaining > 0.0 and generation == _recent_event_generation and not _skip_recent_reveal_requested:
+	var timer := get_tree().create_timer(LINE_PAUSE, false)
+	while (
+		timer.time_left > 0.0
+		and generation == _recent_event_generation
+		and not _skip_recent_reveal_requested
+	):
 		await get_tree().process_frame
-		var now := Time.get_ticks_usec()
-		remaining -= float(now - last_tick) / 1_000_000.0
-		last_tick = now
 
 
 func _finish_outcome_presentation() -> void:
@@ -388,7 +405,7 @@ func _animate_character_in() -> void:
 func _animate_character_out() -> void:
 	if not is_instance_valid(_character_pivot):
 		return
-	await get_tree().create_timer(CHARACTER_HOLD_AFTER_OUTCOME).timeout
+	await get_tree().create_timer(CHARACTER_HOLD_AFTER_OUTCOME, false).timeout
 	if not is_instance_valid(_character_pivot):
 		return
 
@@ -490,7 +507,7 @@ func _reveal_recent_event(event: Dictionary, generation: int) -> void:
 			return
 		dialogue_output.visible_characters = character
 		if character < final_character:
-			await get_tree().create_timer(character_delay).timeout
+			await get_tree().create_timer(character_delay, false).timeout
 			if generation != _recent_event_generation:
 				return
 	dialogue_output.visible_characters = final_character
@@ -536,6 +553,16 @@ func _open_id_card() -> void:
 func _close_id_card() -> void:
 	id_card_overlay.hide()
 	id_card_button.grab_focus()
+
+
+func _resume_from_pause() -> void:
+	pause_overlay.hide()
+	get_tree().paused = false
+
+
+func _return_to_main_menu() -> void:
+	get_tree().paused = false
+	return_to_main_menu.emit()
 
 
 func _show_tool_reactions(tool_key: String) -> void:
