@@ -129,9 +129,12 @@ func _clear_character() -> void:
 	_body = null
 
 
-func _load_character_texture(file_name: String) -> Texture2D:
-	var path := CHARACTER_DIR + file_name
-	if not file_name.is_empty() and ResourceLoader.exists(path):
+func _load_character_texture(file_or_path: String) -> Texture2D:
+	if file_or_path.is_empty():
+		push_warning("Path gambar karakter kosong.")
+		return null
+	var path := file_or_path if file_or_path.begins_with("res://") else CHARACTER_DIR + file_or_path
+	if ResourceLoader.exists(path):
 		return load(path) as Texture2D
 	push_warning("Gambar karakter tidak ditemukan: %s" % path)
 	return null

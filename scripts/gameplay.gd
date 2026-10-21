@@ -6,6 +6,8 @@ signal shift_finished
 ## Dipertahankan untuk kompatibilitas dengan main.gd lama. Hanya dipancarkan
 ## kalau tidak ada yang mendengarkan shift_finished (lihat _finish_shift).
 signal outcome_finished
+## Dipancarkan sekali per pemohon saat Terima/Tolak ditekan; main.gd menyimpan efeknya.
+signal decision_made(is_accepted: bool)
 
 const DEFAULT_SCAN_UNLOCK_QUESTIONS := 2
 const WORD_REVEAL_INTERVAL := 0.12
@@ -17,10 +19,6 @@ const NEXT_CHARACTER_DELAY := 0.8
 ## Data pemohon: res://data/d<hari>p<urutan>.json (d1p1.json, d1p2.json, ...).
 ## Pemohon dimuat berurutan sampai file berikutnya tidak ada.
 const CHARACTER_DATA_PATH_FORMAT := "res://data/d%dp%d.json"
-## Gambar & posisi vertikal per urutan pemohon. Bisa ditimpa lewat kunci
-## "texture" dan "offset_y" di JSON pemohon.
-const CHARACTER_TEXTURES: Array[String] = ["d1p1.png", "d1p2.png"]
-const CHARACTER_OFFSETS_Y: Array[float] = [0.0, -25.0]
 
 ## Aturan per hari. Hari yang belum ditulis memakai aturan hari terakhir yang ada.
 ## scan_unlock_questions = jumlah pertanyaan berbeda sebelum alat pemindai terbuka.
@@ -58,6 +56,9 @@ var results: Array[Dictionary] = []
 ## Total efek keputusan hari ini (mis. suspicion, infiltration), dijumlah dari
 ## "decision_effects" di JSON tiap pemohon.
 var stats: Dictionary = {}
+## Jumlah pertanyaan interogasi sebelum alat pemindai terbuka. Bila > 0, menimpa
+## aturan hari; diisi main.gd dari band Pelanggaran Tercatat (2 / 3 / 4).
+var scan_unlock_questions_override := 0
 
 var _scan_unlock_questions := DEFAULT_SCAN_UNLOCK_QUESTIONS
 var _data_day := 1
@@ -164,6 +165,8 @@ func _connect_television() -> void:
 func _apply_day_rules() -> void:
 	var rules := _rules_for_day(day)
 	_scan_unlock_questions = int(rules.get("scan_unlock_questions", DEFAULT_SCAN_UNLOCK_QUESTIONS))
+	if scan_unlock_questions_override > 0:
+		_scan_unlock_questions = scan_unlock_questions_override
 	if rules.has("sop"):
 		bunker.set_sop_text(str(rules["sop"]))
 
@@ -190,12 +193,11 @@ func _start_next_character() -> void:
 
 	_reset_for_new_character(_load_character_data(CHARACTER_DATA_PATH_FORMAT % [_data_day, person]))
 
-	var texture_name := str(_current_character.get("texture", ""))
-	if texture_name.is_empty() and _next_index < CHARACTER_TEXTURES.size():
-		texture_name = CHARACTER_TEXTURES[_next_index]
-	var default_offset := CHARACTER_OFFSETS_Y[_next_index] if _next_index < CHARACTER_OFFSETS_Y.size() else 0.0
-	var offset_y := float(_current_character.get("offset_y", default_offset))
-	bunker.spawn_character(texture_name, offset_y)
+	var image_path := str(_current_character.get("character_image", ""))
+	if image_path.is_empty():
+		image_path = str(_current_character.get("texture", ""))
+	var offset_y := float(_current_character.get("offset_y", 0.0))
+	bunker.spawn_character(image_path, offset_y)
 
 
 func _reset_for_new_character(data: Dictionary) -> void:
@@ -277,6 +279,7 @@ func get_case_tracking_data() -> Dictionary:
 	return {
 		"is_empty": is_empty,
 		"decision_effects": decision_effects if decision_effects is Dictionary else {},
+		"is_last_applicant": not _character_data_exists(_next_index + 2),
 	}
 
 
@@ -347,6 +350,7 @@ func show_decision_outcome(is_accepted: bool) -> void:
 		return
 	_decision_outcome_started = true
 	_last_decision_accepted = is_accepted
+	decision_made.emit(is_accepted)
 
 	var outcome_name := "accept" if is_accepted else "decline"
 	var all_outcomes: Variant = _current_character.get("outcomes", {})

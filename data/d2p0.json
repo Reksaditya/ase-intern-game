@@ -1,0 +1,39 @@
+{
+  "character_id": "D2P0",
+  "character_name": "Komandan",
+  "day": 2,
+  "applicant_index": 0,
+  "is_empty": false,
+  "character_image": null,
+  "id_card_image": null,
+  "anomaly_character_image": null,
+  "pre_interaction": [
+    {
+      "type": "dialogue",
+      "speaker": "KOMANDAN",
+      "text": "Menurut protokol interogasi lama, siapapun yang menyembunyikan sesuatu pasti menunjukkan tanda gelisah — detak jantung naik, keringat dingin. Kita belum pernah menangkap satu pun dari mereka hidup-hidup untuk memastikan, jadi ini asumsi terbaik yang kita punya. Mulai hari ini: siapapun dengan BPM di atas 80, tolak. Lebih baik kita kehilangan satu yang gugup, daripada kecolongan satu penyusup lagi."
+    }
+  ],
+  "heartbeat": {},
+  "dialogs": [],
+  "diagnostics": {},
+  "outcomes": {
+    "accept": [],
+    "decline": []
+  },
+  "tool_reactions": {
+    "pupil_light": [],
+    "biometric_monitor": []
+  },
+  "pupil_behaviours": {},
+  "decision_effects": {
+    "accept": {
+      "suspicion": 0,
+      "infiltration": 0
+    },
+    "decline": {
+      "suspicion": 0,
+      "infiltration": 0
+    }
+  }
+}

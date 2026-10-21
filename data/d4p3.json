@@ -1,0 +1,127 @@
+{
+  "character_id": "D4P3",
+  "character_name": "Kiara",
+  "day": 4,
+  "applicant_index": 3,
+  "is_empty": true,
+  "character_image": "res://assets/character/kiara.png",
+  "id_card_image": "res://assets/character/kiara_ID.png",
+  "anomaly_character_image": null,
+  "pre_interaction": [
+    {
+      "type": "narration",
+      "text": "Seorang wanita berdiri di balik kaca, rambut merah pendeknya berantakan tertiup angin dari luar. Jaket kulitnya terbuka, satu tangan mengetuk-ngetuk pinggiran jendela, tangan satunya lagi memegang sebatang rokok yang baru saja dinyalakan."
+    }
+  ],
+  "heartbeat": {
+    "base_bpm": 60.0,
+    "primary_wave_amplitude_bpm": 0.0,
+    "primary_wave_frequency": 0.0,
+    "secondary_wave_amplitude_bpm": 0.0,
+    "secondary_wave_frequency": 0.0,
+    "min_bpm": 60.0,
+    "max_bpm": 60.0,
+    "base_temperature_c": 23.4,
+    "primary_temperature_amplitude_c": 0.0,
+    "primary_temperature_frequency": 0.0,
+    "secondary_temperature_amplitude_c": 0.0,
+    "secondary_temperature_frequency": 0.0,
+    "min_temperature_c": 23.4,
+    "max_temperature_c": 23.4
+  },
+  "dialogs": [
+    {
+      "category": "Emosional",
+      "trigger": "emotional",
+      "player_prompt": "Kenapa kamu masih di sini? Banyak yang udah nyerah duluan.",
+      "speaker": "PEMOHON",
+      "text": "(hembus asap dulu) \"Nyerah itu pilihan orang lemah.\" (ketus) \"Gue masih punya bensin, masih punya alesan buat gerak —\" (berhenti, sadar kedengeran keras) \"...ya gitu. Gue belum siap berenti.\""
+    },
+    {
+      "category": "Faktual",
+      "trigger": "factual",
+      "player_prompt": "Sepanjang jalan ke sini, kamu lewat mana aja?",
+      "speaker": "PEMOHON",
+      "text": "(nyala, excited) \"Gue potong lewat rel mati, terus ke SPBU tua buat isi bensin sisa —\" (ngomong cepet, tangan gerak) \"—abis itu jembatan miring yang orang takut lewatin, padahal aman asal —\" (berhenti mendadak, ekspresi datar) \"...kenapa gue jelasin sedetail ini. Gak penting. Skip.\""
+    },
+    {
+      "category": "Jebakan",
+      "trigger": "trap",
+      "player_prompt": "Kalau tiba-tiba gerbang ini gak pernah dibuka buat kamu, apa yang bakal kamu lakuin?",
+      "speaker": "PEMOHON",
+      "text": "(isep rokok, diam, senyum miring) \"Gas lagi lah. Cari gerbang lain.\" (pelan) \"...atau abisin bensin sampe kering, terus liat apa yang kejadian.\" (ketawa kecil) \"Bercanda. Mungkin.\""
+    },
+    {
+      "category": "Klarifikasi",
+      "trigger": "clarification",
+      "story_beat": "TITIK RETAK",
+      "player_prompt": "Ada yang mau kamu sampaikan sebelum aku putuskan?",
+      "speaker": "PEMOHON",
+      "text": "(matiin rokok dengan gerakan rapi, tenang) \"Kagak, buruan aja kalo emang mau.\" (jeda pendek, tanpa gangguan) \"Kalo di dalem ada muffin nganggur, gue gak nolak. Udah itu aja.\"",
+      "implementation_note": "Tidak ada distraksi atau kehilangan fokus. Jawaban tuntas dalam satu tarikan napas, rapi tanpa melenceng sedikit pun."
+    }
+  ],
+  "diagnostics": {
+    "pupil_response": "static; no response to light",
+    "heartbeat_bpm": 60,
+    "temperature_c": 23.4
+  },
+  "outcomes": {
+    "accept": [
+      {
+        "type": "narration",
+        "text": "Gerbang berderit terbuka."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(buang puntung, injek santai) \"...Yaudah. Makasih.\" (garuk leher) \"—ah lupain, makasih aja.\""
+      },
+      {
+        "type": "narration",
+        "text": "Dia melangkah masuk. Motor bututnya ditinggal di luar."
+      }
+    ],
+    "decline": [
+      {
+        "type": "narration",
+        "text": "Gerbang tetap tertutup."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "(ketawa gak nyampe mata, masih megang rokok setengah abis) \"...Fine. Gak butuh drama —\" (berhenti total, rokok gak jadi terangkat)"
+      },
+      {
+        "type": "narration",
+        "text": "Wajahnya gelap dari dalam. Rokok yang dipegang jatuh dari tangan yang perlahan gak lagi berbentuk jelas, masih menyala kecil di aspal saat dia berjalan pergi."
+      }
+    ]
+  },
+  "tool_reactions": {
+    "pupil_light": [
+      {
+        "type": "dialogue",
+        "speaker": "PEMOHON",
+        "text": "\"...oke itu emang perlu ya.\""
+      }
+    ],
+    "biometric_monitor": []
+  },
+  "pupil_behaviours": {
+    "initial_diameter_mm": 6.5,
+    "hippus_amplitude_mm": 0.0,
+    "light_response_enabled": false,
+    "blink_enabled": false
+  },
+  "decision_effects": {
+    "accept": {
+      "suspicion": 20,
+      "infiltration": 25
+    },
+    "decline": {
+      "suspicion": -5,
+      "infiltration": 0
+    }
+  }
+}

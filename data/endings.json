@@ -1,0 +1,145 @@
+{
+	"final_evaluation": {
+		"label": "Memuat catatan lima hari terakhir...",
+		"header": "EVALUASI AKHIR",
+		"continue_text": "[ LANJUT ]",
+		"body": "Indikasi Penyusup: {infiltration}%\nPelanggaran Tercatat: {violations}%\nManusia Terselamatkan: {saved} dari {human_total}"
+	},
+	"humanity_sanctuary": {
+		"title": "HUMANITY'S SANCTUARY",
+		"events": [
+			{
+				"type": "narration",
+				"text": "Malam kelima. Gerbang ditutup untuk terakhir kalinya. Tidak ada lagi pemohon yang akan datang — shift-mu resmi berakhir."
+			},
+			{
+				"type": "dialogue",
+				"speaker": "KOMANDAN",
+				"note": "nada terdengar lelah, tapi tulus",
+				"text": "\"Aku sudah lihat laporanmu. Kau melanggar protokol lebih dari sekali minggu ini. Tapi entah bagaimana... bunker ini masih berdiri. Dan lebih banyak dari mereka masih bernapas karena kau.\""
+			},
+			{
+				"type": "narration",
+				"text": "Untuk pertama kalinya sejak dunia runtuh, lorong bunker terasa ramai dengan suara — bukan tangisan, bukan ketakutan, tapi obrolan pelan. Orang-orang yang kau pertaruhkan nyawamu untuk selamatkan, hidup satu ruangan denganmu."
+			},
+			{
+				"type": "narration",
+				"text": "Kau tidak pernah tahu pasti siapa di antara mereka yang benar-benar manusia — tidak ada yang pernah mengonfirmasinya selama lima hari ini. Yang kau tahu hanya ini: kau memilih untuk percaya pada manusia, bahkan ketika aturan bilang sebaliknya."
+			}
+		],
+		"quote": "\"Kadang, aturan yang paling ketat sekalipun tidak bisa menggantikan satu hal: keberanian untuk melihat orang lain sebagai manusia, bukan ancaman.\""
+	},
+	"cold_fortress_a": {
+		"title": "THE COLD MILITARY FORTRESS",
+		"events": [
+			{
+				"type": "narration",
+				"text": "Malam kelima. Gerbang ditutup. Tidak ada lagi yang akan datang."
+			},
+			{
+				"type": "dialogue",
+				"speaker": "KOMANDAN",
+				"note": "nada puas, formal",
+				"text": "\"Catatan nyaris bersih. Hampir tidak ada pelanggaran protokol selama lima hari. Komando pusat akan senang mendengar ini. Bunker ini aman berkat kedisiplinanmu.\""
+			},
+			{
+				"type": "narration",
+				"text": "Lorong bunker sunyi. Bukan karena kosong — tapi karena lebih sedikit yang tersisa untuk bersuara."
+			},
+			{
+				"type": "narration",
+				"text": "Kau ingat setiap wajah yang kau tolak karena angkanya melewati batas: detak jantung, suhu tubuh, usia. Semua sesuai prosedur. Tidak ada yang bisa disalahkan."
+			},
+			{
+				"type": "narration",
+				"text": "Kau nyaris selalu menepati aturan. Bunker ini selamat. Dan entah kenapa, itu tidak terasa seperti kemenangan."
+			}
+		],
+		"quote": "\"Kau mengikuti nyaris setiap aturan tanpa celah. Pertanyaannya: berapa banyak dari aturan itu yang sebenarnya melindungi siapapun selain dirimu sendiri?\""
+	},
+	"cold_fortress_b": {
+		"title": "THE COLD MILITARY FORTRESS",
+		"events": [
+			{
+				"type": "narration",
+				"text": "Malam kelima. Gerbang ditutup. Tidak ada lagi yang akan datang."
+			},
+			{
+				"type": "dialogue",
+				"speaker": "KOMANDAN",
+				"note": "nada datar, setengah puas",
+				"text": "\"Laporanmu sudah kubaca. Ada catatan yang tidak sepenuhnya bersih, tapi tidak cukup untuk dijadikan perkara. Bunker ini aman. Anggap itu cukup.\""
+			},
+			{
+				"type": "narration",
+				"text": "Lorong bunker lebih tenang dari yang kau harapkan, dan lebih sepi dari yang kau inginkan."
+			},
+			{
+				"type": "narration",
+				"text": "Sebagian besar wajah yang gagal pemeriksaan kau tolak: detak jantung, suhu tubuh, usia. Sebagian karena aturan, sebagian karena ragu. Tidak cukup yang kau bawa masuk untuk membuat lorong ini ramai."
+			},
+			{
+				"type": "narration",
+				"text": "Bunker ini selamat. Kau juga. Tapi kau tidak akan pernah tahu berapa banyak lagi yang bisa kau bawa masuk kalau kau lebih berani."
+			}
+		],
+		"quote": "\"Kau mengikuti hampir setiap aturan. Pertanyaannya: berapa banyak dari aturan itu yang sebenarnya melindungi siapapun selain dirimu sendiri?\""
+	},
+	"silent_outbreak": {
+		"title": "SILENT OUTBREAK",
+		"events": [
+			{
+				"type": "narration",
+				"text": "Tengah malam, setelah gerbang ditutup. Alarm berbunyi — bukan dari gerbang, tapi dari dalam."
+			},
+			{
+				"type": "narration",
+				"text": "Lampu koridor berkedip merah. Suara jeritan terdengar dari lorong tempat tinggal — bukan jeritan ketakutan, tapi jeritan orang yang baru menyadari tetangga di sebelahnya selama ini tidak pernah benar-benar bernapas."
+			},
+			{
+				"type": "dialogue",
+				"speaker": "KOMANDAN",
+				"note": "lewat radio, panik, suara terputus-putus",
+				"text": "\"Berapa— berapa banyak yang kau loloskan?! Mereka ada di dalam— mereka sudah ada di—\""
+			},
+			{
+				"type": "narration",
+				"text": "Radio mati. Bukan karena diputus. Karena tidak ada lagi yang menjawab dari sisi lain."
+			},
+			{
+				"type": "narration",
+				"text": "Kau berdiri sendirian di pos inspeksi, menatap gerbang yang sama yang selama ini kau jaga. Terlalu terlambat untuk menyadari: pintu yang kau lindungi bukan lagi pintu yang perlu dikhawatirkan."
+			}
+		],
+		"quote": "\"Kau menjaga gerbang dengan baik. Tapi ancaman sesungguhnya sudah lama berjalan melewatinya — satu per satu, tanpa pernah benar-benar diperiksa.\""
+	},
+	"traitor_fate": {
+		"title": "TRAITOR'S FATE",
+		"events": [
+			{
+				"type": "narration",
+				"text": "Pagi hari. Pintu pos inspeksi terbuka lebih cepat dari biasanya. Bukan pemohon yang berdiri di sana — tapi dua personel militer bersenjata."
+			},
+			{
+				"type": "dialogue",
+				"speaker": "KOMANDAN",
+				"note": "dingin, tanpa nada bersalah",
+				"text": "\"Kami sudah memperingatkanmu. Setiap pelanggaran protokol dicatat. Kau memilih untuk terus melanggarnya — atau meloloskan sesuatu yang seharusnya tidak pernah masuk. Kami tidak bisa lagi mempercayai penilaianmu.\""
+			},
+			{
+				"type": "narration",
+				"text": "Kau ingin menjelaskan. Tentang keputusan-keputusan yang kau ambil di luar angka di aturan, dan alasan di balik masing-masing. Tentang siapa yang kau percayai, dan siapa yang tidak."
+			},
+			{
+				"type": "narration",
+				"text": "Tidak ada yang mendengarkan. Di dunia yang sudah kehilangan hampir semuanya, kepercayaan adalah satu hal terakhir yang tidak bisa kau dapatkan kembali begitu hilang."
+			},
+			{
+				"type": "dialogue",
+				"speaker": "KOMANDAN",
+				"text": "\"Bawa dia.\""
+			}
+		],
+		"quote": "\"Kau melanggar aturan karena yakin, atau karena tidak tahu. Bagi militer, keduanya sama saja: catatan yang tidak bisa dibela.\""
+	}
+}

@@ -1,0 +1,9 @@
+{
+  "label": "[CETAKAN SISTEM] EVALUASI SHIFT MALAM",
+  "header": "EVALUASI MALAM — HARI 3",
+  "continue_text": "[ CLICK OR PRESS ENTER TO CONTINUE ]",
+  "baris1": "Generator mengalihkan daya sebentar, dan lampu pos inspeksi meredup sebelum menyala normal lagi.",
+  "baris2_rendah": "Suhu di dalam bunker ikut turun. Beberapa penghuni tidur dengan mantel masih terpasang.",
+  "baris2_waspada": "Petugas jaga malam melaporkan salah satu penghuni baru tidak terlihat makan sama sekali sepanjang malam. Catatan itu diarsipkan, belum ditindaklanjuti.",
+  "body": "--------------------------------------------------\nHari Operasional: 3 / 5\n--------------------------------------------------\nRINGKASAN SHIFT SIANG\nPemohon Diproses  : 2\nDiterima          : {diterima}\nDitolak           : {ditolak}\n\nCATATAN KEJADIAN\n{baris1} {baris2}\n\n--------------------------------------------------\nGerbang terkunci. Suhu di dalam bunker ikut turun.\n--------------------------------------------------"
+}

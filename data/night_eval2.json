@@ -1,0 +1,9 @@
+{
+  "label": "[CETAKAN SISTEM] EVALUASI SHIFT MALAM",
+  "header": "EVALUASI MALAM — HARI 2",
+  "continue_text": "[ CLICK OR PRESS ENTER TO CONTINUE ]",
+  "baris1": "Badai di luar tidak reda sepanjang malam. Pelat baja gerbang berdenting tiap kali angin menghantamnya.",
+  "baris2_rendah": "Petugas jaga malam tidak mencatat apa pun yang tidak biasa. Laporan ditandatangani tanpa dibaca ulang.",
+  "baris2_waspada": "Larut malam, sesuatu terdengar bergerak pelan di koridor utama — lalu diam. Log keamanan tidak mencatat apa pun yang tidak biasa.",
+  "body": "--------------------------------------------------\nHari Operasional: 2 / 5\n--------------------------------------------------\nRINGKASAN SHIFT SIANG\nPemohon Diproses  : 3\nDiterima          : {diterima}\nDitolak           : {ditolak}\n\nCATATAN KEJADIAN\n{baris1} {baris2}\n\n--------------------------------------------------\nGerbang terkunci. Badai asam mengetuk pelat baja.\n--------------------------------------------------"
+}

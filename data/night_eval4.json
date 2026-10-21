@@ -1,0 +1,9 @@
+{
+  "label": "[CETAKAN SISTEM] EVALUASI SHIFT MALAM",
+  "header": "EVALUASI MALAM — HARI 4",
+  "continue_text": "[ CLICK OR PRESS ENTER TO CONTINUE ]",
+  "baris1": "Persediaan air dihitung ulang dua kali malam ini. Hasilnya sama, dan tidak ada yang senang dengan angkanya.",
+  "baris2_rendah": "Antrean jatah makan malam ini lebih pendek dari kemarin. Tidak ada yang membahasnya.",
+  "baris2_waspada": "Sensor suhu lorong asrama mencatat satu titik dingin yang tidak bergerak sepanjang malam. Dianggap kerusakan sensor.",
+  "body": "--------------------------------------------------\nHari Operasional: 4 / 5\n--------------------------------------------------\nRINGKASAN SHIFT SIANG\nPemohon Diproses  : 3\nDiterima          : {diterima}\nDitolak           : {ditolak}\n\nCATATAN KEJADIAN\n{baris1} {baris2}\n\n--------------------------------------------------\nGerbang terkunci. Ini malam kelima sejak shift pertama dimulai — meski baru hari keempat operasional. Waktu terasa mulai kabur.\n--------------------------------------------------"
+}

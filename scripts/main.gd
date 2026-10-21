@@ -12,11 +12,20 @@ const ENDING_SCENE: PackedScene = preload("res://scenes/ending.tscn")
 const SAVE_SLOT_COUNT := 4
 const SAVE_PATH_FORMAT := "user://save_slot_%d.json"
 const REPORT_TEXT_PATH := "res://data/report_text.json"
-const DAY1_MORNING_REPORT_PATH := "res://data/day1morning.json"
+const MORNING_REPORT_PATH_FORMAT := "res://data/morning_report%d.json"
+const ENDINGS_PATH := "res://data/endings.json"
+## Ambang pemilihan ending (persen) sesuai dokumen "Ending final".
+const ENDING_EARLY_TRIGGER_VALUE := 100
+const ENDING_OUTBREAK_INFILTRATION := 50
+const ENDING_SANCTUARY_MIN_SAVED := 5
+const ENDING_FORTRESS_A_MAX_SUSPICION := 20
+## Pengurang suspicion (persen) bila satu hari selesai tanpa kenaikan suspicion.
+const PERFECT_DAY_SUSPICION_REDUCTION := 10
 
 var _timeline: Array[Dictionary] = []
 var _report_text: Dictionary = {}
-var _day1_morning_report: Dictionary = {}
+var _morning_reports: Array[Dictionary] = []
+var _endings: Dictionary = {}
 var _timeline_index := 0
 var _active_scene: Node
 var _game_started := false
@@ -34,7 +43,9 @@ var _save_slots: Array[Dictionary] = []
 func _ready() -> void:
 	_timeline = _build_timeline()
 	_report_text = _load_json_dictionary(REPORT_TEXT_PATH)
-	_day1_morning_report = _load_json_dictionary(DAY1_MORNING_REPORT_PATH)
+	for day in range(1, TOTAL_DAYS + 1):
+		_morning_reports.append(_load_json_dictionary(MORNING_REPORT_PATH_FORMAT % day))
+	_endings = _load_json_dictionary(ENDINGS_PATH)
 	_load_save_slots()
 	$MainMenu/Buttons/PlayGameButton.pressed.connect(_open_save_menu)
 	$MainMenu/Buttons/SettingsButton.pressed.connect(_open_settings_menu)
@@ -160,7 +171,7 @@ func _build_timeline() -> Array[Dictionary]:
 		steps.append({
 			"scene": MORNING_REPORT_SCENE,
 			"day": day,
-			"report": "day1_morning" if day == 1 else "day_report",
+			"report": "morning_report",
 		})
 		steps.append({"scene": TEMPO_GAMEPLAY_SCENE, "title": "Afternoon", "day": day})
 		steps.append({
@@ -185,7 +196,16 @@ func _advance_timeline() -> void:
 		_refresh_save_menu()
 		_show_main_menu()
 		return
-	_timeline_index += 1
+	# Evaluasi malam yang memicu ending dini (infiltrasi / suspicion 100%):
+	# sisa hari dilewati, langsung ke Evaluasi Akhir lalu ending.
+	var current_step: Dictionary = _timeline[_timeline_index]
+	if (
+		str(current_step.get("report", "")) == "night_evaluation"
+		and _early_ending_triggered(_active_save_data())
+	):
+		_timeline_index = _timeline.size() - 2
+	else:
+		_timeline_index += 1
 	_save_current_progress()
 	_show_timeline_step()
 
@@ -209,6 +229,7 @@ func _load_save_slots() -> void:
 						"declined_count": maxi(0, int(parsed.get("declined_count", 0))),
 						"empty_accepted_count": maxi(0, int(parsed.get("empty_accepted_count", 0))),
 						"empty_declined_count": maxi(0, int(parsed.get("empty_declined_count", 0))),
+						"daily_decisions": parsed["daily_decisions"] if parsed.get("daily_decisions") is Dictionary else {},
 					}
 		_save_slots.append(save_data)
 
@@ -227,11 +248,17 @@ func _load_json_dictionary(path: String) -> Dictionary:
 
 
 func _apply_report_text(scene: Node, report_key: String, day: int) -> void:
-	if report_key == "day1_morning":
-		if scene.has_method("set_report_text"):
-			scene.call("set_report_text", _day1_morning_report)
-		else:
+	if report_key == "morning_report":
+		if not scene.has_method("set_report_text"):
 			push_error("The morning report scene cannot display report text.")
+			return
+		if day < 1 or day > _morning_reports.size():
+			push_error("Morning report data is missing for day %d." % day)
+			return
+		var report := _format_report(
+			_morning_reports[day - 1], _morning_report_values(_active_save_data())
+		)
+		scene.call("set_report_text", report)
 		return
 
 	if not _report_text.has(report_key):
@@ -253,6 +280,95 @@ func _apply_report_text(scene: Node, report_key: String, day: int) -> void:
 		else:
 			push_error("Report text node '%s' was not found in %s." % [node_path, scene.name])
 			continue
+
+
+## Mengisi placeholder teks laporan dengan nilai band (mis. {band_infiltrasi}).
+func _format_report(report: Dictionary, values: Dictionary) -> Dictionary:
+	var formatted := report.duplicate()
+	for field in ["label", "header", "continue_text", "body"]:
+		if formatted.has(field):
+			formatted[field] = str(formatted[field]).format(values)
+	return formatted
+
+
+func _active_save_data() -> Dictionary:
+	if _active_save_slot >= 0 and _active_save_slot < _save_slots.size():
+		return _save_slots[_active_save_slot]
+	return {}
+
+
+## Pemain hanya melihat band, bukan persen asli (persen hanya tampil di ending).
+func _infiltration_band(value: int) -> String:
+	if value >= 75:
+		return "Kritis"
+	if value >= 50:
+		return "Waspada"
+	return "Rendah"
+
+
+## Band Pelanggaran Tercatat dan kuota pertanyaan interogasi dari suspicion:
+## 0-19% = Rendah / 2, 20-39% = Waspada / 3, >= 40% = Kritis / 4.
+func _morning_report_values(save_data: Dictionary) -> Dictionary:
+	var suspicion := int(save_data.get("suspicion", 0))
+	var violation_band := "Rendah"
+	var required_questions := 2
+	if suspicion >= 40:
+		violation_band = "Kritis"
+		required_questions = 4
+	elif suspicion >= 20:
+		violation_band = "Waspada"
+		required_questions = 3
+	return {
+		"band_infiltrasi": _infiltration_band(int(save_data.get("infiltration", 0))),
+		"band_pelanggaran": violation_band,
+		"syarat": required_questions,
+	}
+
+
+## Manusia yang diterima = total diterima dikurangi The Empty yang diterima.
+func _humans_saved(save_data: Dictionary) -> int:
+	return maxi(
+		0,
+		int(save_data.get("accepted_count", 0)) - int(save_data.get("empty_accepted_count", 0))
+	)
+
+
+## True bila ending harus langsung terpicu (permainan berhenti di tengah jalan):
+## Infiltrasi Empty 100% (Silent Outbreak) atau Kecurigaan Militer 100% (Traitor's Fate).
+func _early_ending_triggered(save_data: Dictionary) -> bool:
+	return (
+		int(save_data.get("infiltration", 0)) >= ENDING_EARLY_TRIGGER_VALUE
+		or int(save_data.get("suspicion", 0)) >= ENDING_EARLY_TRIGGER_VALUE
+	)
+
+
+## Memilih ending (tepat satu) sesuai dokumen "Ending final", dengan urutan:
+## Silent Outbreak (infiltrasi 100) > Traitor's Fate (suspicion 100) >
+## Silent Outbreak (infiltrasi >= 50) > Humanity's Sanctuary (saved >= 5) >
+## The Cold Military Fortress (versi A bila pelanggaran < 20%, selain itu B).
+func _ending_key_for(save_data: Dictionary) -> String:
+	var infiltration := int(save_data.get("infiltration", 0))
+	var suspicion := int(save_data.get("suspicion", 0))
+	if infiltration >= ENDING_EARLY_TRIGGER_VALUE:
+		return "silent_outbreak"
+	if suspicion >= ENDING_EARLY_TRIGGER_VALUE:
+		return "traitor_fate"
+	if infiltration >= ENDING_OUTBREAK_INFILTRATION:
+		return "silent_outbreak"
+	if _humans_saved(save_data) >= ENDING_SANCTUARY_MIN_SAVED:
+		return "humanity_sanctuary"
+	if suspicion < ENDING_FORTRESS_A_MAX_SUSPICION:
+		return "cold_fortress_a"
+	return "cold_fortress_b"
+
+
+func _selected_ending_data() -> Dictionary:
+	var key := _ending_key_for(_active_save_data())
+	var data: Variant = _endings.get(key, {})
+	if not data is Dictionary or data.is_empty():
+		push_error("Ending data '%s' is missing in %s." % [key, ENDINGS_PATH])
+		return {}
+	return data
 
 
 func _refresh_save_menu() -> void:
@@ -303,6 +419,7 @@ func _new_save_data() -> Dictionary:
 		"declined_count": 0,
 		"empty_accepted_count": 0,
 		"empty_declined_count": 0,
+		"daily_decisions": {},
 	}
 
 
@@ -311,6 +428,19 @@ func _on_admission_decision(is_accepted: bool) -> void:
 		var save_data: Dictionary = _save_slots[_active_save_slot].duplicate()
 		var decision_counter := "accepted_count" if is_accepted else "declined_count"
 		save_data[decision_counter] = int(save_data.get(decision_counter, 0)) + 1
+
+		var daily_decisions: Dictionary = {}
+		var stored_daily_decisions: Variant = save_data.get("daily_decisions", {})
+		if stored_daily_decisions is Dictionary:
+			daily_decisions = stored_daily_decisions.duplicate()
+		var day_key := str(int(_timeline[_timeline_index].get("day", 1)))
+		var day_decisions: Dictionary = {}
+		var stored_day_decisions: Variant = daily_decisions.get(day_key, {})
+		if stored_day_decisions is Dictionary:
+			day_decisions = stored_day_decisions.duplicate()
+		day_decisions[decision_counter] = int(day_decisions.get(decision_counter, 0)) + 1
+		daily_decisions[day_key] = day_decisions
+		save_data["daily_decisions"] = daily_decisions
 
 		var case_tracking: Dictionary = {}
 		if is_instance_valid(_active_scene) and _active_scene.has_method("get_case_tracking_data"):
@@ -331,6 +461,18 @@ func _on_admission_decision(is_accepted: bool) -> void:
 					var current_value := int(save_data.get(metric, 0))
 					var change := int(decision_effects.get(metric, 0))
 					save_data[metric] = clampi(current_value + change, 0, 100)
+					if metric == "suspicion" and change > 0:
+						day_decisions["suspicion_gained"] = int(day_decisions.get("suspicion_gained", 0)) + change
+
+		# Perfect Day: pemohon terakhir hari ini diputuskan dan tidak ada kenaikan
+		# suspicion sepanjang hari (tidak ada Empty / pelanggar SOP yang diterima).
+		if (
+			bool(case_tracking.get("is_last_applicant", false))
+			and int(day_decisions.get("suspicion_gained", 0)) == 0
+		):
+			save_data["suspicion"] = clampi(
+				int(save_data.get("suspicion", 0)) - PERFECT_DAY_SUSPICION_REDUCTION, 0, 100
+			)
 
 		_write_save_data(save_data)
 	if is_instance_valid(_active_scene) and _active_scene.has_method("show_decision_outcome"):
@@ -373,6 +515,14 @@ func _show_timeline_step() -> void:
 	_active_scene = packed_scene.instantiate()
 	if step.has("day") and "day" in _active_scene:
 		_active_scene.set("day", int(step["day"]))
+	# Kuota pertanyaan interogasi mengikuti band suspicion (2/3/4).
+	if "scan_unlock_questions_override" in _active_scene:
+		_active_scene.set(
+			"scan_unlock_questions_override",
+			int(_morning_report_values(_active_save_data())["syarat"])
+		)
+	if _active_scene.has_method("set_ending_data"):
+		_active_scene.call("set_ending_data", _selected_ending_data())
 	add_child(_active_scene)
 
 	var title_label := _active_scene.get_node_or_null("Title") as Label
@@ -397,3 +547,7 @@ func _show_timeline_step() -> void:
 	# shift_finished setelah semua karakter hari itu selesai diputuskan.
 	if _active_scene.has_signal("shift_finished"):
 		_active_scene.connect("shift_finished", _advance_timeline)
+
+	# Keputusan Terima/Tolak per pemohon disimpan (suspicion, infiltrasi, hitungan).
+	if _active_scene.has_signal("decision_made"):
+		_active_scene.connect("decision_made", _on_admission_decision)
