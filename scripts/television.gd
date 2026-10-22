@@ -2,6 +2,8 @@ extends Sprite2D
 
 signal question_asked(question_key: String)
 signal id_card_requested
+signal log_panel_opened
+signal log_panel_closed
 
 const LOG_SCROLL_WHEEL_STEP := 36.0
 const LOG_SCROLL_TWEEN_DURATION := 0.18
@@ -43,6 +45,9 @@ func _ready() -> void:
 		var question_button := log_list.get_node_or_null(question_key) as BaseButton
 		if question_button:
 			question_button.pressed.connect(_on_question_button_pressed.bind(question_key))
+			question_button.focus_entered.connect(
+				_on_question_button_focused.bind(question_button)
+			)
 
 	log_title.hide()
 	log_scroll.hide()
@@ -83,6 +88,38 @@ func _on_question_button_pressed(question_key: String) -> void:
 	if not log_open:
 		return
 	question_asked.emit(question_key)
+
+
+func _on_question_button_focused(button: Control) -> void:
+	if not log_open:
+		return
+	_scroll_question_button_into_view.call_deferred(button)
+
+
+func _scroll_question_button_into_view(button: Control) -> void:
+	if not log_open or not log_scroll.visible or not is_instance_valid(button):
+		return
+	_stop_log_scroll_tween()
+	log_scroll.ensure_control_visible(button)
+
+	# ensure_control_visible works with integer scroll steps; nudge by the
+	# fractional remainder so the focused button is not clipped at the edge.
+	var viewport_rect := log_scroll.get_global_rect()
+	var button_rect := button.get_global_rect()
+	if button_rect.end.y > viewport_rect.end.y:
+		log_scroll.scroll_vertical += int(ceil(button_rect.end.y - viewport_rect.end.y))
+	elif button_rect.position.y < viewport_rect.position.y:
+		log_scroll.scroll_vertical -= int(ceil(viewport_rect.position.y - button_rect.position.y))
+	log_scroll_target = float(log_scroll.scroll_vertical)
+
+
+func get_log_focus_controls() -> Array[Control]:
+	var controls: Array[Control] = []
+	for child in log_list.get_children():
+		if child is BaseButton:
+			controls.append(child as Control)
+	controls.append(back_button)
+	return controls
 
 
 func _update_scroll_height() -> void:
@@ -161,6 +198,7 @@ func open_log_panel() -> void:
 	)
 
 	_animate_buttons_in()
+	log_panel_opened.emit()
 
 
 func close_log_panel() -> void:
@@ -197,12 +235,19 @@ func close_log_panel() -> void:
 		idcard.disabled = false
 		idcard.visible = true
 		_set_question_buttons_disabled(false)
+		log_panel_closed.emit()
+		intlog.grab_focus()
 	)
 
 
 func _animate_buttons_in() -> void:
 	_stop_question_button_animations()
 	var children := log_list.get_children()
+	var first_button: BaseButton = null
+	for child in children:
+		if child is BaseButton:
+			first_button = child as BaseButton
+			break
 
 	for i in children.size():
 		var btn := children[i] as BaseButton
@@ -218,6 +263,8 @@ func _animate_buttons_in() -> void:
 		t.chain().tween_callback(func():
 			if log_open and is_instance_valid(btn):
 				btn.disabled = false
+				if btn == first_button:
+					btn.grab_focus()
 		)
 		question_button_tweens.append(t)
 

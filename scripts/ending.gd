@@ -9,6 +9,7 @@ const SCROLL_BOTTOM_MARGIN := 110.0
 
 var ending_data: Dictionary = {}
 var _is_revealing := false
+var _skip_reveal_requested := false
 
 
 func set_ending_data(data: Dictionary) -> void:
@@ -30,11 +31,32 @@ func _ready() -> void:
 	_reveal_body(body)
 
 
+func _input(event: InputEvent) -> void:
+	if not _is_revealing:
+		return
+	var wants_to_skip := event.is_action_pressed("ui_accept")
+	if event is InputEventMouseButton:
+		var mouse_event := event as InputEventMouseButton
+		wants_to_skip = mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT
+	if wants_to_skip:
+		_skip_reveal_requested = true
+		get_viewport().set_input_as_handled()
+
+
 func _reveal_body(body: String) -> void:
 	for character_index in range(body.length()):
+		if _skip_reveal_requested:
+			break
 		_story_text.append_text(body.substr(character_index, 1))
 		await get_tree().create_timer(TYPE_DELAY).timeout
+		if _skip_reveal_requested:
+			break
 		_follow_revealed_text()
+
+	if _skip_reveal_requested:
+		_story_text.clear()
+		_story_text.append_text(body)
+	_follow_revealed_text()
 	_is_revealing = false
 
 

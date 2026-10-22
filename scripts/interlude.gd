@@ -40,7 +40,6 @@ var _skip_hold_time := 0.0
 var _skip_dot_timer := 0.0
 
 @onready var _story: Label = $Story
-@onready var _hint: Label = $SkipHint
 @onready var _start_button: Button = $ContinueButton
 @onready var _skipping_label: Label = $SkippingLabel
 
@@ -184,8 +183,8 @@ func _finish() -> void:
 	_index = PARAGRAPHS.size() - 1
 	_story.text = PARAGRAPHS[_index]
 	_story.modulate.a = 1.0
-	_hint.hide()
 
 	_start_button.visible = true
+	_start_button.grab_focus()
 	_tween = create_tween()
 	_tween.tween_property(_start_button, "modulate:a", 1.0, BUTTON_FADE)

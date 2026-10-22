@@ -15,6 +15,8 @@ const NIGHT_EVALUATION_SCENE: PackedScene = preload("res://scenes/night_eval.tsc
 const FINAL_EVALUATION_SCENE: PackedScene = preload("res://scenes/final_evaluation.tscn")
 const ENDING_SCENE: PackedScene = preload("res://scenes/ending.tscn")
 const SAVE_SLOT_COUNT := 4
+const NAV_HINT_MAIN := "ARROWS / WASD  NAVIGATE     ENTER / SPACE  SELECT"
+const NAV_HINT_BACK := NAV_HINT_MAIN + "     ESC / BACKSPACE  BACK"
 const SAVE_PATH_FORMAT := "user://save_slot_%d.json"
 const REPORT_TEXT_PATH := "res://data/report_text.json"
 const MORNING_REPORT_PATH_FORMAT := "res://data/morning_report%d.json"
@@ -38,6 +40,7 @@ var _active_scene: Node
 var _game_started := false
 var _active_save_slot := -1
 var _selected_save_slot := -1
+var _save_actions_active := false
 var _save_slots: Array[Dictionary] = []
 var _windowed_size := Vector2i.ZERO
 
@@ -48,6 +51,11 @@ var _windowed_size := Vector2i.ZERO
 @onready var _save_content := $SaveMenu/Center/Content
 @onready var _brightness_slider := $SettingsMenu/Center/Content/BrightnessRow/BrightnessSlider
 @onready var _fullscreen_toggle := $SettingsMenu/Center/Content/FullscreenRow/FullscreenToggle
+@onready var _play_game_button := $MainMenu/Buttons/PlayGameButton
+@onready var _new_button := $SaveMenu/Center/Content/Actions/NewButton
+@onready var _load_button := $SaveMenu/Center/Content/Actions/LoadButton
+@onready var _delete_button := $SaveMenu/Center/Content/Actions/DeleteButton
+@onready var _nav_hint := $NavHint
 
 
 func _ready() -> void:
@@ -66,10 +74,11 @@ func _ready() -> void:
 	$SaveMenu/Center/Content/SaveSlot2.pressed.connect(_on_save_slot_pressed.bind(1))
 	$SaveMenu/Center/Content/SaveSlot3.pressed.connect(_on_save_slot_pressed.bind(2))
 	$SaveMenu/Center/Content/SaveSlot4.pressed.connect(_on_save_slot_pressed.bind(3))
-	$SaveMenu/Center/Content/Actions/NewButton.pressed.connect(_create_new_save)
-	$SaveMenu/Center/Content/Actions/LoadButton.pressed.connect(_load_selected_save)
-	$SaveMenu/Center/Content/Actions/DeleteButton.pressed.connect(_delete_selected_save)
+	_new_button.pressed.connect(_create_new_save)
+	_load_button.pressed.connect(_load_selected_save)
+	_delete_button.pressed.connect(_delete_selected_save)
 	_refresh_save_menu()
+	_show_main_menu()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -79,8 +88,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 		if _save_menu.visible and event.is_action_pressed("ui_cancel"):
-			_show_main_menu()
+			if _save_actions_active:
+				_exit_save_actions_mode()
+			else:
+				_show_main_menu()
 			get_viewport().set_input_as_handled()
+			return
 		return
 	if is_instance_valid(_active_scene) and _active_scene.find_child("TerimaButton", true, false):
 		return
@@ -91,11 +104,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	):
 		return
 	var should_advance := false
-	if event is InputEventKey:
-		var key_event := event as InputEventKey
-		should_advance = key_event.pressed and not key_event.echo and (
-			key_event.keycode == KEY_ENTER or key_event.keycode == KEY_KP_ENTER
-		)
+	if event.is_action_pressed("ui_accept"):
+		should_advance = true
 	elif event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
 		should_advance = mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed
@@ -105,25 +115,37 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _open_save_menu() -> void:
+	_save_actions_active = false
 	_selected_save_slot = -1
 	_main_menu.hide()
 	_settings_menu.hide()
 	_save_menu.show()
+	_nav_hint.text = NAV_HINT_BACK
+	_nav_hint.show()
 	_refresh_save_menu()
+	$SaveMenu/Center/Content/SaveSlot1.grab_focus()
 
 
 func _open_settings_menu() -> void:
 	_main_menu.hide()
 	_save_menu.hide()
 	_settings_menu.show()
+	_nav_hint.text = NAV_HINT_BACK
+	_nav_hint.show()
 	_fullscreen_toggle.set_pressed_no_signal(_is_window_fullscreen())
 	_brightness_slider.grab_focus()
 
 
 func _show_main_menu() -> void:
+	_save_actions_active = false
+	_selected_save_slot = -1
 	_save_menu.hide()
 	_settings_menu.hide()
 	_main_menu.show()
+	_nav_hint.text = NAV_HINT_MAIN
+	_nav_hint.show()
+	_refresh_save_menu()
+	_play_game_button.grab_focus()
 
 
 func _on_brightness_changed(value: float) -> void:
@@ -151,7 +173,46 @@ func _is_window_fullscreen() -> bool:
 
 func _on_save_slot_pressed(slot_index: int) -> void:
 	_selected_save_slot = slot_index
+	_enter_save_actions_mode()
+
+
+func _enter_save_actions_mode() -> void:
+	if _selected_save_slot < 0:
+		return
+	_save_actions_active = true
 	_refresh_save_menu()
+	_set_save_action_focus_ring()
+	var slot_is_occupied := (
+		_selected_save_slot < _save_slots.size()
+		and not _save_slots[_selected_save_slot].is_empty()
+	)
+	var target := _load_button if slot_is_occupied else _new_button
+	target.grab_focus()
+
+
+func _exit_save_actions_mode() -> void:
+	var previous_slot := _selected_save_slot
+	_save_actions_active = false
+	_selected_save_slot = -1
+	_refresh_save_menu()
+	var slot_index := clampi(previous_slot, 0, SAVE_SLOT_COUNT - 1)
+	var slot_button := _save_content.get_node("SaveSlot%d" % (slot_index + 1)) as Button
+	if slot_button:
+		slot_button.grab_focus()
+
+
+func _set_save_action_focus_ring() -> void:
+	var actions: Array[Button] = [_new_button, _load_button, _delete_button]
+	for index in actions.size():
+		var control := actions[index]
+		var previous := actions[(index - 1 + actions.size()) % actions.size()]
+		var next := actions[(index + 1) % actions.size()]
+		control.focus_neighbor_top = control.get_path_to(previous)
+		control.focus_neighbor_left = control.get_path_to(previous)
+		control.focus_neighbor_bottom = control.get_path_to(next)
+		control.focus_neighbor_right = control.get_path_to(next)
+		control.focus_next = control.get_path_to(next)
+		control.focus_previous = control.get_path_to(previous)
 
 
 func _create_new_save() -> void:
@@ -184,10 +245,14 @@ func _delete_selected_save() -> void:
 
 func _start_game_at_timeline_index(start_index: int) -> void:
 	_game_started = true
+	InputGuide.reset_run()
 	_timeline = _build_timeline()
 	_timeline_index = clampi(start_index, 0, _timeline.size() - 1)
+	_save_actions_active = false
 	_main_menu.hide()
 	_save_menu.hide()
+	_settings_menu.hide()
+	_nav_hint.hide()
 	_show_timeline_step()
 
 
@@ -251,6 +316,7 @@ func _build_timeline() -> Array[Dictionary]:
 func _advance_timeline() -> void:
 	if _timeline_index >= _timeline.size() - 1:
 		_complete_active_save()
+		InputGuide.leave_context()
 		if is_instance_valid(_active_scene):
 			_active_scene.queue_free()
 		_active_scene = null
@@ -278,6 +344,7 @@ func _advance_timeline() -> void:
 
 func _return_to_main_menu() -> void:
 	get_tree().paused = false
+	InputGuide.leave_context()
 	if is_instance_valid(_active_scene):
 		_active_scene.queue_free()
 	_active_scene = null
@@ -539,15 +606,13 @@ func _refresh_save_menu() -> void:
 				status = "COMPLETE"
 			else:
 					status = "IN PROGRESS - DAY %d" % _day_for_timeline_index(int(_save_slots[slot_index].get("timeline_index", 0)))
-		button.text = "SAVE FILE %d - %s" % [slot_index + 1, status]
+		var selection_marker := "> " if slot_index == _selected_save_slot else "  "
+		button.text = "%sSAVE FILE %d - %s" % [selection_marker, slot_index + 1, status]
 
-	var has_selection := _selected_save_slot >= 0
-	var new_button := _save_content.get_node("Actions/NewButton") as Button
-	var load_button := _save_content.get_node("Actions/LoadButton") as Button
-	var delete_button := _save_content.get_node("Actions/DeleteButton") as Button
-	new_button.disabled = not has_selection
-	load_button.disabled = not has_selection
-	delete_button.disabled = not has_selection
+	var actions_enabled := _save_actions_active and _selected_save_slot >= 0
+	_new_button.disabled = not actions_enabled
+	_load_button.disabled = not actions_enabled
+	_delete_button.disabled = not actions_enabled
 
 func _save_current_progress() -> void:
 	if _active_save_slot < 0:
@@ -655,6 +720,7 @@ func _save_path(slot_index: int) -> String:
 
 
 func _show_timeline_step() -> void:
+	InputGuide.leave_context()
 	if is_instance_valid(_active_scene):
 		_active_scene.queue_free()
 

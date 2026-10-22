@@ -1,6 +1,6 @@
 {
   "label": "KOMANDO MILITER — BUNKER 07",
   "header": "LAPORAN HARIAN OPERASIONAL",
-  "continue_text": "[ CLICK OR PRESS ENTER TO CONTINUE ]",
+  "continue_text": "[ CLICK OR PRESS ENTER / SPACE TO CONTINUE ]",
   "body": "==================================================\nDIVISI KEAMANAN GERBANG BUNKER TERAKHIR\nHari Operasional: 4 / 5\nTanggal Operasional: 15 Maret 2068\nKlasifikasi: TERBATAS\n==================================================\n\nI. LAPORAN INSIDEN\nPersediaan makanan dan air tercatat turun lebih cepat dari proyeksi. Tim logistik meminta peninjauan ulang kapasitas penerimaan.\n\nII. STATUS INDIKATOR SISTEM\nIndikasi Penyusup     : {band_infiltrasi}\nPelanggaran Tercatat  : {band_pelanggaran}\nSyarat Pertanyaan     : {syarat} pertanyaan wajib\n\nIII. SOP AKTIF HARI INI\n- Semua SOP sebelumnya tetap berlaku (ID, suhu, BPM > 80, suhu < 31°C).\n- BARU: Tolak pemohon berusia di atas 25 tahun.\n- Usia dihitung dari tanggal lahir di ID Card terhadap tanggal operasional hari ini.\n\nIV. INSTRUKSI KOMANDAN\n\"Persediaan bunker menipis lebih cepat dari perkiraan. Kita gak bisa lagi menampung semua yang datang, dan setiap tempat yang tersisa harus diisi mereka yang bisa bertahan paling lama dan menopang generasi berikutnya. Efektif hari ini: tolak siapapun berusia di atas 25 tahun. Semua aturan sebelumnya tetap berlaku. Keputusan ini final, tidak untuk didiskusikan.\"\n\n=================================================="
 }

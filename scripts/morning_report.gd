@@ -1,6 +1,6 @@
 extends Control
 
-const MAX_PAGE_CHARACTERS := 300
+const MAX_PAGE_CHARACTERS := 1200
 const PAGE_BOTTOM_MARGIN := 33.3333
 const SKIP_HOLD_DURATION := 1.0
 const SKIP_DECAY_RATE := 3.0
@@ -42,13 +42,21 @@ var _is_escape_held := false
 var _is_mouse_held := false
 var _skip_hold_time := 0.0
 var _skip_dot_timer := 0.0
+var _measurement_label: Label
 
 
 func _ready() -> void:
+	# Keep the body at its layout size instead of letting the Label grow to its
+	# full text height and overflow the sheet.
+	_report_body.clip_text = true
+	_setup_measurement_label()
 	_paper_size = _paper_viewport.size
 	var paper_size := _paper_size
 	_paper_viewport.size.y = 0.0
 	_continue_button.modulate.a = 0.0
+	_continue_button.disabled = true
+	_previous_page_button.disabled = true
+	_next_page_button.disabled = true
 	_reset_skip_state()
 	# Let the sheet overlap the slot bezel while keeping the roller in front.
 	move_child(_paper_viewport, $OutputSlot.get_index())
@@ -130,30 +138,57 @@ func set_report_text(report: Dictionary) -> void:
 func _split_report_into_pages(body: String) -> Array[String]:
 	var pages: Array[String] = []
 	var current_page := ""
-	var words := body.split(" ", true)
-	for word_index in range(words.size()):
-		var separator := " " if word_index > 0 else ""
-		var word: String = words[word_index]
-		var candidate := current_page + separator + word
-		if _page_fits(candidate):
-			current_page = candidate
+	var lines := body.split("\n", true)
+	for line_index in range(lines.size()):
+		var line: String = lines[line_index]
+		var line_separator := "" if line_index == 0 else "\n"
+
+		# Short report lines (labels, values, section headings) should never be
+		# split across pages. Long paragraph lines still flow by word.
+		if _line_is_atomic(line):
+			var candidate := line if current_page.is_empty() else current_page + line_separator + line
+			if _page_fits(candidate):
+				current_page = candidate
+				continue
+			if not current_page.is_empty():
+				pages.append(current_page)
+				current_page = ""
+			current_page = line
 			continue
 
-		if not current_page.is_empty():
-			pages.append(current_page + separator)
-			current_page = ""
+		var words := line.split(" ", true)
+		for word_index in range(words.size()):
+			var separator := ""
+			if not current_page.is_empty():
+				separator = line_separator if word_index == 0 else " "
+			var word: String = words[word_index]
+			var candidate := current_page + separator + word
+			if _page_fits(candidate):
+				current_page = candidate
+				continue
 
-		if _page_fits(word):
-			current_page = word
-			continue
+			if not current_page.is_empty():
+				pages.append(current_page)
+				current_page = ""
 
-		var word_chunks := _split_unbroken_text(word)
-		for chunk_index in range(word_chunks.size() - 1):
-			pages.append(word_chunks[chunk_index])
-		current_page = word_chunks.back()
+			if _page_fits(word):
+				current_page = word
+				continue
+
+			var word_chunks := _split_unbroken_text(word)
+			for chunk_index in range(word_chunks.size() - 1):
+				pages.append(word_chunks[chunk_index])
+			current_page = word_chunks.back()
 	if not current_page.is_empty():
 		pages.append(current_page)
 	return pages
+
+
+func _line_is_atomic(line: String) -> bool:
+	if _measurement_label == null:
+		return true
+	_measurement_label.text = line
+	return _measurement_label.get_line_count() <= 1
 
 
 func _split_unbroken_text(text: String) -> Array[String]:
@@ -168,28 +203,59 @@ func _split_unbroken_text(text: String) -> Array[String]:
 	return chunks
 
 
+func _setup_measurement_label() -> void:
+	_measurement_label = Label.new()
+	_measurement_label.name = "PageMeasure"
+	_measurement_label.label_settings = _report_body.label_settings
+	_measurement_label.autowrap_mode = _report_body.autowrap_mode
+	_measurement_label.size = Vector2(_report_body.size.x, 0.0)
+	_measurement_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_measurement_label.visible = false
+	add_child(_measurement_label)
+
+
 func _page_fits(text: String) -> bool:
 	if text.length() > MAX_PAGE_CHARACTERS:
 		return false
-	var font: Font = _report_body.label_settings.font
-	var font_size: int = _report_body.label_settings.font_size
-	var measured_size := font.get_multiline_string_size(text, font_size, _report_body.size.x)
+	if _measurement_label == null:
+		return false
+
+	# Measure the real wrapped line count. A font's multiline size does not
+	# include LabelSettings line spacing, which made pages overflow the sheet.
+	_measurement_label.text = text
+	var line_count := _measurement_label.get_line_count()
+	if line_count <= 0:
+		return false
+	var line_height := float(_measurement_label.get_line_height())
+	var line_spacing := 0.0
+	if _measurement_label.label_settings:
+		line_spacing = _measurement_label.label_settings.line_spacing
+	var measured_height := (
+		line_count * line_height + maxf(0.0, line_count - 1.0) * line_spacing
+	)
 	var available_height := _paper.size.y - _report_body.position.y - PAGE_BOTTOM_MARGIN
-	return measured_size.y <= available_height
+	return measured_height <= available_height
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey:
+	if event is InputEventKey and event.pressed and not event.echo:
 		var key_event := event as InputEventKey
-		if key_event.pressed and not key_event.echo:
-			if key_event.keycode == KEY_A or key_event.keycode == KEY_LEFT:
-				_change_page(-1)
-				get_viewport().set_input_as_handled()
-				return
-			if key_event.keycode == KEY_D or key_event.keycode == KEY_RIGHT:
-				_change_page(1)
-				get_viewport().set_input_as_handled()
-				return
+		if event.is_action_pressed("ui_left"):
+			_change_page(-1)
+			get_viewport().set_input_as_handled()
+			return
+		if event.is_action_pressed("ui_right"):
+			_change_page(1)
+			get_viewport().set_input_as_handled()
+			return
+		if key_event.keycode == KEY_BACKSPACE and _can_continue:
+			_change_page(-1)
+			get_viewport().set_input_as_handled()
+			return
+		if event.is_action_pressed("ui_accept") and not _can_continue:
+			_skip_printing()
+			get_viewport().set_input_as_handled()
+			return
 
 	if _can_continue:
 		return
@@ -206,15 +272,6 @@ func _input(event: InputEvent) -> void:
 			_is_mouse_held = mouse_event.pressed
 			get_viewport().set_input_as_handled()
 			return
-
-	var should_block := false
-	if event is InputEventKey:
-		var key_event := event as InputEventKey
-		should_block = key_event.pressed and not key_event.echo and (
-			key_event.keycode == KEY_ENTER or key_event.keycode == KEY_KP_ENTER
-		)
-	if should_block:
-		get_viewport().set_input_as_handled()
 
 
 func _on_printing_complete() -> void:
@@ -343,5 +400,9 @@ func _finish_paper_presentation() -> void:
 	_active_tween = null
 	_can_continue = true
 	_reset_skip_state()
+	_continue_button.disabled = false
+	_update_page_controls()
+	_continue_button.grab_focus()
+	InputGuide.enter_printer()
 	var prompt_tween := create_tween()
 	prompt_tween.tween_property(_continue_button, "modulate:a", 1.0, 0.25)

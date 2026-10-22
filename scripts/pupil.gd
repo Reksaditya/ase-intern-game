@@ -20,6 +20,8 @@ var prolonged_light_exposure := 0.0
 var sclera_redness := 0.0
 var pupil_behaviours: Dictionary = {}
 var _light_reaction_emitted := false
+var _keyboard_light_active := false
+var _keyboard_light_position := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -35,6 +37,15 @@ func _ready() -> void:
 	beam_rect.material = beam_material
 
 	%CloseButton.pressed.connect(func(): close_requested.emit())
+	reset_keyboard_light()
+
+
+func reset_keyboard_light() -> void:
+	_keyboard_light_active = false
+	var eye_size := eye_rect.size
+	if eye_size.x <= 0.0 or eye_size.y <= 0.0:
+		eye_size = Vector2(700.0, 400.0)
+	_keyboard_light_position = eye_size * Vector2(0.18, 0.5)
 
 
 func set_character_data(character_data: Dictionary) -> void:
@@ -47,15 +58,47 @@ func set_character_data(character_data: Dictionary) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if is_visible_in_tree() and event.is_action_pressed("ui_cancel"):
+	if not is_visible_in_tree():
+		return
+	if event.is_action_pressed("ui_cancel"):
 		close_requested.emit()
 		get_viewport().set_input_as_handled()
+		return
+	if event is InputEventMouseMotion:
+		_keyboard_light_active = false
+		return
+	if event is InputEventKey and event.pressed:
+		var direction := Vector2.ZERO
+		if event.is_action_pressed("ui_left"):
+			direction.x -= 1.0
+		elif event.is_action_pressed("ui_right"):
+			direction.x += 1.0
+		elif event.is_action_pressed("ui_up"):
+			direction.y -= 1.0
+		elif event.is_action_pressed("ui_down"):
+			direction.y += 1.0
+		if direction != Vector2.ZERO:
+			if not _keyboard_light_active:
+				_keyboard_light_active = true
+				if _keyboard_light_position == Vector2.ZERO:
+					_keyboard_light_position = eye_rect.size * Vector2(0.18, 0.5)
+			_keyboard_light_position = (
+				_keyboard_light_position + direction * 14.0
+			).clamp(Vector2.ZERO, eye_rect.size)
+			get_viewport().set_input_as_handled()
 
 
 func _process(delta: float) -> void:
 	if eye_rect.size.x <= 0.0 or eye_rect.size.y <= 0.0:
 		return
-	var mouse_local := eye_rect.get_local_mouse_position()
+	if _keyboard_light_active:
+		var direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+		if direction != Vector2.ZERO:
+			_keyboard_light_position = (
+				_keyboard_light_position + direction * 420.0 * delta
+			).clamp(Vector2.ZERO, eye_rect.size)
+
+	var mouse_local := _light_local_position()
 	var eye_center := eye_rect.size * 0.5
 	var viewport_scale := get_viewport_rect().size.x / 1152.0
 	var beam_radius := float(pupil_behaviours.get("beam_radius_px", 200.0)) * viewport_scale
@@ -113,13 +156,19 @@ func _process(delta: float) -> void:
 
 	var beam_diameter := beam_radius * 2.4
 	beam_rect.size = Vector2.ONE * beam_diameter
-	beam_rect.position = eye_stage.get_local_mouse_position() - beam_rect.size * 0.5
+	beam_rect.position = mouse_local - beam_rect.size * 0.5
 	beam_material.set_shader_parameter("core_brightness", light_intensity)
 	if light_response_enabled:
 		_update_sclera_redness(delta, direct_lux)
 	else:
 		prolonged_light_exposure = 0.0
 		sclera_redness = 0.0
+
+
+func _light_local_position() -> Vector2:
+	if _keyboard_light_active:
+		return _keyboard_light_position.clamp(Vector2.ZERO, eye_rect.size)
+	return eye_rect.get_local_mouse_position()
 
 
 func _update_blink(delta: float) -> float:

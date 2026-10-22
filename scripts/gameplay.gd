@@ -7,6 +7,7 @@ const MINIMUM_ANSWERS_BEFORE_SCAN := 2
 const TYPE_SPEED := 0.025
 const MAX_BLOCK_TIME := 7.0
 const LINE_PAUSE := 0.7
+const DIALOGUE_SCROLL_STEP := 56.0
 const PLAYER_NAME := "KAMU"
 const CHARACTER_DATA_PATH := "res://data/d1p1.json"
 const CHARACTER_HEIGHT := 640.0
@@ -47,7 +48,22 @@ const EMPTY_CHARACTER_EXIT_TINT := Color(0.1, 0.1, 0.14, 1.0)
 @onready var id_card_image: TextureRect = $HUD/DesignCanvas/IDCardOverlay/CardImage
 @onready var id_card_close_button: Button = $HUD/DesignCanvas/IDCardOverlay/CloseButton
 @onready var id_card_button: TextureButton = $Sprite2D/idcard
+@onready var intlog_button: TextureButton = $Sprite2D/intlog
+@onready var pause_button: Button = $HUD/DesignCanvas/PauseButton
 @onready var pause_overlay: ColorRect = $HUD/DesignCanvas/PauseOverlay
+@onready var pupil_close_button: Button = $HUD/DesignCanvas/Pupil/Layout/Header/CloseButton
+@onready var heartbeat_close_button: Button = (
+	$HUD/DesignCanvas/HeartbeatTemperature/Layout/Header/CloseButton
+)
+@onready var pause_resume_button: Button = (
+	$HUD/DesignCanvas/PauseOverlay/Center/Content/ResumeButton
+)
+@onready var pause_how_to_play_button: Button = (
+	$HUD/DesignCanvas/PauseOverlay/Center/Content/HowToPlayButton
+)
+@onready var pause_main_menu_button: Button = (
+	$HUD/DesignCanvas/PauseOverlay/Center/Content/MainMenuButton
+)
 
 var _current_character: Dictionary = {}
 var _asked_question_ids: Dictionary = {}
@@ -67,20 +83,26 @@ var _character_move_tween: Tween
 var _character_bob_tween: Tween
 var _character_settle_tween: Tween
 var _character_half_width := 150.0
+var _focus_return_target: Control
+var _dialogue_scroll_mode := false
 var character_data_path := CHARACTER_DATA_PATH
 
 
 func _ready() -> void:
 	television.connect("question_asked", _on_question_asked)
 	television.connect("id_card_requested", _open_id_card)
+	television.connect("log_panel_opened", _on_log_panel_opened)
+	television.connect("log_panel_closed", _on_log_panel_closed)
 	pupil_button.pressed.connect(_open_pupil)
 	pupil.connect("close_requested", _close_pupil)
 	pupil.connect("tool_reaction_requested", _show_tool_reactions)
 	heartbeat_temperature_button.pressed.connect(_open_heartbeat_temperature)
 	heartbeat_temperature.connect("close_requested", _close_heartbeat_temperature)
-	transcript_click_area.pressed.connect(_open_transcript)
 	close_transcript_button.pressed.connect(_close_transcript)
 	id_card_close_button.pressed.connect(_close_id_card)
+	dialogue_output.focus_entered.connect(_on_dialogue_focus_entered)
+	dialogue_output.focus_exited.connect(_on_dialogue_focus_exited)
+	pause_button.pressed.connect(_open_pause_menu.bind(true))
 	pause_overlay.connect("resume_requested", _resume_from_pause)
 	pause_overlay.connect("main_menu_requested", _return_to_main_menu)
 	accept_button.disabled = true
@@ -95,6 +117,9 @@ func _ready() -> void:
 	decline_button.disabled = false
 	_show_pre_interaction()
 	_refresh_diagnostic_access()
+	_update_focus_ring()
+	intlog_button.grab_focus()
+	InputGuide.enter_gameplay()
 
 
 func _input(event: InputEvent) -> void:
@@ -104,19 +129,66 @@ func _input(event: InputEvent) -> void:
 		return
 	if id_card_overlay.visible:
 		return
-	if transcript_overlay.visible and event.is_action_pressed("ui_cancel"):
-		_close_transcript()
-		get_viewport().set_input_as_handled()
-		return
 	if transcript_overlay.visible:
+		if event.is_action_pressed("ui_cancel"):
+			_close_transcript()
+			get_viewport().set_input_as_handled()
+			return
+		if event is InputEventKey and event.pressed and not event.echo:
+			var scroll_direction := 0
+			if event.is_action_pressed("ui_up"):
+				scroll_direction = -1
+			elif event.is_action_pressed("ui_down"):
+				scroll_direction = 1
+			if scroll_direction != 0:
+				transcript_scroll.scroll_vertical += scroll_direction * 60
+				get_viewport().set_input_as_handled()
+				return
 		return
 	if event.is_action_pressed("ui_cancel"):
 		if pupil.visible or heartbeat_temperature.visible:
 			return
-		pause_overlay.call("open_menu")
-		get_tree().paused = true
+		if television.log_open:
+			television.call("close_log_panel")
+			get_viewport().set_input_as_handled()
+			return
+		_open_pause_menu()
 		get_viewport().set_input_as_handled()
 		return
+	if dialogue_output.has_focus() and event is InputEventKey and event.pressed and not event.echo:
+		if event.is_action_pressed("ui_accept"):
+			if _dialogue_scroll_mode:
+				_open_transcript()
+			else:
+				_set_dialogue_scroll_mode(true)
+			get_viewport().set_input_as_handled()
+			return
+		if _dialogue_scroll_mode:
+			if event.is_action_pressed("ui_up"):
+				if _scroll_dialogue(-1.0):
+					get_viewport().set_input_as_handled()
+					return
+				_focus_adjacent_from_dialogue(false)
+				get_viewport().set_input_as_handled()
+				return
+			elif event.is_action_pressed("ui_down"):
+				if _scroll_dialogue(1.0):
+					get_viewport().set_input_as_handled()
+					return
+				_focus_adjacent_from_dialogue(true)
+				get_viewport().set_input_as_handled()
+				return
+		else:
+			# Before scroll mode is activated, Up/Down navigate the focus ring
+			# instead of being consumed by the RichTextLabel's own scrolling.
+			if event.is_action_pressed("ui_up"):
+				_focus_adjacent_from_dialogue(false)
+				get_viewport().set_input_as_handled()
+				return
+			elif event.is_action_pressed("ui_down"):
+				_focus_adjacent_from_dialogue(true)
+				get_viewport().set_input_as_handled()
+				return
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
 		var dialogue_scrollbar := dialogue_output.get_v_scroll_bar()
@@ -154,32 +226,41 @@ func get_case_tracking_data() -> Dictionary:
 func _open_pupil() -> void:
 	if not _diagnostics_unlocked():
 		return
+	_remember_focus(pupil_button)
 	heartbeat_temperature.hide()
 	heartbeat_temperature.set_process(false)
 	pupil.show()
 	pupil.set_process(true)
+	pupil.call("reset_keyboard_light")
+	_update_focus_ring()
+	pupil_close_button.grab_focus()
 
 
 func _close_pupil() -> void:
 	pupil.hide()
 	pupil.set_process(false)
-	pupil_button.grab_focus()
+	_update_focus_ring()
+	_restore_focus(pupil_button)
 
 
 func _open_heartbeat_temperature() -> void:
 	if not _diagnostics_unlocked():
 		return
+	_remember_focus(heartbeat_temperature_button)
 	pupil.hide()
 	pupil.set_process(false)
 	heartbeat_temperature.show()
 	heartbeat_temperature.set_process(true)
 	_show_tool_reactions("biometric_monitor")
+	_update_focus_ring()
+	heartbeat_close_button.grab_focus()
 
 
 func _close_heartbeat_temperature() -> void:
 	heartbeat_temperature.hide()
 	heartbeat_temperature.set_process(false)
-	heartbeat_temperature_button.grab_focus()
+	_update_focus_ring()
+	_restore_focus(heartbeat_temperature_button)
 
 
 func _on_question_asked(question_key: String) -> void:
@@ -292,6 +373,8 @@ func _clear_recent_dialogue() -> void:
 	_last_recent_speaker = ""
 	dialogue_output.clear()
 	dialogue_output.visible_characters = 0
+	dialogue_output.scroll_following = true
+	dialogue_output.scroll_following_visible_characters = true
 
 
 func _queue_recent_event(event: Dictionary) -> void:
@@ -513,7 +596,51 @@ func _reveal_recent_event(event: Dictionary, generation: int) -> void:
 	dialogue_output.visible_characters = final_character
 
 
+func _scroll_dialogue(direction: float) -> bool:
+	var scroll_bar := dialogue_output.get_v_scroll_bar()
+	var maximum_scroll := maxf(0.0, scroll_bar.max_value - scroll_bar.page)
+	var target := clampf(scroll_bar.value + direction * DIALOGUE_SCROLL_STEP, 0.0, maximum_scroll)
+	if is_equal_approx(target, scroll_bar.value):
+		return false
+	scroll_bar.value = target
+	# Stop auto-following while reading history; resume it at the bottom once
+	# the current reveal has finished.
+	var follow_bottom := (
+		target >= maximum_scroll - 0.5
+		and not _recent_event_is_revealing
+		and _pending_recent_events.is_empty()
+	)
+	dialogue_output.scroll_following = follow_bottom
+	dialogue_output.scroll_following_visible_characters = follow_bottom
+	return true
+
+
+func _on_dialogue_focus_entered() -> void:
+	_set_dialogue_scroll_mode(false)
+
+
+func _on_dialogue_focus_exited() -> void:
+	_set_dialogue_scroll_mode(false)
+
+
+func _set_dialogue_scroll_mode(enabled: bool) -> void:
+	if _dialogue_scroll_mode == enabled:
+		return
+	_dialogue_scroll_mode = enabled
+
+
+func _focus_adjacent_from_dialogue(forward: bool) -> void:
+	var target := (
+		dialogue_output.find_next_valid_focus()
+		if forward
+		else dialogue_output.find_prev_valid_focus()
+	)
+	if is_instance_valid(target):
+		target.grab_focus()
+
+
 func _open_transcript() -> void:
+	_remember_focus(dialogue_output)
 	transcript_output.clear()
 	if _dialogue_history.is_empty():
 		transcript_output.add_text("No dialogue yet.")
@@ -522,15 +649,18 @@ func _open_transcript() -> void:
 			_append_formatted_event(transcript_output, event)
 	transcript_scroll.set_deferred("scroll_vertical", 0)
 	transcript_overlay.show()
+	_update_focus_ring()
 	close_transcript_button.grab_focus()
 
 
 func _close_transcript() -> void:
 	transcript_overlay.hide()
-	transcript_click_area.grab_focus()
+	_update_focus_ring()
+	_restore_focus(dialogue_output)
 
 
 func _open_id_card() -> void:
+	_remember_focus(id_card_button)
 	var image_path := str(_current_character.get("id_card_image", ""))
 	if image_path.is_empty():
 		var character_id := str(_current_character.get("character_id", "unknown"))
@@ -547,21 +677,38 @@ func _open_id_card() -> void:
 
 	id_card_image.texture = card_texture
 	id_card_overlay.show()
+	_update_focus_ring()
 	id_card_close_button.grab_focus()
 
 
 func _close_id_card() -> void:
 	id_card_overlay.hide()
-	id_card_button.grab_focus()
+	_update_focus_ring()
+	_restore_focus(id_card_button)
+
+
+func _open_pause_menu(from_button: bool = false) -> void:
+	if pause_overlay.visible:
+		return
+	_remember_focus(pause_button if from_button else null)
+	InputGuide.hide_tip()
+	pause_overlay.call("open_menu")
+	get_tree().paused = true
+	_update_focus_ring()
+	pause_resume_button.grab_focus()
 
 
 func _resume_from_pause() -> void:
 	pause_overlay.hide()
 	get_tree().paused = false
+	_update_focus_ring()
+	_restore_focus(pause_button)
+	InputGuide.refresh_active_tip()
 
 
 func _return_to_main_menu() -> void:
 	get_tree().paused = false
+	InputGuide.leave_context()
 	return_to_main_menu.emit()
 
 
@@ -603,6 +750,109 @@ func _refresh_diagnostic_access() -> void:
 		label.add_theme_color_override("font_color", action_color)
 	for label in [pupil_status_dot, heartbeat_status_dot]:
 		label.add_theme_color_override("font_color", dot_color)
+	_update_focus_ring()
+
+
+func _on_log_panel_opened() -> void:
+	_remember_focus(intlog_button)
+	_update_focus_ring()
+
+
+func _on_log_panel_closed() -> void:
+	_update_focus_ring()
+	_restore_focus(intlog_button)
+
+
+func _default_focus_controls() -> Array:
+	var controls: Array = [
+		intlog_button,
+		id_card_button,
+		dialogue_output,
+		accept_button,
+		decline_button,
+	]
+	if not pupil_button.disabled:
+		controls.append(pupil_button)
+	if not heartbeat_temperature_button.disabled:
+		controls.append(heartbeat_temperature_button)
+	controls.append(pause_button)
+	return controls
+
+
+func _update_focus_ring() -> void:
+	if pause_overlay.visible:
+		_set_focus_ring([pause_resume_button, pause_how_to_play_button, pause_main_menu_button])
+		return
+	if pupil.visible:
+		_set_focus_ring([pupil_close_button])
+		return
+	if heartbeat_temperature.visible:
+		_set_focus_ring([heartbeat_close_button])
+		return
+	if id_card_overlay.visible:
+		_set_focus_ring([id_card_close_button])
+		return
+	if transcript_overlay.visible:
+		_set_focus_ring([close_transcript_button])
+		return
+	if bool(television.get("log_open")):
+		_set_focus_ring(television.call("get_log_focus_controls"))
+		return
+	_set_focus_ring(_default_focus_controls())
+
+
+func _set_focus_ring(controls: Array) -> void:
+	var ring: Array[Control] = []
+	for control in controls:
+		if control is Control and is_instance_valid(control):
+			var focus_control := control as Control
+			focus_control.focus_mode = Control.FOCUS_ALL
+			ring.append(focus_control)
+	if ring.is_empty():
+		return
+
+	for index in ring.size():
+		var control := ring[index]
+		var previous := ring[(index - 1 + ring.size()) % ring.size()]
+		var next := ring[(index + 1) % ring.size()]
+		var previous_path := control.get_path_to(previous)
+		var next_path := control.get_path_to(next)
+		control.focus_neighbor_top = previous_path
+		control.focus_neighbor_left = previous_path
+		control.focus_neighbor_bottom = next_path
+		control.focus_neighbor_right = next_path
+		control.focus_next = next_path
+		control.focus_previous = previous_path
+
+
+func _remember_focus(preferred: Control = null) -> void:
+	var focus_owner := get_viewport().gui_get_focus_owner()
+	if is_instance_valid(preferred):
+		_focus_return_target = preferred
+	elif is_instance_valid(focus_owner):
+		_focus_return_target = focus_owner
+
+
+func _restore_focus(fallback: Control) -> void:
+	var target := _focus_return_target
+	_focus_return_target = null
+	if _can_take_focus(target):
+		target.grab_focus()
+		return
+	if _can_take_focus(fallback):
+		fallback.grab_focus()
+
+
+func _can_take_focus(control: Control) -> bool:
+	if control == null or not is_instance_valid(control):
+		return false
+	if not control.is_inside_tree() or not control.is_visible_in_tree():
+		return false
+	if control.focus_mode == Control.FOCUS_NONE:
+		return false
+	if control is BaseButton and (control as BaseButton).disabled:
+		return false
+	return true
 
 
 func _load_character_data(path: String) -> Dictionary:
