@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dhb5schsxpdet" path="res://scripts/prologue.gd" id="1_prolog"]
 [ext_resource type="FontFile" uid="uid://bxdeha88xo6ug" path="res://assets/fonts/CourierPrime-Regular.ttf" id="2_reg"]
-[ext_resource type="AudioStream" uid="uid://b3xmuukdibb6t" path="res://assets/bgm/click_everywhere.mp3" id="3_8byya"]
+[ext_resource type="AudioStream" uid="uid://l1ppv3l0tvkl" path="res://assets/bgm/clickeveywhere.mp3" id="3_8byya"]
 
 [node name="Prologue" type="Control" unique_id=1346689054]
 layout_mode = 3
@@ -91,3 +91,4 @@ flat = true
 
 [node name="ClickSound" type="AudioStreamPlayer" parent="." unique_id=1392816098]
 stream = ExtResource("3_8byya")
+volume_db = -3.0

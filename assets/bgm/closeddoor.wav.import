@@ -2,13 +2,13 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://db4o6rd5ogud3"
-path="res://.godot/imported/bgm_menu.wav-297b56c2dce63265fc1c46c25e7a3523.sample"
+uid="uid://drfixn5af7hij"
+path="res://.godot/imported/closeddoor.wav-e75a6af3a59e9382973613c89e3857e2.sample"
 
 [deps]
 
-source_file="res://assets/bgm/bgm_menu.wav"
-dest_files=["res://.godot/imported/bgm_menu.wav-297b56c2dce63265fc1c46c25e7a3523.sample"]
+source_file="res://assets/bgm/closeddoor.wav"
+dest_files=["res://.godot/imported/closeddoor.wav-e75a6af3a59e9382973613c89e3857e2.sample"]
 
 [params]
 

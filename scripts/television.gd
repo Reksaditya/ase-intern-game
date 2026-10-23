@@ -3,6 +3,8 @@ extends Sprite2D
 signal category_selected(category: String)
 signal id_card_requested
 
+const BUTTON_SFX: AudioStream = preload("res://assets/bgm/button.mp3")
+
 @onready var intlog: TextureButton = $intlog
 @onready var idcard: TextureButton = $idcard
 @onready var log_title: Label = $LogTitle
@@ -25,6 +27,7 @@ signal id_card_requested
 var button_tweens: Dictionary = {}
 var panel_tween: Tween
 var log_open: bool = false
+var _button_sfx_player: AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -40,7 +43,10 @@ func _ready() -> void:
 	_connect_once(intlog.pressed, _on_intlog_pressed)
 	_connect_once(idcard.pressed, _on_idcard_pressed)
 
-	_connect_once(back_button.pressed, close_log_panel)
+	_connect_once(back_button.pressed, func():
+		_play_button_sfx()
+		close_log_panel()
+	)
 
 	back_button.visible = false
 	back_button.modulate.a = 0.0
@@ -54,6 +60,11 @@ func _ready() -> void:
 	log_scroll.modulate.a = 0.0
 	log_scroll.scale = Vector2(0.9, 0.9)
 
+	_button_sfx_player = AudioStreamPlayer.new()
+	_button_sfx_player.stream = BUTTON_SFX
+	_button_sfx_player.volume_db = -3.0
+	add_child(_button_sfx_player)
+
 	call_deferred("_update_scroll_height")
 
 
@@ -62,11 +73,18 @@ func _connect_once(sig: Signal, callable: Callable) -> void:
 		sig.connect(callable)
 
 
+func _play_button_sfx() -> void:
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
+
+
 func _on_category_pressed(category: String) -> void:
+	_play_button_sfx()
 	category_selected.emit(category)
 
 
 func _on_idcard_pressed() -> void:
+	_play_button_sfx()
 	id_card_requested.emit()
 
 
@@ -88,6 +106,7 @@ func _update_scroll_height() -> void:
 
 
 func _on_intlog_pressed() -> void:
+	_play_button_sfx()
 	if log_open:
 		close_log_panel()
 	else:

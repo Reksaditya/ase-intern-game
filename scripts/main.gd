@@ -1,18 +1,20 @@
 extends Control
 
 const TOTAL_DAYS := 5
+const TOTAL_HUMANS := 6
 const INTERLUDE_SCENE: PackedScene = preload("res://scenes/interlude.tscn")
 const PROLOGUE_SCENE: PackedScene = preload("res://scenes/prologue.tscn")
 const DAY_INTRO_SCENE: PackedScene = preload("res://scenes/day_intro.tscn")
 const MORNING_REPORT_SCENE: PackedScene = preload("res://scenes/morning_report.tscn")
 const TEMPO_GAMEPLAY_SCENE: PackedScene = preload("res://scenes/gameplay.tscn")
-const NIGHT_EVALUATION_SCENE: PackedScene = preload("res://scenes/night_evaluation.tscn")
+const NIGHT_EVALUATION_SCENE: PackedScene = preload("res://scenes/night_eval.tscn")
 const FINAL_EVALUATION_SCENE: PackedScene = preload("res://scenes/final_evaluation.tscn")
 const ENDING_SCENE: PackedScene = preload("res://scenes/ending.tscn")
 const SAVE_SLOT_COUNT := 4
 const SAVE_PATH_FORMAT := "user://save_slot_%d.json"
 const REPORT_TEXT_PATH := "res://data/report_text.json"
 const MORNING_REPORT_PATH_FORMAT := "res://data/morning_report%d.json"
+const NIGHT_EVALUATION_PATH_FORMAT := "res://data/night_eval%d.json"
 const ENDINGS_PATH := "res://data/endings.json"
 ## Ambang pemilihan ending (persen) sesuai dokumen "Ending final".
 const ENDING_EARLY_TRIGGER_VALUE := 100
@@ -21,10 +23,20 @@ const ENDING_SANCTUARY_MIN_SAVED := 5
 const ENDING_FORTRESS_A_MAX_SUSPICION := 20
 ## Pengurang suspicion (persen) bila satu hari selesai tanpa kenaikan suspicion.
 const PERFECT_DAY_SUSPICION_REDUCTION := 10
+const MENU_BGM: AudioStream = preload("res://assets/bgm/menu.wav")
+const DAY1_TO_3_BGM: AudioStream = preload("res://assets/bgm/day1to3.wav")
+const DAY4_TO_5_BGM: AudioStream = preload("res://assets/bgm/day4to5.wav")
+const TRUE_ENDING_BGM: AudioStream = preload("res://assets/bgm/trueending.wav")
+const MILITARY_ENDING_BGM: AudioStream = preload("res://assets/bgm/military.wav")
+const BAD_ENDING_1_BGM: AudioStream = preload("res://assets/bgm/badending.wav")
+const BAD_ENDING_2_BGM: AudioStream = preload("res://assets/bgm/badending2.wav")
+const REPORT_SFX: AudioStream = preload("res://assets/bgm/report.wav")
+const BUTTON_SFX: AudioStream = preload("res://assets/bgm/button.mp3")
 
 var _timeline: Array[Dictionary] = []
 var _report_text: Dictionary = {}
 var _morning_reports: Array[Dictionary] = []
+var _night_evaluation_reports: Array[Dictionary] = []
 var _endings: Dictionary = {}
 var _timeline_index := 0
 var _active_scene: Node
@@ -39,18 +51,23 @@ var _save_slots: Array[Dictionary] = []
 @onready var _brightness_modulate := $BrightnessModulate
 @onready var _save_content := $SaveMenu/Center/Content
 @onready var _brightness_slider := $SettingsMenu/Center/Content/BrightnessRow/BrightnessSlider
+@onready var _bgm_player: AudioStreamPlayer = $MenuBGM
+var _report_sfx_player: AudioStreamPlayer
+var _button_sfx_player: AudioStreamPlayer
 
 func _ready() -> void:
 	_timeline = _build_timeline()
 	_report_text = _load_json_dictionary(REPORT_TEXT_PATH)
 	for day in range(1, TOTAL_DAYS + 1):
 		_morning_reports.append(_load_json_dictionary(MORNING_REPORT_PATH_FORMAT % day))
+	for day in range(1, TOTAL_DAYS):
+		_night_evaluation_reports.append(_load_json_dictionary(NIGHT_EVALUATION_PATH_FORMAT % day))
 	_endings = _load_json_dictionary(ENDINGS_PATH)
 	_load_save_slots()
 	$MainMenu/Buttons/PlayGameButton.pressed.connect(_open_save_menu)
 	$MainMenu/Buttons/SettingsButton.pressed.connect(_open_settings_menu)
 	$MainMenu/Buttons/QuitButton.pressed.connect(_quit_game)
-	$SettingsMenu/Center/Content/BackButton.pressed.connect(_show_main_menu)
+	$SettingsMenu/Center/Content/BackButton.pressed.connect(_on_back_to_main_menu_pressed)
 	_brightness_slider.value_changed.connect(_on_brightness_changed)
 	$SaveMenu/Center/Content/SaveSlot1.pressed.connect(_on_save_slot_pressed.bind(0))
 	$SaveMenu/Center/Content/SaveSlot2.pressed.connect(_on_save_slot_pressed.bind(1))
@@ -59,16 +76,31 @@ func _ready() -> void:
 	$SaveMenu/Center/Content/Actions/NewButton.pressed.connect(_create_new_save)
 	$SaveMenu/Center/Content/Actions/LoadButton.pressed.connect(_load_selected_save)
 	$SaveMenu/Center/Content/Actions/DeleteButton.pressed.connect(_delete_selected_save)
+
+	_report_sfx_player = AudioStreamPlayer.new()
+	_report_sfx_player.stream = REPORT_SFX
+	_report_sfx_player.volume_db = -2.0
+	add_child(_report_sfx_player)
+
+	_button_sfx_player = AudioStreamPlayer.new()
+	_button_sfx_player.stream = BUTTON_SFX
+	_button_sfx_player.volume_db = -3.0
+	add_child(_button_sfx_player)
+
+	_bgm_player.finished.connect(_on_bgm_finished)
+	_play_bgm(MENU_BGM)
 	_refresh_save_menu()
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _game_started:
 		if _settings_menu.visible and event.is_action_pressed("ui_cancel"):
+			_play_button_sfx()
 			_show_main_menu()
 			get_viewport().set_input_as_handled()
 			return
 		if _save_menu.visible and event.is_action_pressed("ui_cancel"):
+			_play_button_sfx()
 			_show_main_menu()
 			get_viewport().set_input_as_handled()
 		return
@@ -88,7 +120,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+func _play_button_sfx() -> void:
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
+
+
 func _open_save_menu() -> void:
+	_play_button_sfx()
 	_selected_save_slot = -1
 	_main_menu.hide()
 	_settings_menu.hide()
@@ -97,16 +135,88 @@ func _open_save_menu() -> void:
 
 
 func _open_settings_menu() -> void:
+	_play_button_sfx()
 	_main_menu.hide()
 	_save_menu.hide()
 	_settings_menu.show()
 	_brightness_slider.grab_focus()
 
 
+func _on_back_to_main_menu_pressed() -> void:
+	_play_button_sfx()
+	_show_main_menu()
+
+
 func _show_main_menu() -> void:
 	_save_menu.hide()
 	_settings_menu.hide()
 	_main_menu.show()
+	_play_bgm(MENU_BGM)
+
+
+func _bgm_volume_for(stream: AudioStream) -> float:
+	if stream == MENU_BGM or stream == DAY1_TO_3_BGM:
+		return -6.0
+	if stream == DAY4_TO_5_BGM:
+		return -5.0
+	if stream == TRUE_ENDING_BGM:
+		return -2.0
+	if stream == MILITARY_ENDING_BGM:
+		return -4.0
+	if stream == BAD_ENDING_1_BGM:
+		return -2.5
+	if stream == BAD_ENDING_2_BGM:
+		return -8.5
+	return -6.0
+
+
+func _play_bgm(stream: AudioStream) -> void:
+	if not is_instance_valid(_bgm_player):
+		return
+	if stream == null:
+		if _bgm_player.playing:
+			_bgm_player.stop()
+		_bgm_player.stream = null
+		return
+	_bgm_player.volume_db = _bgm_volume_for(stream)
+	if _bgm_player.stream != stream:
+		_bgm_player.stream = stream
+		_bgm_player.play()
+	elif not _bgm_player.playing:
+		_bgm_player.play()
+
+
+func _on_bgm_finished() -> void:
+	if is_instance_valid(_bgm_player) and _bgm_player.stream != null:
+		_bgm_player.play()
+
+
+func _ending_bgm_for(ending_key: String) -> AudioStream:
+	match ending_key:
+		"humanity_sanctuary":
+			return TRUE_ENDING_BGM
+		"cold_fortress_a", "cold_fortress_b":
+			return MILITARY_ENDING_BGM
+		"silent_outbreak":
+			return BAD_ENDING_1_BGM
+		"traitor_fate":
+			return BAD_ENDING_2_BGM
+	return MENU_BGM
+
+
+func _update_bgm_for_step(step: Dictionary) -> void:
+	var scene: PackedScene = step.get("scene")
+	if scene == INTERLUDE_SCENE:
+		_play_bgm(MENU_BGM)
+	elif scene == PROLOGUE_SCENE:
+		_play_bgm(null)
+	elif scene == DAY_INTRO_SCENE:
+		_play_bgm(DAY1_TO_3_BGM)
+	elif scene == ENDING_SCENE:
+		_play_bgm(_ending_bgm_for(_ending_key_for(_active_save_data())))
+	elif step.has("day"):
+		var day := int(step["day"])
+		_play_bgm(DAY1_TO_3_BGM if day <= 3 else DAY4_TO_5_BGM)
 
 
 func _on_brightness_changed(value: float) -> void:
@@ -114,11 +224,13 @@ func _on_brightness_changed(value: float) -> void:
 
 
 func _on_save_slot_pressed(slot_index: int) -> void:
+	_play_button_sfx()
 	_selected_save_slot = slot_index
 	_refresh_save_menu()
 
 
 func _create_new_save() -> void:
+	_play_button_sfx()
 	if _game_started or _selected_save_slot < 0:
 		return
 	_active_save_slot = _selected_save_slot
@@ -127,6 +239,7 @@ func _create_new_save() -> void:
 
 
 func _load_selected_save() -> void:
+	_play_button_sfx()
 	if _game_started or _selected_save_slot < 0:
 		return
 	var save_data: Dictionary = _save_slots[_selected_save_slot]
@@ -137,6 +250,7 @@ func _load_selected_save() -> void:
 
 
 func _delete_selected_save() -> void:
+	_play_button_sfx()
 	if _game_started or _selected_save_slot < 0:
 		return
 	if _save_slots[_selected_save_slot].is_empty():
@@ -157,6 +271,7 @@ func _start_game_at_timeline_index(start_index: int) -> void:
 
 
 func _quit_game() -> void:
+	_play_button_sfx()
 	get_tree().quit()
 
 
@@ -174,13 +289,18 @@ func _build_timeline() -> Array[Dictionary]:
 			"report": "morning_report",
 		})
 		steps.append({"scene": TEMPO_GAMEPLAY_SCENE, "title": "Afternoon", "day": day})
-		steps.append({
-			"scene": NIGHT_EVALUATION_SCENE,
-			"day": day,
-			"report": "night_evaluation",
-		})
+		if day < TOTAL_DAYS:
+			steps.append({
+				"scene": NIGHT_EVALUATION_SCENE,
+				"day": day,
+				"report": "night_eval",
+			})
 
-	steps.append({"scene": FINAL_EVALUATION_SCENE, "title": "Final Evaluation"})
+	steps.append({
+		"scene": FINAL_EVALUATION_SCENE,
+		"title": "Final Evaluation",
+		"report": "final_evaluation",
+	})
 	steps.append({"scene": ENDING_SCENE, "title": "Ending"})
 	return steps
 
@@ -200,7 +320,7 @@ func _advance_timeline() -> void:
 	# sisa hari dilewati, langsung ke Evaluasi Akhir lalu ending.
 	var current_step: Dictionary = _timeline[_timeline_index]
 	if (
-		str(current_step.get("report", "")) == "night_evaluation"
+		str(current_step.get("report", "")) == "night_eval"
 		and _early_ending_triggered(_active_save_data())
 	):
 		_timeline_index = _timeline.size() - 2
@@ -257,6 +377,36 @@ func _apply_report_text(scene: Node, report_key: String, day: int) -> void:
 			return
 		var report := _format_report(
 			_morning_reports[day - 1], _morning_report_values(_active_save_data())
+		)
+		scene.call("set_report_text", report)
+		return
+
+	if report_key == "night_eval":
+		if not scene.has_method("set_report_text"):
+			push_error("The night evaluation scene cannot display report text.")
+			return
+		if day < 1 or day > _night_evaluation_reports.size():
+			push_error("Night evaluation data is missing for day %d." % day)
+			return
+		var report_template := _night_evaluation_reports[day - 1]
+		var report := _format_report(
+			report_template,
+			_night_evaluation_values(_active_save_data(), day, report_template)
+		)
+		scene.call("set_report_text", report)
+		return
+
+	if report_key == "final_evaluation":
+		if not scene.has_method("set_report_text"):
+			push_error("The final evaluation scene cannot display report text.")
+			return
+		var final_eval_template: Variant = _endings.get("final_evaluation", {})
+		if not final_eval_template is Dictionary or (final_eval_template as Dictionary).is_empty():
+			push_error("Final evaluation data is missing in %s." % ENDINGS_PATH)
+			return
+		var report := _format_report(
+			final_eval_template as Dictionary,
+			_final_evaluation_values(_active_save_data())
 		)
 		scene.call("set_report_text", report)
 		return
@@ -322,6 +472,45 @@ func _morning_report_values(save_data: Dictionary) -> Dictionary:
 		"band_infiltrasi": _infiltration_band(int(save_data.get("infiltration", 0))),
 		"band_pelanggaran": violation_band,
 		"syarat": required_questions,
+	}
+
+
+func _night_evaluation_values(
+	save_data: Dictionary,
+	day: int,
+	report_template: Dictionary
+) -> Dictionary:
+	var daily_decisions: Dictionary = {}
+	var stored_daily_decisions: Variant = save_data.get("daily_decisions", {})
+	if stored_daily_decisions is Dictionary:
+		var stored_day_decisions: Variant = stored_daily_decisions.get(str(day), {})
+		if stored_day_decisions is Dictionary:
+			daily_decisions = stored_day_decisions
+	var infiltration := int(save_data.get("infiltration", 0))
+	var baris2 := str(report_template.get("baris2", ""))
+	if baris2.is_empty():
+		baris2 = str(
+			report_template.get(
+				"baris2_waspada"
+				if _infiltration_band(infiltration) != "Rendah"
+				else "baris2_rendah",
+				""
+			)
+		)
+	return {
+		"diterima": maxi(0, int(daily_decisions.get("accepted_count", 0))),
+		"ditolak": maxi(0, int(daily_decisions.get("declined_count", 0))),
+		"baris1": str(report_template.get("baris1", "")),
+		"baris2": baris2,
+	}
+
+
+func _final_evaluation_values(save_data: Dictionary) -> Dictionary:
+	return {
+		"infiltration": clampi(int(save_data.get("infiltration", 0)), 0, 100),
+		"violations": clampi(int(save_data.get("suspicion", 0)), 0, 100),
+		"saved": _humans_saved(save_data),
+		"human_total": TOTAL_HUMANS,
 	}
 
 
@@ -511,6 +700,7 @@ func _show_timeline_step() -> void:
 		_active_scene.queue_free()
 
 	var step: Dictionary = _timeline[_timeline_index]
+	_update_bgm_for_step(step)
 	var packed_scene: PackedScene = step["scene"]
 	_active_scene = packed_scene.instantiate()
 	if step.has("day") and "day" in _active_scene:
@@ -536,6 +726,8 @@ func _show_timeline_step() -> void:
 	var report_key := str(step.get("report", ""))
 	if not report_key.is_empty():
 		_apply_report_text(_active_scene, report_key, int(step.get("day", 1)))
+		if is_instance_valid(_report_sfx_player):
+			_report_sfx_player.play()
 
 	var continue_button := _active_scene.get_node_or_null("ContinueButton") as Button
 	if continue_button:

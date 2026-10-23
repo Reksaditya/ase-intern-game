@@ -54,11 +54,11 @@ func _unhandled_input(event: InputEvent) -> void:
 func _skip() -> void:
 	if _tween:
 		_tween.kill()
+	click_sound.play()
 	if _index >= PARAGRAPHS.size() - 1:
 		_finish()
 	else:
 		_show_paragraph(_index + 1)
-		click_sound.play()
 
 
 func _show_paragraph(index: int) -> void:

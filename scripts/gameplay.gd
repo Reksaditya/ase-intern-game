@@ -19,6 +19,11 @@ const NEXT_CHARACTER_DELAY := 0.8
 ## Data pemohon: res://data/d<hari>p<urutan>.json (d1p1.json, d1p2.json, ...).
 ## Pemohon dimuat berurutan sampai file berikutnya tidak ada.
 const CHARACTER_DATA_PATH_FORMAT := "res://data/d%dp%d.json"
+const LOCKED_SFX: AudioStream = preload("res://assets/bgm/locked.mp3")
+const BUTTON_SFX: AudioStream = preload("res://assets/bgm/button.mp3")
+const SENTER_SFX: AudioStream = preload("res://assets/bgm/senter.wav")
+const MONITOR_SFX: AudioStream = preload("res://assets/bgm/monitor.wav")
+const WORD_SFX: AudioStream = preload("res://assets/bgm/word.wav")
 
 ## Aturan per hari. Hari yang belum ditulis memakai aturan hari terakhir yang ada.
 ## scan_unlock_questions = jumlah pertanyaan berbeda sebelum alat pemindai terbuka.
@@ -77,6 +82,11 @@ var _last_recent_speaker := ""
 var _decision_outcome_started := false
 var _dialogue_scroll_target := 0.0
 var _dialogue_following := false
+var _locked_sfx_player: AudioStreamPlayer
+var _button_sfx_player: AudioStreamPlayer
+var _senter_sfx_player: AudioStreamPlayer
+var _monitor_sfx_player: AudioStreamPlayer
+var _word_sfx_player: AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -98,6 +108,7 @@ func _ready() -> void:
 	bunker.decision_made.connect(show_decision_outcome)
 	pupil.set_process(false)
 	heartbeat_temperature.set_process(false)
+	_setup_audio_players()
 
 	_apply_day_rules()
 	_data_day = day if FileAccess.file_exists(CHARACTER_DATA_PATH_FORMAT % [day, 1]) else 1
@@ -136,13 +147,21 @@ func _input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
-		if (
-			mouse_event.pressed
-			and mouse_event.button_index == MOUSE_BUTTON_LEFT
-			and transcript_click_area.get_global_rect().has_point(mouse_event.position)
-		):
-			_open_transcript()
-			get_viewport().set_input_as_handled()
+		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
+			if (
+				diagnostic_tools.visible
+				and (
+					(pupil_button.disabled and pupil_button.get_global_rect().has_point(mouse_event.position))
+					or (heartbeat_temperature_button.disabled and heartbeat_temperature_button.get_global_rect().has_point(mouse_event.position))
+				)
+			):
+				if is_instance_valid(_locked_sfx_player):
+					_locked_sfx_player.play()
+				get_viewport().set_input_as_handled()
+				return
+			if transcript_click_area.get_global_rect().has_point(mouse_event.position):
+				_open_transcript()
+				get_viewport().set_input_as_handled()
 
 
 # --- Alur shift --------------------------------------------------------------
@@ -216,6 +235,7 @@ func _reset_for_new_character(data: Dictionary) -> void:
 	pupil.set_process(false)
 	heartbeat_temperature.hide()
 	heartbeat_temperature.set_process(false)
+	_stop_tool_sfx()
 	pupil.call("set_character_data", _current_character)
 	heartbeat_temperature.call("set_character_data", _current_character)
 	_refresh_diagnostic_access()
@@ -228,6 +248,8 @@ func _on_character_arrived() -> void:
 
 
 func _on_outcome_continue_pressed() -> void:
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
 	outcome_continue_button.hide()
 	_character_present = false
 	var darken := not _last_decision_accepted and bool(_current_character.get("is_empty", false))
@@ -285,16 +307,66 @@ func get_case_tracking_data() -> Dictionary:
 
 # --- Alat pemindai -----------------------------------------------------------
 
+func _setup_audio_players() -> void:
+	_locked_sfx_player = AudioStreamPlayer.new()
+	_locked_sfx_player.stream = LOCKED_SFX
+	_locked_sfx_player.volume_db = -3.0
+	add_child(_locked_sfx_player)
+
+	_button_sfx_player = AudioStreamPlayer.new()
+	_button_sfx_player.stream = BUTTON_SFX
+	_button_sfx_player.volume_db = -3.0
+	add_child(_button_sfx_player)
+
+	_senter_sfx_player = AudioStreamPlayer.new()
+	_senter_sfx_player.stream = SENTER_SFX
+	_senter_sfx_player.volume_db = 0.0
+	add_child(_senter_sfx_player)
+
+	_monitor_sfx_player = AudioStreamPlayer.new()
+	_monitor_sfx_player.stream = MONITOR_SFX
+	_monitor_sfx_player.volume_db = -4.0
+	_monitor_sfx_player.finished.connect(func():
+		if heartbeat_temperature.visible:
+			_monitor_sfx_player.play()
+	)
+	add_child(_monitor_sfx_player)
+
+	_word_sfx_player = AudioStreamPlayer.new()
+	_word_sfx_player.stream = WORD_SFX
+	_word_sfx_player.volume_db = -2.0
+	add_child(_word_sfx_player)
+
+
+func _stop_tool_sfx() -> void:
+	if is_instance_valid(_senter_sfx_player) and _senter_sfx_player.playing:
+		_senter_sfx_player.stop()
+	if is_instance_valid(_monitor_sfx_player) and _monitor_sfx_player.playing:
+		_monitor_sfx_player.stop()
+
+
 func _open_pupil() -> void:
 	if not _diagnostics_unlocked():
+		if is_instance_valid(_locked_sfx_player):
+			_locked_sfx_player.play()
 		return
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
+	if is_instance_valid(_monitor_sfx_player) and _monitor_sfx_player.playing:
+		_monitor_sfx_player.stop()
 	heartbeat_temperature.hide()
 	heartbeat_temperature.set_process(false)
 	pupil.show()
 	pupil.set_process(true)
+	if is_instance_valid(_senter_sfx_player):
+		_senter_sfx_player.play()
 
 
 func _close_pupil() -> void:
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
+	if is_instance_valid(_senter_sfx_player) and _senter_sfx_player.playing:
+		_senter_sfx_player.stop()
 	pupil.hide()
 	pupil.set_process(false)
 	pupil_button.grab_focus()
@@ -302,15 +374,27 @@ func _close_pupil() -> void:
 
 func _open_heartbeat_temperature() -> void:
 	if not _diagnostics_unlocked():
+		if is_instance_valid(_locked_sfx_player):
+			_locked_sfx_player.play()
 		return
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
+	if is_instance_valid(_senter_sfx_player) and _senter_sfx_player.playing:
+		_senter_sfx_player.stop()
 	pupil.hide()
 	pupil.set_process(false)
 	heartbeat_temperature.show()
 	heartbeat_temperature.set_process(true)
+	if is_instance_valid(_monitor_sfx_player) and not _monitor_sfx_player.playing:
+		_monitor_sfx_player.play()
 	_show_tool_reactions("biometric_monitor")
 
 
 func _close_heartbeat_temperature() -> void:
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
+	if is_instance_valid(_monitor_sfx_player) and _monitor_sfx_player.playing:
+		_monitor_sfx_player.stop()
 	heartbeat_temperature.hide()
 	heartbeat_temperature.set_process(false)
 	heartbeat_temperature_button.grab_focus()
@@ -363,6 +447,7 @@ func show_decision_outcome(is_accepted: bool) -> void:
 				_append_outcome_event(event)
 
 	bunker.set_decision_enabled(false)
+	_stop_tool_sfx()
 	pupil.hide()
 	pupil.set_process(false)
 	heartbeat_temperature.hide()
@@ -420,6 +505,8 @@ func _clear_recent_dialogue() -> void:
 	_pending_recent_events.clear()
 	_recent_event_is_revealing = false
 	_last_recent_speaker = ""
+	if is_instance_valid(_word_sfx_player) and _word_sfx_player.playing:
+		_word_sfx_player.stop()
 	dialogue_output.clear()
 	dialogue_output.visible_characters = 0
 	_dialogue_following = false
@@ -478,6 +565,8 @@ func _reveal_recent_event(event: Dictionary, generation: int) -> void:
 		if word_index < words.size() - 1:
 			revealed_characters += 1
 		dialogue_output.visible_characters = mini(start_character + revealed_characters, final_character)
+		if is_instance_valid(_word_sfx_player):
+			_word_sfx_player.play()
 		_update_dialogue_scroll_target()
 		if word_index < words.size() - 1:
 			await get_tree().create_timer(WORD_REVEAL_INTERVAL).timeout
@@ -508,6 +597,8 @@ func _update_dialogue_scroll_target() -> void:
 # --- Transcript & ID Card ----------------------------------------------------
 
 func _open_transcript() -> void:
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
 	transcript_output.clear()
 	if _dialogue_history.is_empty():
 		transcript_output.add_text("No dialogue yet.")
@@ -520,6 +611,8 @@ func _open_transcript() -> void:
 
 
 func _close_transcript() -> void:
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
 	transcript_overlay.hide()
 	transcript_click_area.grab_focus()
 
@@ -547,6 +640,8 @@ func _open_id_card() -> void:
 
 
 func _close_id_card() -> void:
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
 	id_card_overlay.hide()
 	id_card_button.grab_focus()
 

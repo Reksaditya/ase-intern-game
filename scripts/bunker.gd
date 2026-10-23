@@ -32,6 +32,9 @@ const BOB_HEIGHT := 7.0
 const SWAY_DEGREES := 1.2
 ## Warna sosok The Empty yang ditolak (menggelap dari dalam).
 const EMPTY_DARK_COLOR := Color(0.1, 0.1, 0.14, 1.0)
+const STEP_SFX: AudioStream = preload("res://assets/bgm/step.wav")
+const REJECT_SFX: AudioStream = preload("res://assets/bgm/reject.wav")
+const BUTTON_SFX: AudioStream = preload("res://assets/bgm/button.mp3")
 
 @onready var sop_label: Label = $Label
 @onready var window_clip: Control = $bgpanel/WindowClip
@@ -43,6 +46,9 @@ var _move_tween: Tween
 var _bob_tween: Tween
 var _settle_tween: Tween
 var _fade_tween: Tween
+var _step_player: AudioStreamPlayer
+var _reject_player: AudioStreamPlayer
+var _accept_player: AudioStreamPlayer
 
 var _pivot: Node2D
 var _body: Sprite2D
@@ -54,6 +60,25 @@ func _ready() -> void:
 	accept_button.pressed.connect(_on_decision_pressed.bind(true))
 	reject_button.pressed.connect(_on_decision_pressed.bind(false))
 	set_decision_enabled(false)
+
+	_step_player = AudioStreamPlayer.new()
+	_step_player.stream = STEP_SFX
+	_step_player.volume_db = 12.0
+	_step_player.finished.connect(func():
+		if _bob_tween and _bob_tween.is_running():
+			_step_player.play()
+	)
+	add_child(_step_player)
+
+	_reject_player = AudioStreamPlayer.new()
+	_reject_player.stream = REJECT_SFX
+	_reject_player.volume_db = -3.0
+	add_child(_reject_player)
+
+	_accept_player = AudioStreamPlayer.new()
+	_accept_player.stream = BUTTON_SFX
+	_accept_player.volume_db = -3.0
+	add_child(_accept_player)
 
 
 ## Teks SOP di kiri atas.
@@ -111,6 +136,11 @@ func dismiss_character(accepted: bool, darken: bool = false) -> void:
 
 
 func _on_decision_pressed(accepted: bool) -> void:
+	if accepted:
+		if _accept_player:
+			_accept_player.play()
+	elif _reject_player:
+		_reject_player.play()
 	decision_made.emit(accepted)
 
 
@@ -123,6 +153,8 @@ func _clear_character() -> void:
 	for t in [_move_tween, _bob_tween, _settle_tween, _fade_tween]:
 		if t:
 			t.kill()
+	if _step_player and _step_player.playing:
+		_step_player.stop()
 	if is_instance_valid(_pivot):
 		_pivot.queue_free()
 	_pivot = null
@@ -161,6 +193,8 @@ func _start_walk_bob() -> void:
 		_bob_tween.kill()
 	if _settle_tween:
 		_settle_tween.kill()
+	if _step_player and not _step_player.playing:
+		_step_player.play()
 	_bob_tween = create_tween().set_loops()
 	_bob_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	var steps := [
@@ -177,6 +211,8 @@ func _start_walk_bob() -> void:
 func _stop_walk_bob() -> void:
 	if _bob_tween:
 		_bob_tween.kill()
+	if _step_player and _step_player.playing:
+		_step_player.stop()
 	if not is_instance_valid(_body):
 		return
 	_settle_tween = create_tween()
