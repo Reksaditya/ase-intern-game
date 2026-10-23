@@ -94,13 +94,19 @@ func spawn_character(texture_name: String, offset_y: float = 0.0) -> void:
 
 
 ## Karakter berjalan keluar. Diterima: ke kanan. Ditolak: bergeser kembali ke kiri.
-## darken = true membuat sosoknya menggelap lebih dulu (The Empty yang ditolak).
-func dismiss_character(accepted: bool, darken: bool = false) -> void:
+## Jika anomaly_texture_name diisi untuk The Empty yang ditolak, shake dan ubah sprite perlahan sebelum keluar frame.
+func dismiss_character(accepted: bool, darken: bool = false, anomaly_texture_name: String = "") -> void:
 	if not is_instance_valid(_pivot):
 		character_left.emit(accepted)
 		return
 
-	if darken:
+	if not accepted and not anomaly_texture_name.is_empty() and is_instance_valid(_body):
+		await _shake_and_morph_character(anomaly_texture_name)
+		await get_tree().create_timer(0.6, false).timeout
+		if not is_instance_valid(_pivot):
+			character_left.emit(accepted)
+			return
+	elif darken:
 		_fade_tween = create_tween()
 		_fade_tween.tween_property(_body, "modulate", EMPTY_DARK_COLOR, 0.8)
 
@@ -108,6 +114,42 @@ func dismiss_character(accepted: bool, darken: bool = false) -> void:
 	if not accepted:
 		target_x = -_half_width - EXIT_MARGIN
 	_walk_to(target_x, WALK_OUT_TIME, Tween.EASE_IN, _on_exited.bind(accepted))
+
+
+func _shake_and_morph_character(anomaly_texture_name: String) -> void:
+	var shake_tween := create_tween()
+	for i in range(10):
+		var dir := -1.0 if i % 2 == 0 else 1.0
+		var decay := 1.0 - (float(i) / 10.0) * 0.35
+		var offset := Vector2(dir * 9.0 * decay, (1.0 if i % 3 == 0 else -1.0) * 3.0 * decay)
+		shake_tween.tween_property(_body, "position", offset, 0.045)
+	shake_tween.tween_property(_body, "position", Vector2.ZERO, 0.045)
+	await shake_tween.finished
+
+	var texture := _load_character_texture(anomaly_texture_name)
+	if not texture or not is_instance_valid(_body) or not is_instance_valid(_pivot):
+		return
+
+	var anomaly_body := Sprite2D.new()
+	anomaly_body.texture = texture
+	var s := CHARACTER_HEIGHT / float(texture.get_height())
+	anomaly_body.scale = Vector2(s, s)
+	anomaly_body.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	_pivot.add_child(anomaly_body)
+
+	var morph_tween := create_tween().set_parallel(true)
+	morph_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	morph_tween.tween_property(anomaly_body, "modulate:a", 1.0, 1.2)
+	morph_tween.tween_property(_body, "modulate:a", 0.0, 1.2)
+	await morph_tween.finished
+
+	if is_instance_valid(_body):
+		_body.texture = texture
+		_body.scale = Vector2(s, s)
+		_body.modulate = Color.WHITE
+		_half_width = texture.get_width() * s * 0.5
+	if is_instance_valid(anomaly_body):
+		anomaly_body.queue_free()
 
 
 func _on_decision_pressed(accepted: bool) -> void:

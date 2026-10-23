@@ -7,6 +7,7 @@
   "character_image": "res://assets/character/agnes2.png",
   "id_card_image": "res://assets/character/agnes_ID.png",
   "anomaly_character_image": "res://assets/character/agnes_a.png",
+  "anomaly_sound": "res://assets/bgm/agnes_a_sound.wav",
   "pre_interaction": [
     {
       "type": "narration",

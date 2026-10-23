@@ -21,7 +21,10 @@ const CHARACTER_STEP_TIME := 0.22
 const CHARACTER_BOB_HEIGHT := 7.0
 const CHARACTER_SWAY_DEGREES := 1.2
 const CHARACTER_HOLD_AFTER_OUTCOME := 0.9
-const EMPTY_CHARACTER_EXIT_TINT := Color(0.1, 0.1, 0.14, 1.0)
+const ANOMALY_SHAKE_STEPS := 10
+const ANOMALY_SHAKE_STEP_DURATION := 0.045
+const ANOMALY_SHAKE_OFFSET := 9.0
+const ANOMALY_MORPH_DURATION := 1.2
 const LOCKED_SFX: AudioStream = preload("res://assets/bgm/locked.mp3")
 const BUTTON_SFX: AudioStream = preload("res://assets/bgm/button.mp3")
 const REJECT_SFX: AudioStream = preload("res://assets/bgm/reject.wav")
@@ -29,6 +32,7 @@ const SENTER_SFX: AudioStream = preload("res://assets/bgm/senter.wav")
 const MONITOR_SFX: AudioStream = preload("res://assets/bgm/monitor.wav")
 const WORD_SFX: AudioStream = preload("res://assets/bgm/word.wav")
 const STEP_SFX: AudioStream = preload("res://assets/bgm/step.wav")
+const AGNES_ANOMALY_SFX_PATH := "res://assets/bgm/agnes_a_sound.wav"
 const WORD_SFX_MIN_INTERVAL_MS := 90
 const DAY_SOP_TEXTS := {
 	1: "SOP DASAR — Cek ID Card & Suhu Referensi. Belum ada threshold penolakan ketat hari ini.",
@@ -99,6 +103,8 @@ var _character_move_tween: Tween
 var _character_bob_tween: Tween
 var _character_settle_tween: Tween
 var _character_half_width := 150.0
+var _anomaly_transformed := false
+var _anomaly_transforming := false
 var _focus_return_target: Control
 var _dialogue_scroll_mode := false
 var character_data_path := CHARACTER_DATA_PATH
@@ -110,6 +116,7 @@ var _senter_sfx_player: AudioStreamPlayer
 var _monitor_sfx_player: AudioStreamPlayer
 var _word_sfx_player: AudioStreamPlayer
 var _step_sfx_player: AudioStreamPlayer
+var _agnes_anomaly_sfx_player: AudioStreamPlayer
 var _last_word_sfx_ms := -1000
 
 
@@ -282,6 +289,21 @@ func _setup_audio_players() -> void:
 		if _character_bob_tween and _character_bob_tween.is_running():
 			_step_sfx_player.play()
 	)
+	_agnes_anomaly_sfx_player = _create_sfx_player(
+		_load_audio_stream_safe(AGNES_ANOMALY_SFX_PATH),
+		0.0
+	)
+
+
+func _load_audio_stream_safe(path: String) -> AudioStream:
+	if ResourceLoader.exists(path):
+		var stream := load(path) as AudioStream
+		if stream != null:
+			return stream
+	var global_path := ProjectSettings.globalize_path(path)
+	if FileAccess.file_exists(global_path):
+		return AudioStreamWAV.load_from_file(global_path)
+	return null
 
 
 func _create_sfx_player(stream: AudioStream, volume_db: float) -> AudioStreamPlayer:
@@ -507,6 +529,15 @@ func _start_recent_event_reveal() -> void:
 		await _wait_recent_line_pause(generation)
 		if generation != _recent_event_generation:
 			return
+	if (
+		_decision_outcome_started
+		and _pending_recent_events.is_empty()
+		and _should_transform_to_anomaly()
+		and not _anomaly_transformed
+	):
+		await _transform_to_anomaly_character()
+		if generation != _recent_event_generation:
+			return
 	await _reveal_recent_event(event, generation)
 	if generation != _recent_event_generation:
 		return
@@ -538,37 +569,35 @@ func _finish_outcome_presentation() -> void:
 	outcome_finished.emit()
 
 
-func _animate_character_in() -> void:
-	var image_path := str(_current_character.get("character_image", ""))
+func _apply_character_texture(image_path: String, target_sprite: Sprite2D = null) -> bool:
+	var sprite := target_sprite if is_instance_valid(target_sprite) else _character_sprite
+	if not is_instance_valid(sprite):
+		return false
 	if image_path.is_empty() or not ResourceLoader.exists(image_path):
 		if image_path.is_empty():
 			push_error("The current character is missing its character_image path.")
 		else:
 			push_error("Character image not found: %s" % image_path)
-		return
+		return false
 
 	var texture := load(image_path) as Texture2D
 	if texture == null:
 		push_error("Character image is not a texture: %s" % image_path)
-		return
-	if character_window.size.x <= 0.0 or character_window.size.y <= 0.0:
-		await get_tree().process_frame
+		return false
 	var image := texture.get_image()
 	if image == null:
 		push_error("Could not read character image: %s" % image_path)
-		return
+		return false
 	var visible_region := image.get_used_rect()
 	if visible_region.size.x <= 0 or visible_region.size.y <= 0:
 		push_error("Character image has no visible pixels: %s" % image_path)
-		return
+		return false
 
-	_character_pivot = Node2D.new()
-	_character_sprite = Sprite2D.new()
-	_character_sprite.texture = texture
-	_character_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-	_character_sprite.region_enabled = true
-	_character_sprite.region_filter_clip_enabled = true
-	_character_sprite.region_rect = Rect2(
+	sprite.texture = texture
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	sprite.region_enabled = true
+	sprite.region_filter_clip_enabled = true
+	sprite.region_rect = Rect2(
 		Vector2(visible_region.position),
 		Vector2(visible_region.size)
 	)
@@ -577,11 +606,106 @@ func _animate_character_in() -> void:
 		character_window.size.y * CHARACTER_WINDOW_HEIGHT_RATIO
 	)
 	var sprite_scale := character_height / float(visible_region.size.y)
-	_character_sprite.scale = Vector2(sprite_scale, sprite_scale)
+	sprite.scale = Vector2(sprite_scale, sprite_scale)
+	sprite.modulate = Color.WHITE
 	_character_half_width = float(visible_region.size.x) * sprite_scale * 0.5
+	return true
+
+
+func _should_transform_to_anomaly() -> bool:
+	if _decision_was_accepted:
+		return false
+	if not bool(_current_character.get("is_empty", false)):
+		return false
+	var anomaly_path := str(_current_character.get("anomaly_character_image", ""))
+	return not anomaly_path.is_empty()
+
+
+func _transform_to_anomaly_character() -> void:
+	if _anomaly_transformed or not _should_transform_to_anomaly():
+		return
+	if _anomaly_transforming:
+		while _anomaly_transforming:
+			await get_tree().process_frame
+		return
+	if not is_instance_valid(_character_sprite) or not is_instance_valid(_character_pivot):
+		return
+
+	_anomaly_transforming = true
+	var anomaly_path := str(_current_character.get("anomaly_character_image", ""))
+
+	# 1. Shaking sebelum karakter berubah.
+	var shake_tween := create_tween()
+	for i in range(ANOMALY_SHAKE_STEPS):
+		var dir := -1.0 if i % 2 == 0 else 1.0
+		var decay := 1.0 - (float(i) / float(ANOMALY_SHAKE_STEPS)) * 0.35
+		var offset := Vector2(
+			dir * ANOMALY_SHAKE_OFFSET * decay,
+			(1.0 if i % 3 == 0 else -1.0) * (ANOMALY_SHAKE_OFFSET * 0.35) * decay
+		)
+		shake_tween.tween_property(
+			_character_sprite,
+			"position",
+			offset,
+			ANOMALY_SHAKE_STEP_DURATION
+		)
+	shake_tween.tween_property(_character_sprite, "position", Vector2.ZERO, ANOMALY_SHAKE_STEP_DURATION)
+	await shake_tween.finished
+
+	if not is_instance_valid(_character_sprite) or not is_instance_valid(_character_pivot):
+		_anomaly_transforming = false
+		return
+
+	# 2. Pelan-pelan berubah menjadi karakter anomali (crossfade).
+	if (
+		anomaly_path.ends_with("agnes_a.png")
+		or str(_current_character.get("character_name", "")).to_lower() == "agnes"
+		or not str(_current_character.get("anomaly_sound", "")).is_empty()
+	):
+		_play_sfx(_agnes_anomaly_sfx_player)
+	var anomaly_sprite := Sprite2D.new()
+	if _apply_character_texture(anomaly_path, anomaly_sprite):
+		anomaly_sprite.position = Vector2.ZERO
+		anomaly_sprite.modulate = Color(1.0, 1.0, 1.0, 0.0)
+		_character_pivot.add_child(anomaly_sprite)
+
+		var morph_tween := create_tween().set_parallel(true)
+		morph_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		morph_tween.tween_property(anomaly_sprite, "modulate:a", 1.0, ANOMALY_MORPH_DURATION)
+		morph_tween.tween_property(_character_sprite, "modulate:a", 0.0, ANOMALY_MORPH_DURATION)
+		await morph_tween.finished
+
+		if is_instance_valid(_character_sprite):
+			_apply_character_texture(anomaly_path, _character_sprite)
+		if is_instance_valid(anomaly_sprite):
+			anomaly_sprite.queue_free()
+
+	_anomaly_transformed = true
+	_anomaly_transforming = false
+
+
+func _animate_character_in() -> void:
+	var image_path := str(_current_character.get("character_image", ""))
+	if character_window.size.x <= 0.0 or character_window.size.y <= 0.0:
+		await get_tree().process_frame
+
+	_anomaly_transformed = false
+	_anomaly_transforming = false
+	_character_pivot = Node2D.new()
+	_character_sprite = Sprite2D.new()
+	if not _apply_character_texture(image_path):
+		_character_sprite.queue_free()
+		_character_pivot.queue_free()
+		_character_sprite = null
+		_character_pivot = null
+		return
 	_character_pivot.add_child(_character_sprite)
 	character_holder.add_child(_character_pivot)
 
+	var character_height := minf(
+		CHARACTER_HEIGHT,
+		character_window.size.y * CHARACTER_WINDOW_HEIGHT_RATIO
+	)
 	var stand_y := (
 		CHARACTER_TOP_MARGIN
 		+ character_height * 0.5
@@ -602,17 +726,13 @@ func _animate_character_in() -> void:
 func _animate_character_out() -> void:
 	if not is_instance_valid(_character_pivot):
 		return
+	if _should_transform_to_anomaly() and not _anomaly_transformed:
+		await _transform_to_anomaly_character()
+		if not is_instance_valid(_character_pivot):
+			return
 	await get_tree().create_timer(CHARACTER_HOLD_AFTER_OUTCOME, false).timeout
 	if not is_instance_valid(_character_pivot):
 		return
-
-	if not _decision_was_accepted and bool(_current_character.get("is_empty", false)):
-		create_tween().tween_property(
-			_character_sprite,
-			"modulate",
-			EMPTY_CHARACTER_EXIT_TINT,
-			0.8
-		)
 
 	var target_x := character_window.size.x + _character_half_width + CHARACTER_EXIT_MARGIN
 	if not _decision_was_accepted:

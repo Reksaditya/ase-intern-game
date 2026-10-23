@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ddb67tx6wlar6"
-path="res://.godot/imported/Tak berjudul218_20261019162328.png-efb51445574faae5acce2948b3f7dede.ctex"
+uid="uid://bng4kp86cck1m"
+path="res://.godot/imported/agnes_a.png-ac7f40da20b070d3d1f558a96f37023b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/character/Tak berjudul218_20261019162328.png"
-dest_files=["res://.godot/imported/Tak berjudul218_20261019162328.png-efb51445574faae5acce2948b3f7dede.ctex"]
+source_file="res://assets/character/agnes_a.png"
+dest_files=["res://.godot/imported/agnes_a.png-ac7f40da20b070d3d1f558a96f37023b.ctex"]
 
 [params]
 
