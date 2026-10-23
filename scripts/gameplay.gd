@@ -33,6 +33,9 @@ const MONITOR_SFX: AudioStream = preload("res://assets/bgm/monitor.wav")
 const WORD_SFX: AudioStream = preload("res://assets/bgm/word.wav")
 const STEP_SFX: AudioStream = preload("res://assets/bgm/step.wav")
 const AGNES_ANOMALY_SFX_PATH := "res://assets/bgm/agnes_a_sound.wav"
+const POPUP_FONT_BOLD: Font = preload("res://assets/fonts/CourierPrime-Bold.ttf")
+const POPUP_FONT_REGULAR: Font = preload("res://assets/fonts/CourierPrime-Regular.ttf")
+const SCANNER_UNLOCK_POPUP_HOLD := 2.2
 const WORD_SFX_MIN_INTERVAL_MS := 90
 const DAY_SOP_TEXTS := {
 	1: "SOP DASAR — Cek ID Card & Suhu Referensi. Belum ada threshold penolakan ketat hari ini.",
@@ -109,6 +112,9 @@ var _focus_return_target: Control
 var _dialogue_scroll_mode := false
 var character_data_path := CHARACTER_DATA_PATH
 var minimum_answers_before_scan := MINIMUM_ANSWERS_BEFORE_SCAN
+var _diagnostics_access_granted := false
+var _scanner_unlock_popup: Control
+var _scanner_unlock_popup_tween: Tween
 var _locked_sfx_player: AudioStreamPlayer
 var _button_sfx_player: AudioStreamPlayer
 var _reject_sfx_player: AudioStreamPlayer
@@ -143,6 +149,8 @@ func _ready() -> void:
 	heartbeat_temperature.set_process(false)
 	_setup_audio_players()
 	_current_character = _load_character_data(character_data_path)
+	_diagnostics_access_granted = minimum_answers_before_scan <= 0
+	_refresh_diagnostic_access()
 	var current_day := int(_current_character.get("day", 1))
 	if sop_label and DAY_SOP_TEXTS.has(current_day):
 		sop_label.text = str(DAY_SOP_TEXTS[current_day])
@@ -395,12 +403,15 @@ func _close_heartbeat_temperature() -> void:
 func _on_question_asked(question_key: String) -> void:
 	if _decision_outcome_started:
 		return
-	var diagnostics_were_unlocked := _diagnostics_unlocked()
 	_asked_question_ids[question_key] = true
 	_show_question_response(question_key)
-	_refresh_diagnostic_access()
-	if not diagnostics_were_unlocked and _diagnostics_unlocked():
-		_append_dialogue_line("SISTEM", "Alat Pemindai Terbuka.")
+	if not _diagnostics_access_granted and _asked_question_ids.size() >= minimum_answers_before_scan:
+		_queue_recent_event({
+			"type": "dialogue",
+			"speaker": "SISTEM",
+			"text": "Alat Pemindai Terbuka.",
+			"unlocks_diagnostics": true,
+		})
 
 
 func _show_question_response(question_key: String) -> void:
@@ -448,6 +459,8 @@ func show_decision_outcome(is_accepted: bool) -> void:
 	pupil.set_process(false)
 	heartbeat_temperature.hide()
 	heartbeat_temperature.set_process(false)
+	if is_instance_valid(_scanner_unlock_popup):
+		_scanner_unlock_popup.hide()
 	$HUD/DesignCanvas/DiagnosticTools.hide()
 	if not _recent_event_is_revealing and _pending_recent_events.is_empty():
 		_finish_outcome_presentation()
@@ -529,6 +542,15 @@ func _start_recent_event_reveal() -> void:
 		await _wait_recent_line_pause(generation)
 		if generation != _recent_event_generation:
 			return
+	if bool(event.get("unlocks_diagnostics", false)) and not _diagnostics_access_granted:
+		_diagnostics_access_granted = true
+		_dialogue_history.append({
+			"type": "dialogue",
+			"speaker": "SISTEM",
+			"text": "Alat Pemindai Terbuka.",
+		})
+		_refresh_diagnostic_access()
+		_show_scanner_unlocked_popup()
 	if (
 		_decision_outcome_started
 		and _pending_recent_events.is_empty()
@@ -971,7 +993,93 @@ func _show_tool_reactions(tool_key: String) -> void:
 
 
 func _diagnostics_unlocked() -> bool:
-	return _asked_question_ids.size() >= minimum_answers_before_scan
+	return _diagnostics_access_granted
+
+
+func _ensure_scanner_unlock_popup() -> Control:
+	if is_instance_valid(_scanner_unlock_popup):
+		return _scanner_unlock_popup
+
+	var center := CenterContainer.new()
+	center.name = "ScannerUnlockPopup"
+	center.position = Vector2.ZERO
+	center.size = Vector2(1920.0, 1080.0)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	center.hide()
+
+	var panel := PanelContainer.new()
+	panel.name = "PopupPanel"
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.02, 0.065, 0.085, 0.96)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
+	style.border_color = Color(0.18, 0.68, 0.77, 1.0)
+	style.corner_radius_top_left = 12
+	style.corner_radius_top_right = 12
+	style.corner_radius_bottom_right = 12
+	style.corner_radius_bottom_left = 12
+	style.content_margin_left = 36.0
+	style.content_margin_top = 22.0
+	style.content_margin_right = 36.0
+	style.content_margin_bottom = 22.0
+	style.shadow_color = Color(0.0, 0.0, 0.0, 0.55)
+	style.shadow_size = 18
+	panel.add_theme_stylebox_override("panel", style)
+
+	var layout := VBoxContainer.new()
+	layout.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layout.add_theme_constant_override("separation", 6)
+
+	var header_label := Label.new()
+	header_label.text = "[ NOTIFIKASI SISTEM ]"
+	header_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	header_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	header_label.add_theme_font_override("font", POPUP_FONT_BOLD)
+	header_label.add_theme_font_size_override("font_size", 16)
+	header_label.add_theme_color_override("font_color", Color(0.24, 0.68, 0.75, 1.0))
+	layout.add_child(header_label)
+
+	var title_label := Label.new()
+	title_label.text = "ALAT PEMINDAI TERBUKA"
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	title_label.add_theme_font_override("font", POPUP_FONT_BOLD)
+	title_label.add_theme_font_size_override("font_size", 28)
+	title_label.add_theme_color_override("font_color", Color(0.90, 0.99, 1.0, 1.0))
+	layout.add_child(title_label)
+
+	var subtitle_label := Label.new()
+	subtitle_label.text = "Pupil Reflex & Biometric Monitor kini dapat digunakan."
+	subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	subtitle_label.add_theme_font_override("font", POPUP_FONT_REGULAR)
+	subtitle_label.add_theme_font_size_override("font_size", 16)
+	subtitle_label.add_theme_color_override("font_color", Color(0.62, 0.82, 0.86, 0.92))
+	layout.add_child(subtitle_label)
+
+	panel.add_child(layout)
+	center.add_child(panel)
+	$HUD/DesignCanvas.add_child(center)
+	_scanner_unlock_popup = center
+	return _scanner_unlock_popup
+
+
+func _show_scanner_unlocked_popup() -> void:
+	var popup := _ensure_scanner_unlock_popup()
+	if _scanner_unlock_popup_tween:
+		_scanner_unlock_popup_tween.kill()
+	popup.modulate.a = 0.0
+	popup.show()
+	_scanner_unlock_popup_tween = create_tween()
+	_scanner_unlock_popup_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_scanner_unlock_popup_tween.tween_property(popup, "modulate:a", 1.0, 0.18)
+	_scanner_unlock_popup_tween.tween_interval(SCANNER_UNLOCK_POPUP_HOLD)
+	_scanner_unlock_popup_tween.set_ease(Tween.EASE_IN)
+	_scanner_unlock_popup_tween.tween_property(popup, "modulate:a", 0.0, 0.35)
+	_scanner_unlock_popup_tween.tween_callback(popup.hide)
 
 
 func _refresh_diagnostic_access() -> void:

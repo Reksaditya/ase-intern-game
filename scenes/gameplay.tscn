@@ -1,25 +1,21 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene format=3 uid="uid://d0bynjlv3t3if"]
 
 [ext_resource type="PackedScene" uid="uid://cdjdekedo1t6d" path="res://scenes/bunker.tscn" id="1_bunker"]
 [ext_resource type="PackedScene" uid="uid://p35oge762nnh" path="res://scenes/television.tscn" id="2_television"]
-[ext_resource type="Script" path="res://scripts/gameplay.gd" id="3_gameplay_script"]
+[ext_resource type="Script" uid="uid://dehe3e6nuecw4" path="res://scripts/gameplay.gd" id="3_gameplay_script"]
 [ext_resource type="PackedScene" path="res://scenes/pupil.tscn" id="4_pupil"]
 [ext_resource type="PackedScene" path="res://scenes/heartbeat_temperature.tscn" id="5_vitals"]
-[ext_resource type="FontFile" uid="uid://bxdeha88xo6ug" path="res://assets/fonts/CourierPrime-Regular.ttf" id="6_font"]
-[ext_resource type="FontFile" path="res://assets/fonts/CourierPrime-Italic.ttf" id="7_italic_font"]
-[ext_resource type="FontFile" path="res://assets/fonts/CourierPrime-Bold.ttf" id="8_bold_font"]
-[ext_resource type="Script" path="res://scripts/pause_overlay.gd" id="9_pause_script"]
+[ext_resource type="FontFile" uid="uid://cevf6dxmn4vbu" path="res://assets/fonts/CourierPrime-Italic.ttf" id="7_italic_font"]
+[ext_resource type="FontFile" uid="uid://c3285r3n5l6cg" path="res://assets/fonts/CourierPrime-Bold.ttf" id="8_bold_font"]
+[ext_resource type="Script" uid="uid://c753lkdhs1n5h" path="res://scripts/pause_overlay.gd" id="9_pause_script"]
 [ext_resource type="FontFile" uid="uid://bxdeha88xo6ug" path="res://assets/fonts/CourierPrime-Regular.ttf" id="10_pause_font"]
-[ext_resource type="Script" path="res://scripts/how_to_play.gd" id="11_howto_script"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBox_diagnostic_panel"]
-bg_color = Color(0.055, 0.07, 0.09, 0)
-content_margin_left = 16.6667
-content_margin_top = 13.3333
-content_margin_right = 16.6667
-content_margin_bottom = 13.3333
+[ext_resource type="Script" uid="uid://bs446bycosddc" path="res://scripts/how_to_play.gd" id="11_howto_script"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_diagnostic_button"]
+content_margin_left = 13.3333
+content_margin_top = 6.6667
+content_margin_right = 13.3333
+content_margin_bottom = 6.6667
 bg_color = Color(0.025, 0.075, 0.095, 1)
 border_width_left = 2
 border_width_top = 2
@@ -30,28 +26,12 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-content_margin_left = 13.3333
-content_margin_top = 6.6667
-content_margin_right = 13.3333
-content_margin_bottom = 6.6667
-
-[sub_resource type="StyleBoxFlat" id="StyleBox_diagnostic_button_hover"]
-bg_color = Color(0.035, 0.095, 0.12, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.08, 0.43, 0.52, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-content_margin_left = 13.3333
-content_margin_top = 6.6667
-content_margin_right = 13.3333
-content_margin_bottom = 6.6667
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_diagnostic_button_pressed"]
+content_margin_left = 13.3333
+content_margin_top = 6.6667
+content_margin_right = 13.3333
+content_margin_bottom = 6.6667
 bg_color = Color(0.018, 0.06, 0.08, 1)
 border_width_left = 2
 border_width_top = 2
@@ -62,12 +42,35 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_diagnostic_button_hover"]
 content_margin_left = 13.3333
 content_margin_top = 6.6667
 content_margin_right = 13.3333
 content_margin_bottom = 6.6667
+bg_color = Color(0.035, 0.095, 0.12, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.08, 0.43, 0.52, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_diagnostic_panel"]
+content_margin_left = 16.6667
+content_margin_top = 13.3333
+content_margin_right = 16.6667
+content_margin_bottom = 13.3333
+bg_color = Color(0.055, 0.07, 0.09, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_diagnostic_button_disabled"]
+content_margin_left = 13.3333
+content_margin_top = 6.6667
+content_margin_right = 13.3333
+content_margin_bottom = 6.6667
 bg_color = Color(0.035, 0.05, 0.06, 0.95)
 border_width_left = 2
 border_width_top = 2
@@ -78,17 +81,13 @@ corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-content_margin_left = 13.3333
-content_margin_top = 6.6667
-content_margin_right = 13.3333
-content_margin_bottom = 6.6667
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_transcript_panel"]
-bg_color = Color(0.045, 0.055, 0.06, 0.98)
 content_margin_left = 23.3333
-content_margin_top = 20
+content_margin_top = 20.0
 content_margin_right = 23.3333
-content_margin_bottom = 20
+content_margin_bottom = 20.0
+bg_color = Color(0.045, 0.055, 0.06, 0.98)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
@@ -99,62 +98,67 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[node name="TempoGameplay" type="Node2D"]
+[node name="TempoGameplay" type="Node2D" unique_id=1058112956]
 script = ExtResource("3_gameplay_script")
 
-[node name="bunker" parent="." instance=ExtResource("1_bunker")]
-scale = Vector2(1, 1)
+[node name="bunker" parent="." unique_id=1200085198 instance=ExtResource("1_bunker")]
 
-[node name="Sprite2D" parent="." instance=ExtResource("2_television")]
+[node name="Sprite2D" parent="." unique_id=1224759094 instance=ExtResource("2_television")]
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=2047437855]
 layer = 10
 
-[node name="DesignCanvas" type="Control" parent="HUD"]
-offset_right = 1920
-offset_bottom = 1080
+[node name="DesignCanvas" type="Control" parent="HUD" unique_id=1458740475]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
 mouse_filter = 2
 
-[node name="SOPLabel" type="Label" parent="HUD/DesignCanvas"]
+[node name="SOPLabel" type="Label" parent="HUD/DesignCanvas" unique_id=2036778056]
+layout_mode = 0
 offset_left = 66.6667
-offset_top = 145
+offset_top = 145.0
 offset_right = 946.6667
-offset_bottom = 205
-mouse_filter = 2
+offset_bottom = 205.0
 theme_override_colors/font_color = Color(0.2, 1, 0.34901962, 1)
-theme_override_fonts/font = ExtResource("6_font")
+theme_override_fonts/font = ExtResource("10_pause_font")
 theme_override_font_sizes/font_size = 23
 text = "SOP DASAR — Cek ID Card & Suhu Referensi. Belum ada threshold penolakan ketat hari ini."
 autowrap_mode = 3
 
-[node name="PauseButton" type="Button" parent="HUD/DesignCanvas"]
+[node name="PauseButton" type="Button" parent="HUD/DesignCanvas" unique_id=500811443]
+layout_mode = 0
 offset_left = 53.3333
 offset_top = 20.0
 offset_right = 200.0
 offset_bottom = 80.0
-focus_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(0.62, 0.78, 0.76, 0.95)
-theme_override_colors/font_hover_color = Color(0.2, 1, 0.34901962, 1)
 theme_override_colors/font_pressed_color = Color(0.15, 0.78, 0.26, 1)
+theme_override_colors/font_hover_color = Color(0.2, 1, 0.34901962, 1)
 theme_override_fonts/font = ExtResource("8_bold_font")
 theme_override_font_sizes/font_size = 21
 theme_override_styles/normal = SubResource("StyleBox_diagnostic_button")
-theme_override_styles/hover = SubResource("StyleBox_diagnostic_button_hover")
 theme_override_styles/pressed = SubResource("StyleBox_diagnostic_button_pressed")
+theme_override_styles/hover = SubResource("StyleBox_diagnostic_button_hover")
 text = "II  PAUSE"
 
-[node name="Pupil" parent="HUD/DesignCanvas" instance=ExtResource("4_pupil")]
+[node name="Pupil" parent="HUD/DesignCanvas" unique_id=1039389159 instance=ExtResource("4_pupil")]
 visible = false
+layout_mode = 0
+anchors_preset = 0
+offset_top = -275.0
+offset_bottom = 275.0
 
-[node name="DiagnosticTools" type="PanelContainer" parent="HUD/DesignCanvas"]
+[node name="DiagnosticTools" type="PanelContainer" parent="HUD/DesignCanvas" unique_id=809865992]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -730
+offset_left = -730.0
 offset_top = -283.3333
 offset_right = -53.3333
 offset_bottom = -53.3333
@@ -162,25 +166,23 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBox_diagnostic_panel")
 
-[node name="Layout" type="HBoxContainer" parent="HUD/DesignCanvas/DiagnosticTools"]
+[node name="Layout" type="HBoxContainer" parent="HUD/DesignCanvas/DiagnosticTools" unique_id=1765236696]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 14
+alignment = 1
 
-[node name="PupilButton" type="Button" parent="HUD/DesignCanvas/DiagnosticTools/Layout"]
+[node name="PupilButton" type="Button" parent="HUD/DesignCanvas/DiagnosticTools/Layout" unique_id=1392927035]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_styles/normal = SubResource("StyleBox_diagnostic_button")
-theme_override_styles/hover = SubResource("StyleBox_diagnostic_button_hover")
 theme_override_styles/pressed = SubResource("StyleBox_diagnostic_button_pressed")
+theme_override_styles/hover = SubResource("StyleBox_diagnostic_button_hover")
 theme_override_styles/disabled = SubResource("StyleBox_diagnostic_button_disabled")
-text = ""
 disabled = true
 
-[node name="ButtonContent" type="HBoxContainer" parent="HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton"]
+[node name="ButtonContent" type="HBoxContainer" parent="HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton" unique_id=2022034348]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -192,52 +194,47 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="StatusDot" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton/ButtonContent"]
-layout_mode = 2
+[node name="StatusDot" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton/ButtonContent" unique_id=957147773]
 custom_minimum_size = Vector2(20, 0)
-mouse_filter = 2
+layout_mode = 2
 theme_override_colors/font_color = Color(0.17, 0.31, 0.35, 0.8)
-theme_override_fonts/font = ExtResource("6_font")
+theme_override_fonts/font = ExtResource("10_pause_font")
 theme_override_font_sizes/font_size = 18
 text = "●"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AppName" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton/ButtonContent"]
+[node name="AppName" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton/ButtonContent" unique_id=1001038055]
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
 theme_override_colors/font_color = Color(0.28, 0.38, 0.42, 0.85)
 theme_override_fonts/font = ExtResource("8_bold_font")
 theme_override_font_sizes/font_size = 19
 text = "pupil.exe"
 vertical_alignment = 1
 
-[node name="Action" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton/ButtonContent"]
-layout_mode = 2
+[node name="Action" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/PupilButton/ButtonContent" unique_id=1437125412]
 custom_minimum_size = Vector2(100, 0)
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.21, 0.30, 0.33, 0.75)
-theme_override_fonts/font = ExtResource("6_font")
+layout_mode = 2
+theme_override_colors/font_color = Color(0.21, 0.3, 0.33, 0.75)
+theme_override_fonts/font = ExtResource("10_pause_font")
 theme_override_font_sizes/font_size = 14
 text = "LOCKED"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="HeartbeatTemperatureButton" type="Button" parent="HUD/DesignCanvas/DiagnosticTools/Layout"]
+[node name="HeartbeatTemperatureButton" type="Button" parent="HUD/DesignCanvas/DiagnosticTools/Layout" unique_id=282008654]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_horizontal = 3
-focus_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_styles/normal = SubResource("StyleBox_diagnostic_button")
-theme_override_styles/hover = SubResource("StyleBox_diagnostic_button_hover")
 theme_override_styles/pressed = SubResource("StyleBox_diagnostic_button_pressed")
+theme_override_styles/hover = SubResource("StyleBox_diagnostic_button_hover")
 theme_override_styles/disabled = SubResource("StyleBox_diagnostic_button_disabled")
-text = ""
 disabled = true
 
-[node name="ButtonContent" type="HBoxContainer" parent="HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton"]
+[node name="ButtonContent" type="HBoxContainer" parent="HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton" unique_id=973036187]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -249,86 +246,81 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="StatusDot" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton/ButtonContent"]
-layout_mode = 2
+[node name="StatusDot" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton/ButtonContent" unique_id=736131224]
 custom_minimum_size = Vector2(20, 0)
-mouse_filter = 2
+layout_mode = 2
 theme_override_colors/font_color = Color(0.17, 0.31, 0.35, 0.8)
-theme_override_fonts/font = ExtResource("6_font")
+theme_override_fonts/font = ExtResource("10_pause_font")
 theme_override_font_sizes/font_size = 18
 text = "●"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AppName" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton/ButtonContent"]
+[node name="AppName" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton/ButtonContent" unique_id=522496134]
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
 theme_override_colors/font_color = Color(0.28, 0.38, 0.42, 0.85)
 theme_override_fonts/font = ExtResource("8_bold_font")
 theme_override_font_sizes/font_size = 19
 text = "bpmtemp.exe"
 vertical_alignment = 1
 
-[node name="Action" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton/ButtonContent"]
-layout_mode = 2
+[node name="Action" type="Label" parent="HUD/DesignCanvas/DiagnosticTools/Layout/HeartbeatTemperatureButton/ButtonContent" unique_id=1647432807]
 custom_minimum_size = Vector2(100, 0)
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.21, 0.30, 0.33, 0.75)
-theme_override_fonts/font = ExtResource("6_font")
+layout_mode = 2
+theme_override_colors/font_color = Color(0.21, 0.3, 0.33, 0.75)
+theme_override_fonts/font = ExtResource("10_pause_font")
 theme_override_font_sizes/font_size = 14
 text = "LOCKED"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="HeartbeatTemperature" parent="HUD/DesignCanvas" instance=ExtResource("5_vitals")]
+[node name="HeartbeatTemperature" parent="HUD/DesignCanvas" unique_id=1231846329 instance=ExtResource("5_vitals")]
 visible = false
+layout_mode = 0
+anchors_preset = 0
 
-[node name="DialogueOutput" type="RichTextLabel" parent="HUD/DesignCanvas"]
+[node name="DialogueOutput" type="RichTextLabel" parent="HUD/DesignCanvas" unique_id=1484261692]
+layout_mode = 0
 offset_left = 73.3333
-offset_top = 796.6667
-offset_right = 1166.6667
-offset_bottom = 926.6667
+offset_top = 808.0
+offset_right = 1160.0
+offset_bottom = 920.0
 focus_mode = 2
-mouse_filter = 0
 mouse_default_cursor_shape = 2
 theme_override_colors/default_color = Color(0.2, 1, 0.35, 1)
-theme_override_fonts/normal_font = ExtResource("6_font")
-theme_override_fonts/italics_font = ExtResource("7_italic_font")
+theme_override_fonts/normal_font = ExtResource("10_pause_font")
 theme_override_fonts/bold_font = ExtResource("8_bold_font")
+theme_override_fonts/italics_font = ExtResource("7_italic_font")
 theme_override_font_sizes/normal_font_size = 27
-theme_override_font_sizes/italics_font_size = 27
 theme_override_font_sizes/bold_font_size = 27
-bbcode_enabled = false
-scroll_active = true
+theme_override_font_sizes/italics_font_size = 27
 scroll_following = true
 scroll_following_visible_characters = true
 autowrap_mode = 2
-fit_content = false
-selection_enabled = false
 
-[node name="TranscriptClickArea" type="Button" parent="HUD/DesignCanvas"]
+[node name="TranscriptClickArea" type="Button" parent="HUD/DesignCanvas" unique_id=420328317]
+layout_mode = 0
 offset_left = 53.3333
 offset_top = 796.6667
 offset_right = 1166.6667
 offset_bottom = 926.6667
+tooltip_text = "Open the full transcript"
 focus_mode = 0
 mouse_filter = 2
 mouse_default_cursor_shape = 2
-tooltip_text = "Open the full transcript"
 flat = true
 
-[node name="TranscriptOverlay" type="ColorRect" parent="HUD/DesignCanvas"]
+[node name="TranscriptOverlay" type="ColorRect" parent="HUD/DesignCanvas" unique_id=2032841634]
 visible = false
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 color = Color(0, 0, 0, 0.72)
 
-[node name="CenterContainer" type="CenterContainer" parent="HUD/DesignCanvas/TranscriptOverlay"]
+[node name="CenterContainer" type="CenterContainer" parent="HUD/DesignCanvas/TranscriptOverlay" unique_id=1080644907]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -336,20 +328,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TranscriptPanel" type="PanelContainer" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer"]
+[node name="TranscriptPanel" type="PanelContainer" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer" unique_id=1363137316]
 custom_minimum_size = Vector2(1533.3333, 916.6667)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBox_transcript_panel")
 
-[node name="Layout" type="VBoxContainer" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel"]
+[node name="Layout" type="VBoxContainer" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel" unique_id=74113182]
 layout_mode = 2
 theme_override_constants/separation = 17
 
-[node name="Header" type="HBoxContainer" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout"]
+[node name="Header" type="HBoxContainer" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout" unique_id=1804752929]
 layout_mode = 2
 theme_override_constants/separation = 17
 
-[node name="Title" type="Label" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/Header"]
+[node name="Title" type="Label" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/Header" unique_id=453901475]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.88, 0.91, 0.88, 1)
@@ -358,55 +350,50 @@ theme_override_font_sizes/font_size = 27
 text = "FULL TRANSCRIPT"
 vertical_alignment = 1
 
-[node name="CloseButton" type="Button" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/Header"]
+[node name="CloseButton" type="Button" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/Header" unique_id=918977596]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
-focus_mode = 2
 mouse_default_cursor_shape = 2
-theme_override_fonts/font = ExtResource("6_font")
+theme_override_fonts/font = ExtResource("10_pause_font")
 theme_override_font_sizes/font_size = 27
 text = "X"
 
-[node name="TranscriptScroll" type="ScrollContainer" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout"]
+[node name="TranscriptScroll" type="ScrollContainer" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout" unique_id=286860469]
 custom_minimum_size = Vector2(0, 783.3333)
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
-vertical_scroll_mode = 1
 
-[node name="TranscriptText" type="RichTextLabel" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/TranscriptScroll"]
+[node name="TranscriptText" type="RichTextLabel" parent="HUD/DesignCanvas/TranscriptOverlay/CenterContainer/TranscriptPanel/Layout/TranscriptScroll" unique_id=1076049282]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-custom_maximum_size = Vector2(1466.6667, -1)
+focus_mode = 2
 theme_override_colors/default_color = Color(0.91, 0.91, 0.86, 1)
-theme_override_fonts/normal_font = ExtResource("6_font")
-theme_override_fonts/italics_font = ExtResource("7_italic_font")
+theme_override_fonts/normal_font = ExtResource("10_pause_font")
 theme_override_fonts/bold_font = ExtResource("8_bold_font")
+theme_override_fonts/italics_font = ExtResource("7_italic_font")
 theme_override_font_sizes/normal_font_size = 23
-theme_override_font_sizes/italics_font_size = 23
 theme_override_font_sizes/bold_font_size = 23
-bbcode_enabled = false
-scroll_active = false
-scroll_following = false
-autowrap_mode = 2
+theme_override_font_sizes/italics_font_size = 23
 fit_content = true
+scroll_active = false
+autowrap_mode = 2
 selection_enabled = true
 
-[node name="IDCardOverlay" type="ColorRect" parent="HUD/DesignCanvas"]
+[node name="IDCardOverlay" type="ColorRect" parent="HUD/DesignCanvas" unique_id=1711293818]
 visible = false
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 color = Color(0, 0, 0, 0.82)
 
-[node name="CardImage" type="TextureRect" parent="HUD/DesignCanvas/IDCardOverlay"]
+[node name="CardImage" type="TextureRect" parent="HUD/DesignCanvas/IDCardOverlay" unique_id=1628313791]
 unique_name_in_owner = true
-anchors_preset = 15
+layout_mode = 0
 anchor_left = 0.04
 anchor_top = 0.04
 anchor_right = 0.96
@@ -417,38 +404,34 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CloseButton" type="Button" parent="HUD/DesignCanvas/IDCardOverlay"]
+[node name="CloseButton" type="Button" parent="HUD/DesignCanvas/IDCardOverlay" unique_id=1074226353]
 custom_minimum_size = Vector2(73.3333, 73.3333)
-anchors_preset = 1
+layout_mode = 0
 anchor_left = 1.0
-anchor_top = 0.0
 anchor_right = 1.0
-anchor_bottom = 0.0
 offset_left = -113.3333
 offset_top = 33.3333
 offset_right = -33.3333
 offset_bottom = 113.3333
 grow_horizontal = 0
 grow_vertical = 0
-focus_mode = 2
 mouse_default_cursor_shape = 2
-theme_override_fonts/font = ExtResource("6_font")
+theme_override_fonts/font = ExtResource("10_pause_font")
 theme_override_font_sizes/font_size = 30
 text = "X"
 
-[node name="PauseOverlay" type="ColorRect" parent="HUD/DesignCanvas"]
-visible = false
+[node name="PauseOverlay" type="ColorRect" parent="HUD/DesignCanvas" unique_id=806800555]
 process_mode = 3
-anchors_preset = 15
+visible = false
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 color = Color(0, 0, 0, 0.82)
 script = ExtResource("9_pause_script")
 
-[node name="Center" type="CenterContainer" parent="HUD/DesignCanvas/PauseOverlay"]
+[node name="Center" type="CenterContainer" parent="HUD/DesignCanvas/PauseOverlay" unique_id=1822041797]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -456,12 +439,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Content" type="VBoxContainer" parent="HUD/DesignCanvas/PauseOverlay/Center"]
+[node name="Content" type="VBoxContainer" parent="HUD/DesignCanvas/PauseOverlay/Center" unique_id=906459096]
 custom_minimum_size = Vector2(466.6667, 0)
 layout_mode = 2
 theme_override_constants/separation = 17
 
-[node name="Title" type="Label" parent="HUD/DesignCanvas/PauseOverlay/Center/Content"]
+[node name="Title" type="Label" parent="HUD/DesignCanvas/PauseOverlay/Center/Content" unique_id=1151258482]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("10_pause_font")
@@ -469,7 +452,7 @@ theme_override_font_sizes/font_size = 37
 text = "PAUSED"
 horizontal_alignment = 1
 
-[node name="SaveNotice" type="Label" parent="HUD/DesignCanvas/PauseOverlay/Center/Content"]
+[node name="SaveNotice" type="Label" parent="HUD/DesignCanvas/PauseOverlay/Center/Content" unique_id=1960866610]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.72, 0.72, 1)
 theme_override_fonts/font = ExtResource("10_pause_font")
@@ -477,52 +460,48 @@ theme_override_font_sizes/font_size = 17
 text = "Progress saves at the end of each day."
 horizontal_alignment = 1
 
-[node name="ResumeButton" type="Button" parent="HUD/DesignCanvas/PauseOverlay/Center/Content"]
+[node name="ResumeButton" type="Button" parent="HUD/DesignCanvas/PauseOverlay/Center/Content" unique_id=2010838527]
 custom_minimum_size = Vector2(466.6667, 73.3333)
 layout_mode = 2
-focus_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
+theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_fonts/font = ExtResource("10_pause_font")
 theme_override_font_sizes/font_size = 30
 text = "Resume"
 flat = true
 
-[node name="HowToPlayButton" type="Button" parent="HUD/DesignCanvas/PauseOverlay/Center/Content"]
+[node name="HowToPlayButton" type="Button" parent="HUD/DesignCanvas/PauseOverlay/Center/Content" unique_id=2066832521]
 custom_minimum_size = Vector2(466.6667, 73.3333)
 layout_mode = 2
-focus_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
+theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_fonts/font = ExtResource("10_pause_font")
 theme_override_font_sizes/font_size = 30
 text = "How to Play"
 flat = true
 
-[node name="MainMenuButton" type="Button" parent="HUD/DesignCanvas/PauseOverlay/Center/Content"]
+[node name="MainMenuButton" type="Button" parent="HUD/DesignCanvas/PauseOverlay/Center/Content" unique_id=678602387]
 custom_minimum_size = Vector2(466.6667, 73.3333)
 layout_mode = 2
-focus_mode = 2
 mouse_default_cursor_shape = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_colors/font_pressed_color = Color(0.5, 0.5, 0.5, 1)
+theme_override_colors/font_hover_color = Color(0.75, 0.75, 0.75, 1)
 theme_override_fonts/font = ExtResource("10_pause_font")
 theme_override_font_sizes/font_size = 30
 text = "Main Menu"
 flat = true
 
-[node name="HowToPlayOverlay" type="ColorRect" parent="HUD/DesignCanvas/PauseOverlay"]
+[node name="HowToPlayOverlay" type="ColorRect" parent="HUD/DesignCanvas/PauseOverlay" unique_id=2098420332]
 visible = false
-anchors_preset = 15
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 color = Color(0, 0, 0, 0.86)
 script = ExtResource("11_howto_script")
