@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://cwccwl2dx7uiu"]
+[gd_scene format=3]
 
-[ext_resource type="FontFile" uid="uid://c3285r3n5l6cg" path="res://assets/fonts/CourierPrime-Bold.ttf" id="1_boj6g"]
+[ext_resource type="FontFile" uid="uid://bxdeha88xo6ug" path="res://assets/fonts/CourierPrime-Regular.ttf" id="1_font"]
 
-[node name="DayIntro" type="Control" unique_id=1066557663]
+[node name="DayIntro" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Background" type="ColorRect" parent="." unique_id=186222370]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,22 +21,23 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.055, 0.067, 0.075, 1)
 
-[node name="Title" type="Label" parent="." unique_id=1693568343]
+[node name="Title" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -40.0
-offset_right = 300.0
-offset_bottom = 40.0
+offset_left = -500
+offset_top = -66.6667
+offset_right = 500
+offset_bottom = 66.6667
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_colors/font_color = Color(0.91, 0.89, 0.85, 1)
-theme_override_fonts/font = ExtResource("1_boj6g")
-theme_override_font_sizes/font_size = 48
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 80
 text = "DAY 1"
 horizontal_alignment = 1
 vertical_alignment = 1

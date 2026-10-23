@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://chfm03sx6vsl6"
-path="res://.godot/imported/Tak berjudul210_20261011020236.png-95024f296935a99beff62169175f0d31.ctex"
+uid="uid://cj48b4fa23tff"
+path="res://.godot/imported/kiara1.png-f9963cb52a8b3567f11149ae944353c0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/character/Tak berjudul210_20261011020236.png"
-dest_files=["res://.godot/imported/Tak berjudul210_20261011020236.png-95024f296935a99beff62169175f0d31.ctex"]
+source_file="res://assets/character/kiara1.png"
+dest_files=["res://.godot/imported/kiara1.png-f9963cb52a8b3567f11149ae944353c0.ctex"]
 
 [params]
 

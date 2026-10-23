@@ -4,9 +4,9 @@
   "day": 2,
   "applicant_index": 3,
   "is_empty": true,
-  "character_image": "res://assets/character/elizzabeth.png",
+  "character_image": "res://assets/character/elizzabeth2.png",
   "id_card_image": "res://assets/character/elizzabeth_ID.png",
-  "anomaly_character_image": null,
+  "anomaly_character_image": "res://assets/character/elizzabeth_a.png",
   "pre_interaction": [
     {
       "type": "narration",

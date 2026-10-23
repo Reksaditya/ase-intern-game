@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c3vugh6rgn2pq"
-path="res://.godot/imported/Tak berjudul210_20261011020749.png-671be019475c793c30c717502c650450.ctex"
+uid="uid://duk012efvn1re"
+path="res://.godot/imported/tutor_BACKSPACE.svg-59ab3d7b4bea9627c9e1169ddbaaacfa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/character/Tak berjudul210_20261011020749.png"
-dest_files=["res://.godot/imported/Tak berjudul210_20261011020749.png-671be019475c793c30c717502c650450.ctex"]
+source_file="res://assets/UI/tutor_BACKSPACE.svg"
+dest_files=["res://.godot/imported/tutor_BACKSPACE.svg-59ab3d7b4bea9627c9e1169ddbaaacfa.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

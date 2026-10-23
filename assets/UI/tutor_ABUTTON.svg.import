@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c3mv2e2tpmx55"
-path="res://.godot/imported/Tak berjudul193_20260919180408.png-89a189c4beec3ec307e8a6fdae7dde36.ctex"
+uid="uid://bji6k3l6wgoxv"
+path="res://.godot/imported/tutor_ABUTTON.svg-399c89c55ab362b027f3fd252f353c26.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/character/Tak berjudul193_20260919180408.png"
-dest_files=["res://.godot/imported/Tak berjudul193_20260919180408.png-89a189c4beec3ec307e8a6fdae7dde36.ctex"]
+source_file="res://assets/UI/tutor_ABUTTON.svg"
+dest_files=["res://.godot/imported/tutor_ABUTTON.svg-399c89c55ab362b027f3fd252f353c26.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

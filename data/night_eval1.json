@@ -1,7 +1,7 @@
 {
   "label": "[CETAKAN SISTEM] EVALUASI SHIFT MALAM",
   "header": "EVALUASI MALAM — HARI 1",
-  "continue_text": "[ CLICK OR PRESS ENTER TO CONTINUE ]",
+  "continue_text": "[ CLICK OR PRESS ENTER / SPACE TO CONTINUE ]",
   "baris1": "Gerbang ditutup. Badai asam masih mengetuk pelat baja, pelan dan tidak berhenti. Malam ini terasa nyaris normal.",
   "baris2": "Gerbang sunyi lebih lama dari biasanya. Di luar sana, tidak ada cara untuk tahu apa yang bergerak.",
   "body": "--------------------------------------------------\nHari Operasional: 1 / 5\n--------------------------------------------------\nRINGKASAN SHIFT SIANG\nPemohon Diproses  : 2\nDiterima          : {diterima}\nDitolak           : {ditolak}\n\nCATATAN KEJADIAN\n{baris1} {baris2}\n\n--------------------------------------------------\nGerbang terkunci. Menunggu shift berikutnya.\n--------------------------------------------------"

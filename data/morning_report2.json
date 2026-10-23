@@ -1,6 +1,6 @@
 {
   "label": "KOMANDO MILITER — BUNKER 07",
   "header": "LAPORAN HARIAN OPERASIONAL",
-  "continue_text": "[ CLICK OR PRESS ENTER TO CONTINUE ]",
+  "continue_text": "[ CLICK OR PRESS ENTER / SPACE TO CONTINUE ]",
   "body": "==================================================\nDIVISI KEAMANAN GERBANG BUNKER TERAKHIR\nHari Operasional: 2 / 5\nTanggal Operasional: 13 Maret 2068\nKlasifikasi: TERBATAS\n==================================================\n\nI. LAPORAN INSIDEN\nLog internal tidak mencatat kejadian yang memerlukan tindak lanjut. Badai semalam menunda pemeliharaan generator cadangan.\n\nII. STATUS INDIKATOR SISTEM\nIndikasi Penyusup     : {band_infiltrasi}\nPelanggaran Tercatat  : {band_pelanggaran}\nSyarat Pertanyaan     : {syarat} pertanyaan wajib\n\nIII. SOP AKTIF HARI INI\n- Cek ID Card & Suhu Referensi. (tetap berlaku)\n- BARU: Tolak pemohon dengan BPM di atas 80.\n\nIV. INSTRUKSI KOMANDAN\n\"Menurut protokol interogasi lama, siapapun yang menyembunyikan sesuatu pasti menunjukkan tanda gelisah — detak jantung naik, keringat dingin. Kita belum pernah menangkap satu pun dari mereka hidup-hidup untuk memastikan, jadi ini asumsi terbaik yang kita punya. Mulai hari ini: siapapun dengan BPM di atas 80, tolak. Lebih baik kita kehilangan satu yang gugup, daripada kecolongan satu penyusup lagi.\"\n\n=================================================="
 }
