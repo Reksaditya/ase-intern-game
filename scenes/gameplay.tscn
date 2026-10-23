@@ -146,10 +146,18 @@ text = "II  PAUSE"
 
 [node name="Pupil" parent="HUD/DesignCanvas" unique_id=1039389159 instance=ExtResource("4_pupil")]
 visible = false
-layout_mode = 0
-anchors_preset = 0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -383.3333
 offset_top = -275.0
+offset_right = 383.3333
 offset_bottom = 275.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="DiagnosticTools" type="PanelContainer" parent="HUD/DesignCanvas" unique_id=809865992]
 layout_mode = 1
@@ -277,8 +285,18 @@ vertical_alignment = 1
 
 [node name="HeartbeatTemperature" parent="HUD/DesignCanvas" unique_id=1231846329 instance=ExtResource("5_vitals")]
 visible = false
-layout_mode = 0
-anchors_preset = 0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -383.3333
+offset_top = -183.3333
+offset_right = 383.3333
+offset_bottom = 183.3333
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="DialogueOutput" type="RichTextLabel" parent="HUD/DesignCanvas" unique_id=1484261692]
 layout_mode = 0

@@ -145,6 +145,7 @@ func _ready() -> void:
 	pause_overlay.connect("main_menu_requested", _return_to_main_menu)
 	accept_button.disabled = true
 	decline_button.disabled = true
+	television.call("set_interaction_locked", true)
 	pupil.set_process(false)
 	heartbeat_temperature.set_process(false)
 	_setup_audio_players()
@@ -161,6 +162,7 @@ func _ready() -> void:
 	decline_button.disabled = false
 	_show_pre_interaction()
 	_refresh_diagnostic_access()
+	_refresh_television_interaction_lock()
 	_update_focus_ring()
 	intlog_button.grab_focus()
 	InputGuide.enter_gameplay()
@@ -188,7 +190,8 @@ func _input(event: InputEvent) -> void:
 			return
 		return
 	if television.log_open and event.is_action_pressed("ui_cancel"):
-		television.call("close_log_panel")
+		if not _is_dialogue_busy():
+			television.call("close_log_panel")
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("ui_pause"):
@@ -198,6 +201,14 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	var is_key_echo := event is InputEventKey and (event as InputEventKey).echo
+	if (
+		(_recent_event_is_revealing or not _pending_recent_events.is_empty())
+		and not is_key_echo
+		and event.is_action_pressed("ui_accept")
+	):
+		_skip_recent_dialogue()
+		get_viewport().set_input_as_handled()
+		return
 	if dialogue_output.has_focus() and not is_key_echo:
 		if event.is_action_pressed("ui_accept"):
 			if _dialogue_scroll_mode:
@@ -512,6 +523,19 @@ func _append_formatted_event(target: RichTextLabel, event: Dictionary) -> void:
 	target.newline()
 
 
+func _is_dialogue_busy() -> bool:
+	return (
+		_recent_event_is_revealing
+		or not _pending_recent_events.is_empty()
+		or _decision_outcome_started
+	)
+
+
+func _refresh_television_interaction_lock() -> void:
+	if is_instance_valid(television):
+		television.call("set_interaction_locked", _is_dialogue_busy())
+
+
 func _clear_recent_dialogue() -> void:
 	_recent_event_generation += 1
 	_pending_recent_events.clear()
@@ -524,10 +548,12 @@ func _clear_recent_dialogue() -> void:
 	dialogue_output.visible_characters = 0
 	dialogue_output.scroll_following = true
 	dialogue_output.scroll_following_visible_characters = true
+	_refresh_television_interaction_lock()
 
 
 func _queue_recent_event(event: Dictionary) -> void:
 	_pending_recent_events.append(event.duplicate())
+	_refresh_television_interaction_lock()
 	_start_recent_event_reveal()
 
 
@@ -535,6 +561,7 @@ func _start_recent_event_reveal() -> void:
 	if _recent_event_is_revealing or _pending_recent_events.is_empty():
 		return
 	_recent_event_is_revealing = true
+	_refresh_television_interaction_lock()
 	var generation := _recent_event_generation
 	var event: Dictionary = _pending_recent_events.pop_front()
 	var speaker := _speaker_for_event(event)
@@ -567,6 +594,7 @@ func _start_recent_event_reveal() -> void:
 	_recent_event_is_revealing = false
 	if _pending_recent_events.is_empty():
 		_skip_recent_reveal_requested = false
+		_refresh_television_interaction_lock()
 		if _decision_outcome_started:
 			_finish_outcome_presentation()
 		return

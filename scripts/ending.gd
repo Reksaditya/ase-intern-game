@@ -39,7 +39,6 @@ func _input(event: InputEvent) -> void:
 		var mouse_event := event as InputEventMouseButton
 		wants_to_skip = mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT
 	if wants_to_skip:
-		_skip_reveal_requested = true
 		get_viewport().set_input_as_handled()
 
 

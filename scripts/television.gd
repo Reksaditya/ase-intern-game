@@ -29,6 +29,7 @@ var panel_tween: Tween
 var log_scroll_tween: Tween
 var log_scroll_target: float = 0.0
 var log_open: bool = false
+var interaction_locked: bool = false
 var _button_sfx_player: AudioStreamPlayer
 
 func _ready() -> void:
@@ -43,6 +44,8 @@ func _ready() -> void:
 	idcard.pressed.connect(_on_idcard_pressed)
 
 	back_button.pressed.connect(func():
+		if interaction_locked:
+			return
 		_play_button_sfx()
 		close_log_panel()
 	)
@@ -100,7 +103,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _on_question_button_pressed(question_key: String) -> void:
-	if not log_open:
+	if not log_open or interaction_locked:
 		return
 	_play_button_sfx()
 	question_asked.emit(question_key)
@@ -155,7 +158,22 @@ func _update_scroll_height() -> void:
 	log_scroll.custom_minimum_size.y = total_height
 
 
+func set_interaction_locked(locked: bool) -> void:
+	interaction_locked = locked
+	if log_open:
+		_set_question_buttons_disabled(locked)
+		back_button.disabled = locked
+	else:
+		intlog.disabled = locked
+		idcard.disabled = locked
+		if locked:
+			_animate_button(intlog, Vector2.ONE, 0.1, Tween.TRANS_SINE)
+			_animate_button(idcard, Vector2.ONE, 0.1, Tween.TRANS_SINE)
+
+
 func _on_intlog_pressed() -> void:
+	if interaction_locked:
+		return
 	_play_button_sfx()
 	if log_open:
 		close_log_panel()
@@ -164,12 +182,14 @@ func _on_intlog_pressed() -> void:
 
 
 func _on_idcard_pressed() -> void:
+	if interaction_locked:
+		return
 	_play_button_sfx()
 	id_card_requested.emit()
 
 
 func open_log_panel() -> void:
-	if log_open:
+	if log_open or interaction_locked:
 		return
 
 	_stop_log_scroll_tween()
@@ -212,7 +232,7 @@ func open_log_panel() -> void:
 		if not log_open:
 			return
 		intlog.visible = false
-		back_button.disabled = false
+		back_button.disabled = interaction_locked
 	)
 
 	_animate_buttons_in()
@@ -220,7 +240,7 @@ func open_log_panel() -> void:
 
 
 func close_log_panel() -> void:
-	if not log_open:
+	if not log_open or interaction_locked:
 		return
 
 	log_open = false
@@ -247,14 +267,15 @@ func close_log_panel() -> void:
 		log_scroll.visible = false
 		log_title.visible = false
 		back_button.visible = false
-		back_button.disabled = false
-		intlog.disabled = false
+		back_button.disabled = interaction_locked
+		intlog.disabled = interaction_locked
 		intlog.mouse_filter = Control.MOUSE_FILTER_STOP
-		idcard.disabled = false
+		idcard.disabled = interaction_locked
 		idcard.visible = true
-		_set_question_buttons_disabled(false)
+		_set_question_buttons_disabled(interaction_locked)
 		log_panel_closed.emit()
-		intlog.grab_focus()
+		if not interaction_locked:
+			intlog.grab_focus()
 	)
 
 
@@ -280,8 +301,8 @@ func _animate_buttons_in() -> void:
 		t.tween_property(btn, "modulate:a", 1.0, button_appear_duration)
 		t.chain().tween_callback(func():
 			if log_open and is_instance_valid(btn):
-				btn.disabled = false
-				if btn == first_button:
+				btn.disabled = interaction_locked
+				if not interaction_locked and btn == first_button:
 					btn.grab_focus()
 		)
 		question_button_tweens.append(t)
