@@ -15,8 +15,6 @@ const NIGHT_EVALUATION_SCENE: PackedScene = preload("res://scenes/night_eval.tsc
 const FINAL_EVALUATION_SCENE: PackedScene = preload("res://scenes/final_evaluation.tscn")
 const ENDING_SCENE: PackedScene = preload("res://scenes/ending.tscn")
 const SAVE_SLOT_COUNT := 4
-const NAV_HINT_MAIN := "ARROWS / WASD  NAVIGATE     ENTER / SPACE  SELECT"
-const NAV_HINT_BACK := NAV_HINT_MAIN + "     ESC / BACKSPACE  BACK"
 const SAVE_PATH_FORMAT := "user://save_slot_%d.json"
 const REPORT_TEXT_PATH := "res://data/report_text.json"
 const MORNING_REPORT_PATH_FORMAT := "res://data/morning_report%d.json"
@@ -55,7 +53,6 @@ var _windowed_size := Vector2i.ZERO
 @onready var _new_button := $SaveMenu/Center/Content/Actions/NewButton
 @onready var _load_button := $SaveMenu/Center/Content/Actions/LoadButton
 @onready var _delete_button := $SaveMenu/Center/Content/Actions/DeleteButton
-@onready var _nav_hint := $NavHint
 
 
 func _ready() -> void:
@@ -120,8 +117,6 @@ func _open_save_menu() -> void:
 	_main_menu.hide()
 	_settings_menu.hide()
 	_save_menu.show()
-	_nav_hint.text = NAV_HINT_BACK
-	_nav_hint.show()
 	_refresh_save_menu()
 	$SaveMenu/Center/Content/SaveSlot1.grab_focus()
 
@@ -130,8 +125,6 @@ func _open_settings_menu() -> void:
 	_main_menu.hide()
 	_save_menu.hide()
 	_settings_menu.show()
-	_nav_hint.text = NAV_HINT_BACK
-	_nav_hint.show()
 	_fullscreen_toggle.set_pressed_no_signal(_is_window_fullscreen())
 	_brightness_slider.grab_focus()
 
@@ -142,8 +135,6 @@ func _show_main_menu() -> void:
 	_save_menu.hide()
 	_settings_menu.hide()
 	_main_menu.show()
-	_nav_hint.text = NAV_HINT_MAIN
-	_nav_hint.show()
 	_refresh_save_menu()
 	_play_game_button.grab_focus()
 
@@ -252,7 +243,6 @@ func _start_game_at_timeline_index(start_index: int) -> void:
 	_main_menu.hide()
 	_save_menu.hide()
 	_settings_menu.hide()
-	_nav_hint.hide()
 	_show_timeline_step()
 
 

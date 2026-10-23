@@ -6,15 +6,60 @@ extends ColorRect
 signal close_requested
 
 const KEYBOARD_ROWS := [
-	{"icons": ["wasd", "arrow"], "text": "Navigate menus, choices, and the eye light"},
-	{"icons": ["enter", "space"], "text": "Select / continue"},
-	{"icons": ["backspace"], "text": "Back / previous page"},
-	{"icons": ["esc"], "text": "Pause / close"},
+	{
+		"icons": ["wasd", "arrow"],
+		"text": "Navigate menus, choices, and the eye light",
+		"icon_width": 72.0,
+	},
+	{
+		"icons": ["enter", "space"],
+		"text": "Select / continue",
+		"icon_width": 100.0,
+	},
+	{"icons": ["backspace"], "text": "Back / previous page", "icon_width": 96.0},
+	{"icons": ["esc"], "text": "Pause / close", "icon_width": 56.0},
 ]
 
 const MOUSE_ROWS := [
-	{"icons": ["mouse"], "text": "Click buttons to navigate and select"},
-	{"icons": ["mouse"], "text": "Move over the eye to aim the light"},
+	{
+		"icons": ["mouse"],
+		"text": "Click buttons to navigate and select",
+		"icon_width": 88.0,
+	},
+	{
+		"icons": ["mouse"],
+		"text": "Move over the eye to aim the light",
+		"icon_width": 88.0,
+	},
+]
+
+const GAMEPAD_ROWS := [
+	{
+		"icons": ["analog"],
+		"text": "Navigate menus, choices, and the eye light",
+		"icon_size": 64.0,
+		"icon_width": 150.0,
+		"row_height": 70.0,
+	},
+	{
+		"icons": ["abutton"],
+		"text": "Select / continue",
+		"icon_size": 56.0,
+		"row_height": 70.0,
+	},
+	{
+		"icons": ["bbutton"],
+		"text": "Back / previous page",
+		"icon_size": 56.0,
+		"row_height": 70.0,
+	},
+	{
+		"icons": ["pause"],
+		"text": "Pause / hold to skip cutscenes",
+		"icon_size": 56.0,
+		"icon_width": 96.0,
+		"row_height": 70.0,
+	},
 ]
 
 var _close_button: Button
@@ -46,7 +91,7 @@ func _build_ui() -> void:
 
 	var panel := PanelContainer.new()
 	panel.name = "Panel"
-	panel.custom_minimum_size = Vector2(1180.0, 0.0)
+	panel.custom_minimum_size = Vector2(1560.0, 0.0)
 	panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	panel.add_theme_stylebox_override(
 		"panel",
@@ -75,7 +120,7 @@ func _build_ui() -> void:
 	layout.add_child(title)
 
 	var subtitle := Label.new()
-	subtitle.text = "Keyboard and mouse controls"
+	subtitle.text = "Keyboard, mouse, and gamepad controls"
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	subtitle.add_theme_font_override("font", ControlHints.get_font())
 	subtitle.add_theme_font_size_override("font_size", 18)
@@ -89,16 +134,10 @@ func _build_ui() -> void:
 	layout.add_child(columns)
 
 	columns.add_child(_make_section("KEYBOARD", KEYBOARD_ROWS))
-
-	var divider := ColorRect.new()
-	divider.name = "Divider"
-	divider.color = Color(0.15, 0.34, 0.31, 0.8)
-	divider.custom_minimum_size = Vector2(1.0, 0.0)
-	divider.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	columns.add_child(divider)
-
+	columns.add_child(_make_divider())
 	columns.add_child(_make_section("MOUSE", MOUSE_ROWS))
+	columns.add_child(_make_divider())
+	columns.add_child(_make_section("GAMEPAD", GAMEPAD_ROWS))
 
 	var footer := HBoxContainer.new()
 	footer.name = "Footer"
@@ -127,6 +166,16 @@ func _build_ui() -> void:
 	footer.add_child(_close_button)
 
 
+func _make_divider() -> ColorRect:
+	var divider := ColorRect.new()
+	divider.name = "Divider"
+	divider.color = Color(0.15, 0.34, 0.31, 0.8)
+	divider.custom_minimum_size = Vector2(1.0, 0.0)
+	divider.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return divider
+
+
 func _make_section(section_title: String, rows: Array) -> VBoxContainer:
 	var section := VBoxContainer.new()
 	section.name = section_title.capitalize()
@@ -146,8 +195,10 @@ func _make_section(section_title: String, rows: Array) -> VBoxContainer:
 
 
 func _make_row(row_data: Dictionary) -> HBoxContainer:
+	var icon_size := float(row_data.get("icon_size", 56.0))
+	var icon_width := float(row_data.get("icon_width", 0.0))
 	var row := HBoxContainer.new()
-	row.custom_minimum_size = Vector2(0.0, 58.0)
+	row.custom_minimum_size = Vector2(0.0, float(row_data.get("row_height", 64.0)))
 	row.add_theme_constant_override("separation", 16)
 
 	var icon_box := HBoxContainer.new()
@@ -155,7 +206,9 @@ func _make_row(row_data: Dictionary) -> HBoxContainer:
 	icon_box.alignment = BoxContainer.ALIGNMENT_CENTER
 	icon_box.add_theme_constant_override("separation", 2)
 	for icon_name in row_data.get("icons", []):
-		icon_box.add_child(ControlHints.make_icon_rect(str(icon_name), 52.0))
+		icon_box.add_child(
+			ControlHints.make_icon_rect(str(icon_name), icon_size, icon_width)
+		)
 	row.add_child(icon_box)
 
 	var label := Label.new()

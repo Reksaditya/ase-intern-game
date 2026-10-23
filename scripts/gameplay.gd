@@ -134,28 +134,27 @@ func _input(event: InputEvent) -> void:
 			_close_transcript()
 			get_viewport().set_input_as_handled()
 			return
-		if event is InputEventKey and event.pressed and not event.echo:
-			var scroll_direction := 0
-			if event.is_action_pressed("ui_up"):
-				scroll_direction = -1
-			elif event.is_action_pressed("ui_down"):
-				scroll_direction = 1
-			if scroll_direction != 0:
-				transcript_scroll.scroll_vertical += scroll_direction * 60
-				get_viewport().set_input_as_handled()
-				return
-		return
-	if event.is_action_pressed("ui_cancel"):
-		if pupil.visible or heartbeat_temperature.visible:
-			return
-		if television.log_open:
-			television.call("close_log_panel")
+		if event.is_action_pressed("ui_up"):
+			transcript_scroll.scroll_vertical -= 60
 			get_viewport().set_input_as_handled()
+			return
+		if event.is_action_pressed("ui_down"):
+			transcript_scroll.scroll_vertical += 60
+			get_viewport().set_input_as_handled()
+			return
+		return
+	if television.log_open and event.is_action_pressed("ui_cancel"):
+		television.call("close_log_panel")
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("ui_pause"):
+		if pupil.visible or heartbeat_temperature.visible:
 			return
 		_open_pause_menu()
 		get_viewport().set_input_as_handled()
 		return
-	if dialogue_output.has_focus() and event is InputEventKey and event.pressed and not event.echo:
+	var is_key_echo := event is InputEventKey and (event as InputEventKey).echo
+	if dialogue_output.has_focus() and not is_key_echo:
 		if event.is_action_pressed("ui_accept"):
 			if _dialogue_scroll_mode:
 				_open_transcript()
@@ -231,7 +230,7 @@ func _open_pupil() -> void:
 	heartbeat_temperature.set_process(false)
 	pupil.show()
 	pupil.set_process(true)
-	pupil.call("reset_keyboard_light")
+	pupil.call("reset_light_tracking")
 	_update_focus_ring()
 	pupil_close_button.grab_focus()
 

@@ -5,7 +5,7 @@ extends CanvasLayer
 
 signal modality_changed(modality: int)
 
-enum Modality { KEYBOARD, MOUSE }
+enum Modality { KEYBOARD, MOUSE, CONTROLLER }
 
 const GAMEPLAY_CONTEXT := "gameplay"
 const PRINTER_CONTEXT := "printer"
@@ -44,6 +44,12 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventMouseMotion:
 		if (event as InputEventMouseMotion).relative.length_squared() > 1.0:
 			_set_modality(Modality.MOUSE)
+	elif event is InputEventJoypadButton:
+		if (event as InputEventJoypadButton).pressed:
+			_set_modality(Modality.CONTROLLER)
+	elif event is InputEventJoypadMotion:
+		if absf((event as InputEventJoypadMotion).axis_value) > 0.5:
+			_set_modality(Modality.CONTROLLER)
 
 
 func enter_gameplay() -> void:
@@ -201,8 +207,9 @@ func _rebuild_tip() -> void:
 			ControlHints.make_tip_section(
 				section.get("icons", []),
 				str(section.get("label", "")),
-				46.0,
-				13
+				float(section.get("icon_size", 56.0)),
+				13,
+				float(section.get("icon_width", 0.0))
 			)
 		)
 
@@ -210,20 +217,54 @@ func _rebuild_tip() -> void:
 func _sections_for(context: String, input_modality: int) -> Array[Dictionary]:
 	var sections: Array[Dictionary] = []
 	if input_modality == Modality.MOUSE:
+		var mouse_label := (
+			"CLICK TO PAGE / CONTINUE"
+			if context == PRINTER_CONTEXT
+			else "CLICK TO NAVIGATE / SELECT"
+		)
+		sections.append({
+			"icons": ["mouse"],
+			"label": mouse_label,
+			"icon_width": 88.0,
+		})
+		return sections
+
+	if input_modality == Modality.CONTROLLER:
 		if context == PRINTER_CONTEXT:
-			sections.append({"icons": ["mouse"], "label": "CLICK TO PAGE / CONTINUE"})
-		else:
-			sections.append({"icons": ["mouse"], "label": "CLICK TO NAVIGATE / SELECT"})
+			sections.append({
+				"icons": ["analog"],
+				"label": "PAGE",
+				"icon_size": 56.0,
+				"icon_width": 120.0,
+			})
+			sections.append({"icons": ["abutton"], "label": "CONTINUE", "icon_size": 56.0})
+			sections.append({"icons": ["bbutton"], "label": "PREVIOUS PAGE", "icon_size": 56.0})
+			return sections
+
+		sections.append({
+			"icons": ["analog"],
+			"label": "NAVIGATE",
+			"icon_size": 56.0,
+			"icon_width": 120.0,
+		})
+		sections.append({"icons": ["abutton"], "label": "SELECT", "icon_size": 56.0})
+		sections.append({"icons": ["bbutton"], "label": "BACK", "icon_size": 56.0})
+		sections.append({
+			"icons": ["pause"],
+			"label": "PAUSE",
+			"icon_size": 56.0,
+			"icon_width": 96.0,
+		})
 		return sections
 
 	if context == PRINTER_CONTEXT:
-		sections.append({"icons": ["arrow"], "label": "PAGE"})
-		sections.append({"icons": ["enter", "space"], "label": "CONTINUE"})
-		sections.append({"icons": ["backspace"], "label": "PREVIOUS PAGE"})
+		sections.append({"icons": ["arrow"], "label": "PAGE", "icon_width": 72.0})
+		sections.append({"icons": ["enter", "space"], "label": "CONTINUE", "icon_width": 100.0})
+		sections.append({"icons": ["backspace"], "label": "PREVIOUS PAGE", "icon_width": 96.0})
 		return sections
 
-	sections.append({"icons": ["wasd", "arrow"], "label": "NAVIGATE"})
-	sections.append({"icons": ["enter", "space"], "label": "SELECT"})
-	sections.append({"icons": ["backspace"], "label": "BACK"})
-	sections.append({"icons": ["esc"], "label": "PAUSE"})
+	sections.append({"icons": ["wasd", "arrow"], "label": "NAVIGATE", "icon_width": 72.0})
+	sections.append({"icons": ["enter", "space"], "label": "SELECT", "icon_width": 100.0})
+	sections.append({"icons": ["backspace"], "label": "BACK", "icon_width": 96.0})
+	sections.append({"icons": ["esc"], "label": "PAUSE", "icon_width": 56.0})
 	return sections

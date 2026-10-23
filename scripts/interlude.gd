@@ -33,7 +33,7 @@ var _index := -1
 var _finished := false
 var _scene_skipped := false
 var _tween: Tween
-var _is_escape_held := false
+var _is_skip_held := false
 var _is_mouse_held := false
 var _mouse_press_time := 0.0
 var _skip_hold_time := 0.0
@@ -57,16 +57,16 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if _scene_skipped:
 		return
-	if _is_escape_held and not Input.is_key_pressed(KEY_ESCAPE):
-		_is_escape_held = false
+	if _is_skip_held and not Input.is_action_pressed("ui_pause"):
+		_is_skip_held = false
 	if _is_mouse_held and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		_is_mouse_held = false
 
 	if _is_mouse_held:
 		_mouse_press_time += delta
 
-	var is_skip_pressing := _is_escape_held or (_is_mouse_held and _mouse_press_time >= MOUSE_SKIP_SHOW_DELAY)
-	if _is_escape_held or _is_mouse_held:
+	var is_skip_pressing := _is_skip_held or (_is_mouse_held and _mouse_press_time >= MOUSE_SKIP_SHOW_DELAY)
+	if _is_skip_held or _is_mouse_held:
 		_skip_hold_time += delta
 		_skip_dot_timer += delta
 		if _skip_hold_time >= SKIP_HOLD_DURATION:
@@ -83,12 +83,10 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if _scene_skipped:
 		return
-	if event is InputEventKey:
-		var key_event := event as InputEventKey
-		if key_event.keycode == KEY_ESCAPE and not key_event.echo:
-			_is_escape_held = key_event.pressed
-			get_viewport().set_input_as_handled()
-			return
+	if event.is_action_pressed("ui_pause"):
+		_is_skip_held = true
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
@@ -126,7 +124,7 @@ func _update_skipping_label(is_skip_pressing: bool) -> void:
 
 
 func _reset_skip_state() -> void:
-	_is_escape_held = false
+	_is_skip_held = false
 	_is_mouse_held = false
 	_mouse_press_time = 0.0
 	_skip_hold_time = 0.0

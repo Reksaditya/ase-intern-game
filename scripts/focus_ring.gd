@@ -1,15 +1,15 @@
 extends CanvasLayer
 
-## Draws a keyboard-focus outline around the currently focused control.
-## The outline only appears while the player is using the keyboard, so mouse
-## users keep the original look of the game.
+## Draws a focus outline around the currently focused control.
+## The outline appears while the player is using the keyboard or a gamepad, so
+## mouse users keep the original look of the game.
 
 const ACCENT := Color(0.26, 1.0, 0.42, 0.95)
 const FILL := Color(0.26, 1.0, 0.42, 0.07)
 const SHADOW := Color(0.0, 0.0, 0.0, 0.7)
 
 var _target: Control
-var _keyboard_mode := true
+var _focus_visible := true
 var _indicator: FocusIndicator
 var _empty_focus_style := StyleBoxEmpty.new()
 
@@ -48,9 +48,14 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
-		_set_keyboard_mode(true)
+		_set_focus_visible(true)
+	elif event is InputEventJoypadButton and event.pressed:
+		_set_focus_visible(true)
+	elif event is InputEventJoypadMotion:
+		if absf((event as InputEventJoypadMotion).axis_value) > 0.5:
+			_set_focus_visible(true)
 	elif event is InputEventMouse:
-		_set_keyboard_mode(false)
+		_set_focus_visible(false)
 
 
 func _process(_delta: float) -> void:
@@ -61,10 +66,10 @@ func _process(_delta: float) -> void:
 		_indicator.queue_redraw()
 
 
-func _set_keyboard_mode(enabled: bool) -> void:
-	if _keyboard_mode == enabled:
+func _set_focus_visible(enabled: bool) -> void:
+	if _focus_visible == enabled:
 		return
-	_keyboard_mode = enabled
+	_focus_visible = enabled
 	_refresh()
 
 
@@ -94,7 +99,7 @@ func _has_valid_target() -> bool:
 func _refresh() -> void:
 	if _indicator == null:
 		return
-	var show_ring := _keyboard_mode and _has_valid_target()
+	var show_ring := _focus_visible and _has_valid_target()
 	_indicator.visible = show_ring
 	_indicator.target = _target if show_ring else null
 	if show_ring:

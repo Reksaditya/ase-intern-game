@@ -289,21 +289,3 @@ theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 27
 text = "Back"
 flat = true
-
-[node name="NavHint" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -54.0
-offset_bottom = -20.0
-grow_horizontal = 2
-grow_vertical = 0
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.52, 0.62, 0.6, 0.9)
-theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 18
-text = "ARROWS / WASD  NAVIGATE     ENTER / SPACE  SELECT     BACKSPACE  BACK"
-horizontal_alignment = 1
-vertical_alignment = 1

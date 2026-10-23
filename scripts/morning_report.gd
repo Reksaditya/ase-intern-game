@@ -38,7 +38,7 @@ var _pages: Array[String] = []
 var _current_page_index := 0
 var _paper_size := Vector2.ZERO
 var _active_tween: Tween
-var _is_escape_held := false
+var _is_skip_held := false
 var _is_mouse_held := false
 var _skip_hold_time := 0.0
 var _skip_dot_timer := 0.0
@@ -101,12 +101,12 @@ func _process(delta: float) -> void:
 			_reset_skip_state()
 		return
 
-	if _is_escape_held and not Input.is_key_pressed(KEY_ESCAPE):
-		_is_escape_held = false
+	if _is_skip_held and not Input.is_action_pressed("ui_pause"):
+		_is_skip_held = false
 	if _is_mouse_held and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		_is_mouse_held = false
 
-	var is_skip_pressing := _is_escape_held or _is_mouse_held
+	var is_skip_pressing := _is_skip_held or _is_mouse_held
 	if is_skip_pressing:
 		_skip_hold_time += delta
 		_skip_dot_timer += delta
@@ -238,8 +238,8 @@ func _page_fits(text: String) -> bool:
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo:
-		var key_event := event as InputEventKey
+	var is_key_echo := event is InputEventKey and (event as InputEventKey).echo
+	if not is_key_echo:
 		if event.is_action_pressed("ui_left"):
 			_change_page(-1)
 			get_viewport().set_input_as_handled()
@@ -248,7 +248,7 @@ func _input(event: InputEvent) -> void:
 			_change_page(1)
 			get_viewport().set_input_as_handled()
 			return
-		if key_event.keycode == KEY_BACKSPACE and _can_continue:
+		if _can_continue and _is_previous_page_event(event):
 			_change_page(-1)
 			get_viewport().set_input_as_handled()
 			return
@@ -260,18 +260,24 @@ func _input(event: InputEvent) -> void:
 	if _can_continue:
 		return
 
-	if event is InputEventKey:
-		var key_event := event as InputEventKey
-		if key_event.keycode == KEY_ESCAPE and not key_event.echo:
-			_is_escape_held = key_event.pressed
-			get_viewport().set_input_as_handled()
-			return
+	if event.is_action_pressed("ui_pause"):
+		_is_skip_held = true
+		get_viewport().set_input_as_handled()
+		return
 	elif event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
 		if mouse_event.button_index == MOUSE_BUTTON_LEFT:
 			_is_mouse_held = mouse_event.pressed
 			get_viewport().set_input_as_handled()
 			return
+
+
+func _is_previous_page_event(event: InputEvent) -> bool:
+	if event is InputEventKey:
+		return (event as InputEventKey).keycode == KEY_BACKSPACE
+	if event is InputEventJoypadButton:
+		return (event as InputEventJoypadButton).button_index == JOY_BUTTON_B
+	return false
 
 
 func _on_printing_complete() -> void:
@@ -360,7 +366,7 @@ func _update_skipping_label(is_skip_pressing: bool) -> void:
 
 
 func _reset_skip_state() -> void:
-	_is_escape_held = false
+	_is_skip_held = false
 	_is_mouse_held = false
 	_skip_hold_time = 0.0
 	_skip_dot_timer = 0.0
