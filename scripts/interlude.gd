@@ -15,6 +15,7 @@ const SKIP_DOT_INTERVAL := 0.15
 const SKIP_DOT_SEQUENCE: Array[int] = [0, 1, 2, 3, 2, 1]
 const SKIP_DIM_MODULATE := Color(0.5, 0.5, 0.5, 0.2)
 const SKIP_VIBRANT_MODULATE := Color(1.0, 1.0, 1.0, 1.0)
+const CLICK_SFX: AudioStream = preload("res://assets/bgm/clickeveywhere.mp3")
 
 const PARAGRAPHS: Array[String] = [
 	"Dunia sudah lama berhenti menjadi tempat yang aman. Atmosfer beracun. Badai asam yang datang tiap hari, tanpa peringatan, tanpa ampun.",
@@ -38,6 +39,7 @@ var _is_mouse_held := false
 var _mouse_press_time := 0.0
 var _skip_hold_time := 0.0
 var _skip_dot_timer := 0.0
+var _click_sfx_player: AudioStreamPlayer
 
 @onready var _story: Label = $Story
 @onready var _start_button: Button = $ContinueButton
@@ -49,6 +51,10 @@ func _ready() -> void:
 	_start_button.visible = false
 	_start_button.modulate.a = 0.0
 	_reset_skip_state()
+	_click_sfx_player = AudioStreamPlayer.new()
+	_click_sfx_player.stream = CLICK_SFX
+	_click_sfx_player.volume_db = -3.0
+	add_child(_click_sfx_player)
 	_tween = create_tween()
 	_tween.tween_interval(START_DELAY)
 	_tween.tween_callback(_show_paragraph.bind(0))
@@ -149,6 +155,8 @@ func _skip_scene() -> void:
 func _skip() -> void:
 	if _tween:
 		_tween.kill()
+	if is_instance_valid(_click_sfx_player):
+		_click_sfx_player.play()
 	if _index >= PARAGRAPHS.size() - 1:
 		_finish()
 	else:

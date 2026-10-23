@@ -27,6 +27,15 @@ const ENDING_DATA_PATHS := {
 	"silent_outbreak": "res://data/ending_silent_outbreak.json",
 	"traitors_fate": "res://data/ending_traitors_fate.json",
 }
+const MENU_BGM: AudioStream = preload("res://assets/bgm/menu.wav")
+const DAY1_TO_3_BGM: AudioStream = preload("res://assets/bgm/day1to3.wav")
+const DAY4_TO_5_BGM: AudioStream = preload("res://assets/bgm/day4to5.wav")
+const TRUE_ENDING_BGM: AudioStream = preload("res://assets/bgm/trueending.wav")
+const MILITARY_ENDING_BGM: AudioStream = preload("res://assets/bgm/military.wav")
+const BAD_ENDING_1_BGM: AudioStream = preload("res://assets/bgm/badending.wav")
+const BAD_ENDING_2_BGM: AudioStream = preload("res://assets/bgm/badending2.wav")
+const REPORT_SFX: AudioStream = preload("res://assets/bgm/report.wav")
+const BUTTON_SFX: AudioStream = preload("res://assets/bgm/button.mp3")
 
 var _timeline: Array[Dictionary] = []
 var _report_text: Dictionary = {}
@@ -41,6 +50,8 @@ var _selected_save_slot := -1
 var _save_actions_active := false
 var _save_slots: Array[Dictionary] = []
 var _windowed_size := Vector2i.ZERO
+var _report_sfx_player: AudioStreamPlayer
+var _button_sfx_player: AudioStreamPlayer
 
 @onready var _main_menu := $MainMenu
 @onready var _save_menu := $SaveMenu
@@ -53,6 +64,7 @@ var _windowed_size := Vector2i.ZERO
 @onready var _new_button := $SaveMenu/Center/Content/Actions/NewButton
 @onready var _load_button := $SaveMenu/Center/Content/Actions/LoadButton
 @onready var _delete_button := $SaveMenu/Center/Content/Actions/DeleteButton
+@onready var _bgm_player: AudioStreamPlayer = $MenuBGM
 
 
 func _ready() -> void:
@@ -64,7 +76,7 @@ func _ready() -> void:
 	$MainMenu/Buttons/PlayGameButton.pressed.connect(_open_save_menu)
 	$MainMenu/Buttons/SettingsButton.pressed.connect(_open_settings_menu)
 	$MainMenu/Buttons/QuitButton.pressed.connect(_quit_game)
-	$SettingsMenu/Center/Content/BackButton.pressed.connect(_show_main_menu)
+	$SettingsMenu/Center/Content/BackButton.pressed.connect(_on_back_to_main_menu_pressed)
 	_brightness_slider.value_changed.connect(_on_brightness_changed)
 	_fullscreen_toggle.toggled.connect(_on_fullscreen_toggled)
 	$SaveMenu/Center/Content/SaveSlot1.pressed.connect(_on_save_slot_pressed.bind(0))
@@ -74,6 +86,20 @@ func _ready() -> void:
 	_new_button.pressed.connect(_create_new_save)
 	_load_button.pressed.connect(_load_selected_save)
 	_delete_button.pressed.connect(_delete_selected_save)
+
+	_report_sfx_player = AudioStreamPlayer.new()
+	_report_sfx_player.stream = REPORT_SFX
+	_report_sfx_player.volume_db = -2.0
+	add_child(_report_sfx_player)
+
+	_button_sfx_player = AudioStreamPlayer.new()
+	_button_sfx_player.stream = BUTTON_SFX
+	_button_sfx_player.volume_db = -3.0
+	add_child(_button_sfx_player)
+
+	_bgm_player.finished.connect(_on_bgm_finished)
+	_play_bgm(MENU_BGM)
+
 	_refresh_save_menu()
 	_show_main_menu()
 
@@ -81,10 +107,12 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not _game_started:
 		if _settings_menu.visible and event.is_action_pressed("ui_cancel"):
+			_play_button_sfx()
 			_show_main_menu()
 			get_viewport().set_input_as_handled()
 			return
 		if _save_menu.visible and event.is_action_pressed("ui_cancel"):
+			_play_button_sfx()
 			if _save_actions_active:
 				_exit_save_actions_mode()
 			else:
@@ -111,7 +139,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+func _play_button_sfx() -> void:
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
+
+
 func _open_save_menu() -> void:
+	_play_button_sfx()
 	_save_actions_active = false
 	_selected_save_slot = -1
 	_main_menu.hide()
@@ -122,11 +156,17 @@ func _open_save_menu() -> void:
 
 
 func _open_settings_menu() -> void:
+	_play_button_sfx()
 	_main_menu.hide()
 	_save_menu.hide()
 	_settings_menu.show()
 	_fullscreen_toggle.set_pressed_no_signal(_is_window_fullscreen())
 	_brightness_slider.grab_focus()
+
+
+func _on_back_to_main_menu_pressed() -> void:
+	_play_button_sfx()
+	_show_main_menu()
 
 
 func _show_main_menu() -> void:
@@ -135,8 +175,74 @@ func _show_main_menu() -> void:
 	_save_menu.hide()
 	_settings_menu.hide()
 	_main_menu.show()
+	_play_bgm(MENU_BGM)
 	_refresh_save_menu()
 	_play_game_button.grab_focus()
+
+
+func _bgm_volume_for(stream: AudioStream) -> float:
+	if stream == MENU_BGM or stream == DAY1_TO_3_BGM:
+		return -6.0
+	if stream == DAY4_TO_5_BGM:
+		return -5.0
+	if stream == TRUE_ENDING_BGM:
+		return -2.0
+	if stream == MILITARY_ENDING_BGM:
+		return -4.0
+	if stream == BAD_ENDING_1_BGM:
+		return -2.5
+	if stream == BAD_ENDING_2_BGM:
+		return -8.5
+	return -6.0
+
+
+func _play_bgm(stream: AudioStream) -> void:
+	if not is_instance_valid(_bgm_player):
+		return
+	if stream == null:
+		if _bgm_player.playing:
+			_bgm_player.stop()
+		_bgm_player.stream = null
+		return
+	_bgm_player.volume_db = _bgm_volume_for(stream)
+	if _bgm_player.stream != stream:
+		_bgm_player.stream = stream
+		_bgm_player.play()
+	elif not _bgm_player.playing:
+		_bgm_player.play()
+
+
+func _on_bgm_finished() -> void:
+	if is_instance_valid(_bgm_player) and _bgm_player.stream != null:
+		_bgm_player.play()
+
+
+func _ending_bgm_for(ending_key: String) -> AudioStream:
+	match ending_key:
+		"humanity_sanctuary":
+			return TRUE_ENDING_BGM
+		"cold_military_fortress_a", "cold_military_fortress_b":
+			return MILITARY_ENDING_BGM
+		"silent_outbreak":
+			return BAD_ENDING_1_BGM
+		"traitors_fate":
+			return BAD_ENDING_2_BGM
+	return MENU_BGM
+
+
+func _update_bgm_for_step(step: Dictionary) -> void:
+	var scene: PackedScene = step.get("scene")
+	if scene == INTERLUDE_SCENE:
+		_play_bgm(MENU_BGM)
+	elif scene == DAY_INTRO_SCENE:
+		_play_bgm(DAY1_TO_3_BGM)
+	elif scene == FINAL_EVALUATION_SCENE:
+		_play_bgm(DAY4_TO_5_BGM)
+	elif scene == ENDING_SCENE:
+		_play_bgm(_ending_bgm_for(_ending_key_for_final_evaluation(_active_save_data())))
+	elif step.has("day"):
+		var day := int(step["day"])
+		_play_bgm(DAY1_TO_3_BGM if day <= 3 else DAY4_TO_5_BGM)
 
 
 func _on_brightness_changed(value: float) -> void:
@@ -163,6 +269,7 @@ func _is_window_fullscreen() -> bool:
 
 
 func _on_save_slot_pressed(slot_index: int) -> void:
+	_play_button_sfx()
 	_selected_save_slot = slot_index
 	_enter_save_actions_mode()
 
@@ -207,6 +314,7 @@ func _set_save_action_focus_ring() -> void:
 
 
 func _create_new_save() -> void:
+	_play_button_sfx()
 	if _game_started or _selected_save_slot < 0:
 		return
 	_active_save_slot = _selected_save_slot
@@ -215,6 +323,7 @@ func _create_new_save() -> void:
 
 
 func _load_selected_save() -> void:
+	_play_button_sfx()
 	if _game_started or _selected_save_slot < 0:
 		return
 	var save_data: Dictionary = _save_slots[_selected_save_slot]
@@ -225,6 +334,7 @@ func _load_selected_save() -> void:
 
 
 func _delete_selected_save() -> void:
+	_play_button_sfx()
 	if _game_started or _selected_save_slot < 0:
 		return
 	if _save_slots[_selected_save_slot].is_empty():
@@ -247,6 +357,7 @@ func _start_game_at_timeline_index(start_index: int) -> void:
 
 
 func _quit_game() -> void:
+	_play_button_sfx()
 	get_tree().quit()
 
 
@@ -333,6 +444,7 @@ func _advance_timeline() -> void:
 
 
 func _return_to_main_menu() -> void:
+	_play_button_sfx()
 	get_tree().paused = false
 	InputGuide.leave_context()
 	if is_instance_valid(_active_scene):
@@ -715,6 +827,7 @@ func _show_timeline_step() -> void:
 		_active_scene.queue_free()
 
 	var step: Dictionary = _timeline[_timeline_index]
+	_update_bgm_for_step(step)
 	var packed_scene: PackedScene = step["scene"]
 	_active_scene = packed_scene.instantiate()
 	var character_data_path := str(step.get("character_data_path", ""))
@@ -738,6 +851,8 @@ func _show_timeline_step() -> void:
 	var report_key := str(step.get("report", ""))
 	if not report_key.is_empty():
 		_apply_report_text(_active_scene, report_key, int(step.get("day", 1)))
+		if is_instance_valid(_report_sfx_player):
+			_report_sfx_player.play()
 
 	var continue_button := _active_scene.get_node_or_null("ContinueButton") as Button
 	if continue_button:

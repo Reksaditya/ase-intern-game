@@ -7,6 +7,7 @@ signal log_panel_closed
 
 const LOG_SCROLL_WHEEL_STEP := 36.0
 const LOG_SCROLL_TWEEN_DURATION := 0.18
+const BUTTON_SFX: AudioStream = preload("res://assets/bgm/button.mp3")
 
 @onready var intlog: TextureButton = $intlog
 @onready var idcard: TextureButton = $idcard
@@ -28,6 +29,7 @@ var panel_tween: Tween
 var log_scroll_tween: Tween
 var log_scroll_target: float = 0.0
 var log_open: bool = false
+var _button_sfx_player: AudioStreamPlayer
 
 func _ready() -> void:
 	for button in [intlog, idcard]:
@@ -40,7 +42,10 @@ func _ready() -> void:
 	intlog.pressed.connect(_on_intlog_pressed)
 	idcard.pressed.connect(_on_idcard_pressed)
 
-	back_button.pressed.connect(close_log_panel)
+	back_button.pressed.connect(func():
+		_play_button_sfx()
+		close_log_panel()
+	)
 	for question_key in ["emotional", "factual", "trap", "clarification"]:
 		var question_button := log_list.get_node_or_null(question_key) as BaseButton
 		if question_button:
@@ -57,7 +62,17 @@ func _ready() -> void:
 	log_scroll.modulate.a = 0.0
 	log_scroll.scale = Vector2(0.9, 0.9)
 
+	_button_sfx_player = AudioStreamPlayer.new()
+	_button_sfx_player.stream = BUTTON_SFX
+	_button_sfx_player.volume_db = -3.0
+	add_child(_button_sfx_player)
+
 	call_deferred("_update_scroll_height")
+
+
+func _play_button_sfx() -> void:
+	if is_instance_valid(_button_sfx_player):
+		_button_sfx_player.play()
 
 
 # Replace ScrollContainer's page-sized wheel jumps with a small smooth step.
@@ -87,6 +102,7 @@ func _input(event: InputEvent) -> void:
 func _on_question_button_pressed(question_key: String) -> void:
 	if not log_open:
 		return
+	_play_button_sfx()
 	question_asked.emit(question_key)
 
 
@@ -140,6 +156,7 @@ func _update_scroll_height() -> void:
 
 
 func _on_intlog_pressed() -> void:
+	_play_button_sfx()
 	if log_open:
 		close_log_panel()
 	else:
@@ -147,6 +164,7 @@ func _on_intlog_pressed() -> void:
 
 
 func _on_idcard_pressed() -> void:
+	_play_button_sfx()
 	id_card_requested.emit()
 
 

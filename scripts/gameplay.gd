@@ -22,6 +22,14 @@ const CHARACTER_BOB_HEIGHT := 7.0
 const CHARACTER_SWAY_DEGREES := 1.2
 const CHARACTER_HOLD_AFTER_OUTCOME := 0.9
 const EMPTY_CHARACTER_EXIT_TINT := Color(0.1, 0.1, 0.14, 1.0)
+const LOCKED_SFX: AudioStream = preload("res://assets/bgm/locked.mp3")
+const BUTTON_SFX: AudioStream = preload("res://assets/bgm/button.mp3")
+const REJECT_SFX: AudioStream = preload("res://assets/bgm/reject.wav")
+const SENTER_SFX: AudioStream = preload("res://assets/bgm/senter.wav")
+const MONITOR_SFX: AudioStream = preload("res://assets/bgm/monitor.wav")
+const WORD_SFX: AudioStream = preload("res://assets/bgm/word.wav")
+const STEP_SFX: AudioStream = preload("res://assets/bgm/step.wav")
+const WORD_SFX_MIN_INTERVAL_MS := 90
 
 @onready var pupil: Control = $HUD/DesignCanvas/Pupil
 @onready var television: Node = $Sprite2D
@@ -86,6 +94,14 @@ var _character_half_width := 150.0
 var _focus_return_target: Control
 var _dialogue_scroll_mode := false
 var character_data_path := CHARACTER_DATA_PATH
+var _locked_sfx_player: AudioStreamPlayer
+var _button_sfx_player: AudioStreamPlayer
+var _reject_sfx_player: AudioStreamPlayer
+var _senter_sfx_player: AudioStreamPlayer
+var _monitor_sfx_player: AudioStreamPlayer
+var _word_sfx_player: AudioStreamPlayer
+var _step_sfx_player: AudioStreamPlayer
+var _last_word_sfx_ms := -1000
 
 
 func _ready() -> void:
@@ -109,6 +125,7 @@ func _ready() -> void:
 	decline_button.disabled = true
 	pupil.set_process(false)
 	heartbeat_temperature.set_process(false)
+	_setup_audio_players()
 	_current_character = _load_character_data(character_data_path)
 	pupil.call("set_character_data", _current_character)
 	heartbeat_temperature.call("set_character_data", _current_character)
@@ -190,6 +207,21 @@ func _input(event: InputEvent) -> void:
 				return
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
+		if (
+			mouse_event.pressed
+			and mouse_event.button_index == MOUSE_BUTTON_LEFT
+			and not _diagnostics_unlocked()
+			and not _decision_outcome_started
+			and not pupil.visible
+			and not heartbeat_temperature.visible
+			and (
+				pupil_button.get_global_rect().has_point(mouse_event.position)
+				or heartbeat_temperature_button.get_global_rect().has_point(mouse_event.position)
+			)
+		):
+			_play_sfx(_locked_sfx_player)
+			get_viewport().set_input_as_handled()
+			return
 		var dialogue_scrollbar := dialogue_output.get_v_scroll_bar()
 		var clicked_dialogue_scrollbar := (
 			dialogue_scrollbar.visible
@@ -222,20 +254,77 @@ func get_case_tracking_data() -> Dictionary:
 	}
 
 
+func _setup_audio_players() -> void:
+	_locked_sfx_player = _create_sfx_player(LOCKED_SFX, -3.0)
+	_button_sfx_player = _create_sfx_player(BUTTON_SFX, -3.0)
+	_reject_sfx_player = _create_sfx_player(REJECT_SFX, -3.0)
+	_senter_sfx_player = _create_sfx_player(SENTER_SFX, 0.0)
+	_monitor_sfx_player = _create_sfx_player(MONITOR_SFX, -4.0)
+	_monitor_sfx_player.finished.connect(func():
+		if heartbeat_temperature.visible:
+			_monitor_sfx_player.play()
+	)
+	_word_sfx_player = _create_sfx_player(WORD_SFX, -2.0)
+	_step_sfx_player = _create_sfx_player(STEP_SFX, 12.0)
+	_step_sfx_player.finished.connect(func():
+		if _character_bob_tween and _character_bob_tween.is_running():
+			_step_sfx_player.play()
+	)
+
+
+func _create_sfx_player(stream: AudioStream, volume_db: float) -> AudioStreamPlayer:
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = volume_db
+	add_child(player)
+	return player
+
+
+func _play_sfx(player: AudioStreamPlayer) -> void:
+	if is_instance_valid(player):
+		player.play()
+
+
+func _stop_sfx(player: AudioStreamPlayer) -> void:
+	if is_instance_valid(player) and player.playing:
+		player.stop()
+
+
+func _play_word_sfx() -> void:
+	if not is_instance_valid(_word_sfx_player):
+		return
+	var now := Time.get_ticks_msec()
+	if now - _last_word_sfx_ms < WORD_SFX_MIN_INTERVAL_MS:
+		return
+	_last_word_sfx_ms = now
+	_word_sfx_player.play()
+
+
+func _stop_tool_sfx() -> void:
+	_stop_sfx(_senter_sfx_player)
+	_stop_sfx(_monitor_sfx_player)
+
+
 func _open_pupil() -> void:
 	if not _diagnostics_unlocked():
+		_play_sfx(_locked_sfx_player)
 		return
+	_play_sfx(_button_sfx_player)
+	_stop_sfx(_monitor_sfx_player)
 	_remember_focus(pupil_button)
 	heartbeat_temperature.hide()
 	heartbeat_temperature.set_process(false)
 	pupil.show()
 	pupil.set_process(true)
 	pupil.call("reset_light_tracking")
+	_play_sfx(_senter_sfx_player)
 	_update_focus_ring()
 	pupil_close_button.grab_focus()
 
 
 func _close_pupil() -> void:
+	_play_sfx(_button_sfx_player)
+	_stop_sfx(_senter_sfx_player)
 	pupil.hide()
 	pupil.set_process(false)
 	_update_focus_ring()
@@ -244,18 +333,25 @@ func _close_pupil() -> void:
 
 func _open_heartbeat_temperature() -> void:
 	if not _diagnostics_unlocked():
+		_play_sfx(_locked_sfx_player)
 		return
+	_play_sfx(_button_sfx_player)
+	_stop_sfx(_senter_sfx_player)
 	_remember_focus(heartbeat_temperature_button)
 	pupil.hide()
 	pupil.set_process(false)
 	heartbeat_temperature.show()
 	heartbeat_temperature.set_process(true)
+	if not _monitor_sfx_player.playing:
+		_play_sfx(_monitor_sfx_player)
 	_show_tool_reactions("biometric_monitor")
 	_update_focus_ring()
 	heartbeat_close_button.grab_focus()
 
 
 func _close_heartbeat_temperature() -> void:
+	_play_sfx(_button_sfx_player)
+	_stop_sfx(_monitor_sfx_player)
 	heartbeat_temperature.hide()
 	heartbeat_temperature.set_process(false)
 	_update_focus_ring()
@@ -294,6 +390,11 @@ func show_decision_outcome(is_accepted: bool) -> void:
 		return
 	_decision_outcome_started = true
 	_decision_was_accepted = is_accepted
+	if is_accepted:
+		_play_sfx(_button_sfx_player)
+	else:
+		_play_sfx(_reject_sfx_player)
+	_stop_tool_sfx()
 
 	var outcome_name := "accept" if is_accepted else "decline"
 	var all_outcomes: Variant = _current_character.get("outcomes", {})
@@ -370,6 +471,8 @@ func _clear_recent_dialogue() -> void:
 	_recent_event_is_revealing = false
 	_skip_recent_reveal_requested = false
 	_last_recent_speaker = ""
+	_stop_sfx(_word_sfx_player)
+	_last_word_sfx_ms = -1000
 	dialogue_output.clear()
 	dialogue_output.visible_characters = 0
 	dialogue_output.scroll_following = true
@@ -527,6 +630,8 @@ func _start_character_walk_bob() -> void:
 		_character_bob_tween.kill()
 	if _character_settle_tween:
 		_character_settle_tween.kill()
+	if not _step_sfx_player.playing:
+		_play_sfx(_step_sfx_player)
 	_character_bob_tween = create_tween().set_loops()
 	_character_bob_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	var steps := [
@@ -553,6 +658,7 @@ func _start_character_walk_bob() -> void:
 func _stop_character_walk_bob() -> void:
 	if _character_bob_tween:
 		_character_bob_tween.kill()
+	_stop_sfx(_step_sfx_player)
 	if not is_instance_valid(_character_sprite):
 		return
 	_character_settle_tween = create_tween()
@@ -588,6 +694,7 @@ func _reveal_recent_event(event: Dictionary, generation: int) -> void:
 			dialogue_output.visible_characters = final_character
 			return
 		dialogue_output.visible_characters = character
+		_play_word_sfx()
 		if character < final_character:
 			await get_tree().create_timer(character_delay, false).timeout
 			if generation != _recent_event_generation:
@@ -639,6 +746,7 @@ func _focus_adjacent_from_dialogue(forward: bool) -> void:
 
 
 func _open_transcript() -> void:
+	_play_sfx(_button_sfx_player)
 	_remember_focus(dialogue_output)
 	transcript_output.clear()
 	if _dialogue_history.is_empty():
@@ -653,6 +761,7 @@ func _open_transcript() -> void:
 
 
 func _close_transcript() -> void:
+	_play_sfx(_button_sfx_player)
 	transcript_overlay.hide()
 	_update_focus_ring()
 	_restore_focus(dialogue_output)
@@ -681,6 +790,7 @@ func _open_id_card() -> void:
 
 
 func _close_id_card() -> void:
+	_play_sfx(_button_sfx_player)
 	id_card_overlay.hide()
 	_update_focus_ring()
 	_restore_focus(id_card_button)
@@ -689,6 +799,7 @@ func _close_id_card() -> void:
 func _open_pause_menu(from_button: bool = false) -> void:
 	if pause_overlay.visible:
 		return
+	_play_sfx(_button_sfx_player)
 	_remember_focus(pause_button if from_button else null)
 	InputGuide.hide_tip()
 	pause_overlay.call("open_menu")
@@ -698,6 +809,7 @@ func _open_pause_menu(from_button: bool = false) -> void:
 
 
 func _resume_from_pause() -> void:
+	_play_sfx(_button_sfx_player)
 	pause_overlay.hide()
 	get_tree().paused = false
 	_update_focus_ring()
