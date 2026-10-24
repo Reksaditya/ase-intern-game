@@ -983,7 +983,7 @@ func _open_pause_menu(from_button: bool = false) -> void:
 		return
 	_play_sfx(_button_sfx_player)
 	_remember_focus(pause_button if from_button else null)
-	InputGuide.hide_tip()
+	InputGuide.suspend_tips()
 	pause_overlay.call("open_menu")
 	get_tree().paused = true
 	_update_focus_ring()
@@ -994,13 +994,15 @@ func _resume_from_pause() -> void:
 	_play_sfx(_button_sfx_player)
 	pause_overlay.hide()
 	get_tree().paused = false
+	FocusRing.set_modal_root(null)
 	_update_focus_ring()
 	_restore_focus(pause_button)
-	InputGuide.refresh_active_tip()
+	InputGuide.resume_tips(true)
 
 
 func _return_to_main_menu() -> void:
 	get_tree().paused = false
+	FocusRing.set_modal_root(null)
 	InputGuide.leave_context()
 	return_to_main_menu.emit()
 

@@ -2,4 +2,8 @@
 .godot/
 /android/
 
+# Export builds and local development signing key
+/bin/
+/keystore/
+
 *.tmp

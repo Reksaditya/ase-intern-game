@@ -18,9 +18,11 @@ func _ready() -> void:
 
 
 func open_menu() -> void:
+	InputGuide.suspend_tips()
 	if _how_to_play.visible:
 		_close_how_to_play()
 	show()
+	FocusRing.set_modal_root(self)
 	_resume_button.grab_focus()
 
 
@@ -28,7 +30,14 @@ func _input(event: InputEvent) -> void:
 	if not visible:
 		return
 	if _how_to_play.visible:
-		if event.is_action_pressed("ui_cancel"):
+		var is_echo := event is InputEventKey and (event as InputEventKey).echo
+		if (
+			not is_echo
+			and (
+				event.is_action_pressed("ui_cancel")
+				or event.is_action_pressed("ui_accept")
+			)
+		):
 			_close_how_to_play()
 			get_viewport().set_input_as_handled()
 		return
@@ -38,6 +47,7 @@ func _input(event: InputEvent) -> void:
 
 
 func _open_how_to_play() -> void:
+	InputGuide.suspend_tips()
 	_resume_button.focus_mode = Control.FOCUS_NONE
 	_how_to_play_button.focus_mode = Control.FOCUS_NONE
 	_main_menu_button.focus_mode = Control.FOCUS_NONE
@@ -46,6 +56,7 @@ func _open_how_to_play() -> void:
 
 func _close_how_to_play() -> void:
 	_how_to_play.call("close")
+	FocusRing.set_modal_root(self)
 	_resume_button.focus_mode = Control.FOCUS_ALL
 	_how_to_play_button.focus_mode = Control.FOCUS_ALL
 	_main_menu_button.focus_mode = Control.FOCUS_ALL

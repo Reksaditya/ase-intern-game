@@ -63,31 +63,77 @@ const GAMEPAD_ROWS := [
 ]
 
 var _close_button: Button
+var _center: CenterContainer
 
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	color = Color(0.0, 0.0, 0.0, 0.86)
 	_build_ui()
+	get_viewport().gui_focus_changed.connect(_on_gui_focus_changed)
+	set_process(false)
 	hide()
 
 
 func open() -> void:
+	InputGuide.suspend_tips()
 	show()
-	if is_instance_valid(_close_button):
-		_close_button.grab_focus()
+	set_process(true)
+	_refresh_layout()
+	FocusRing.set_modal_root(self)
+	_pin_focus_to_close.call_deferred()
 
 
 func close() -> void:
+	set_process(false)
 	hide()
+	FocusRing.set_modal_root(null)
+
+
+func _process(_delta: float) -> void:
+	if not is_visible_in_tree():
+		set_process(false)
+		return
+	if not is_instance_valid(_close_button) or not _close_button.is_visible_in_tree():
+		return
+	if get_viewport().gui_get_focus_owner() != _close_button:
+		_close_button.grab_focus()
+
+
+func _pin_focus_to_close() -> void:
+	if not visible or not is_instance_valid(_close_button):
+		return
+	if not _close_button.is_visible_in_tree():
+		return
+	_close_button.grab_focus()
+
+
+func _on_gui_focus_changed(control: Control) -> void:
+	# How to Play only has one action. Keep the selection on CLOSE so keyboard
+	# and controller navigation cannot move the focus ring behind the modal.
+	if not visible or not is_instance_valid(_close_button):
+		return
+	if control == _close_button:
+		return
+	_pin_focus_to_close.call_deferred()
+
+
+func _refresh_layout() -> void:
+	# The panel is built while this overlay is hidden. Re-apply the full-rect
+	# anchors when it becomes visible so the panel always centers on the
+	# viewport instead of keeping a zero/stale size from build time.
+	if not is_instance_valid(_center):
+		return
+	_center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_center.queue_sort()
 
 
 func _build_ui() -> void:
-	var center := CenterContainer.new()
-	center.name = "Center"
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(center)
-	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_center = CenterContainer.new()
+	_center.name = "Center"
+	_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_center)
+	_center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 	var panel := PanelContainer.new()
 	panel.name = "Panel"
@@ -104,7 +150,7 @@ func _build_ui() -> void:
 			2
 		)
 	)
-	center.add_child(panel)
+	_center.add_child(panel)
 
 	var layout := VBoxContainer.new()
 	layout.name = "Layout"
@@ -164,6 +210,16 @@ func _build_ui() -> void:
 	)
 	_close_button.pressed.connect(func(): close_requested.emit())
 	footer.add_child(_close_button)
+
+	# The panel has a single action. Point every navigation direction back at
+	# CLOSE so arrow keys, Tab, and controller navigation cannot leave it.
+	var close_focus_path := _close_button.get_path()
+	_close_button.focus_neighbor_top = close_focus_path
+	_close_button.focus_neighbor_bottom = close_focus_path
+	_close_button.focus_neighbor_left = close_focus_path
+	_close_button.focus_neighbor_right = close_focus_path
+	_close_button.focus_next = close_focus_path
+	_close_button.focus_previous = close_focus_path
 
 
 func _make_divider() -> ColorRect:

@@ -16,6 +16,7 @@ const FINAL_EVALUATION_SCENE: PackedScene = preload("res://scenes/final_evaluati
 const ENDING_SCENE: PackedScene = preload("res://scenes/ending.tscn")
 const SAVE_SLOT_COUNT := 4
 const SAVE_PATH_FORMAT := "user://save_slot_%d.json"
+const SETTINGS_CYCLES_FOR_EASTER_EGG := 3
 const REPORT_TEXT_PATH := "res://data/report_text.json"
 const MORNING_REPORT_PATH_FORMAT := "res://data/morning_report%d.json"
 const NIGHT_EVALUATION_PATH_FORMAT := "res://data/night_eval%d.json"
@@ -50,14 +51,18 @@ var _selected_save_slot := -1
 var _save_actions_active := false
 var _save_slots: Array[Dictionary] = []
 var _windowed_size := Vector2i.ZERO
+var _settings_cycles := 0
+var _mirica_active := false
 var _report_sfx_player: AudioStreamPlayer
 var _button_sfx_player: AudioStreamPlayer
 
 @onready var _main_menu := $MainMenu
 @onready var _save_menu := $SaveMenu
 @onready var _settings_menu := $SettingsMenu
+@onready var _mirica_overlay := $MiricaOverlay
 @onready var _brightness_modulate := $BrightnessModulate
 @onready var _save_content := $SaveMenu/Center/Content
+@onready var _audio_slider := $SettingsMenu/Center/Content/AudioRow/AudioSlider
 @onready var _brightness_slider := $SettingsMenu/Center/Content/BrightnessRow/BrightnessSlider
 @onready var _fullscreen_toggle := $SettingsMenu/Center/Content/FullscreenRow/FullscreenToggle
 @onready var _play_game_button := $MainMenu/Buttons/PlayGameButton
@@ -77,8 +82,10 @@ func _ready() -> void:
 	$MainMenu/Buttons/SettingsButton.pressed.connect(_open_settings_menu)
 	$MainMenu/Buttons/QuitButton.pressed.connect(_quit_game)
 	$SettingsMenu/Center/Content/BackButton.pressed.connect(_on_back_to_main_menu_pressed)
+	_audio_slider.value_changed.connect(_on_audio_changed)
 	_brightness_slider.value_changed.connect(_on_brightness_changed)
 	_fullscreen_toggle.toggled.connect(_on_fullscreen_toggled)
+	_sync_audio_slider()
 	$SaveMenu/Center/Content/SaveSlot1.pressed.connect(_on_save_slot_pressed.bind(0))
 	$SaveMenu/Center/Content/SaveSlot2.pressed.connect(_on_save_slot_pressed.bind(1))
 	$SaveMenu/Center/Content/SaveSlot3.pressed.connect(_on_save_slot_pressed.bind(2))
@@ -102,6 +109,30 @@ func _ready() -> void:
 
 	_refresh_save_menu()
 	_show_main_menu()
+
+
+func _input(event: InputEvent) -> void:
+	# The easter egg overlay sits above the menus, so it has to consume the
+	# first press before a focused menu button can react to it.
+	if not _mirica_active:
+		return
+	if event is InputEventKey:
+		var key_event := event as InputEventKey
+		if not key_event.pressed or key_event.echo:
+			return
+	elif event is InputEventMouseButton:
+		if not (event as InputEventMouseButton).pressed:
+			return
+	elif event is InputEventJoypadButton:
+		if not (event as InputEventJoypadButton).pressed:
+			return
+	elif event is InputEventScreenTouch:
+		if not (event as InputEventScreenTouch).pressed:
+			return
+	else:
+		return
+	_hide_mirica_overlay()
+	get_viewport().set_input_as_handled()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -161,7 +192,7 @@ func _open_settings_menu() -> void:
 	_save_menu.hide()
 	_settings_menu.show()
 	_fullscreen_toggle.set_pressed_no_signal(_is_window_fullscreen())
-	_brightness_slider.grab_focus()
+	_audio_slider.grab_focus()
 
 
 func _on_back_to_main_menu_pressed() -> void:
@@ -170,6 +201,8 @@ func _on_back_to_main_menu_pressed() -> void:
 
 
 func _show_main_menu() -> void:
+	var left_settings_menu: bool = _settings_menu.visible
+	FocusRing.set_modal_root(null)
 	_save_actions_active = false
 	_selected_save_slot = -1
 	_save_menu.hide()
@@ -178,6 +211,26 @@ func _show_main_menu() -> void:
 	_play_bgm(MENU_BGM)
 	_refresh_save_menu()
 	_play_game_button.grab_focus()
+	if left_settings_menu:
+		_settings_cycles += 1
+		if _settings_cycles >= SETTINGS_CYCLES_FOR_EASTER_EGG:
+			_settings_cycles = 0
+			_show_mirica_overlay()
+
+
+func _show_mirica_overlay() -> void:
+	_mirica_active = true
+	get_viewport().gui_release_focus()
+	_mirica_overlay.show()
+	FocusRing.set_modal_root(_mirica_overlay)
+
+
+func _hide_mirica_overlay() -> void:
+	if not _mirica_active:
+		return
+	_mirica_active = false
+	_mirica_overlay.hide()
+	_show_main_menu()
 
 
 func _bgm_volume_for(stream: AudioStream) -> float:
@@ -247,6 +300,27 @@ func _update_bgm_for_step(step: Dictionary) -> void:
 
 func _on_brightness_changed(value: float) -> void:
 	_brightness_modulate.color = Color(value, value, value, 1.0)
+
+
+func _on_audio_changed(value: float) -> void:
+	var bus_index := AudioServer.get_bus_index("Master")
+	if bus_index < 0:
+		return
+	AudioServer.set_bus_mute(bus_index, value <= 0.001)
+	AudioServer.set_bus_volume_db(bus_index, linear_to_db(clampf(value, 0.001, 1.0)))
+
+
+func _sync_audio_slider() -> void:
+	var bus_index := AudioServer.get_bus_index("Master")
+	if bus_index < 0:
+		return
+	var master_volume := clampf(
+		db_to_linear(AudioServer.get_bus_volume_db(bus_index)),
+		0.0,
+		1.0
+	)
+	_audio_slider.set_value_no_signal(master_volume)
+	_on_audio_changed(master_volume)
 
 
 func _on_fullscreen_toggled(enabled: bool) -> void:
@@ -823,6 +897,7 @@ func _save_path(slot_index: int) -> String:
 
 func _show_timeline_step() -> void:
 	InputGuide.leave_context()
+	FocusRing.set_modal_root(null)
 	if is_instance_valid(_active_scene):
 		_active_scene.queue_free()
 

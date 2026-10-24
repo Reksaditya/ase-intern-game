@@ -18,6 +18,7 @@ var modality: int = Modality.KEYBOARD
 
 var _active_context := ""
 var _active_duration := 0.0
+var _tips_suspended := false
 var _last_shown_modality: Dictionary = {}
 var _tip_tween: Tween
 var _tip_root: Control
@@ -63,6 +64,8 @@ func enter_printer() -> void:
 func enter_context(context: String) -> void:
 	_active_context = context
 	_active_duration = _duration_for(context)
+	if _tips_suspended:
+		return
 	if get_tree().paused:
 		return
 	if int(_last_shown_modality.get(context, -1)) == modality:
@@ -73,21 +76,36 @@ func enter_context(context: String) -> void:
 
 
 func refresh_active_tip() -> void:
-	if _active_context.is_empty() or get_tree().paused:
+	if _active_context.is_empty() or _tips_suspended or get_tree().paused:
 		return
 	if int(_last_shown_modality.get(_active_context, -1)) == modality:
 		return
 	_present_tip()
 
 
+func suspend_tips() -> void:
+	## Hide the transient control hint while a modal menu (pause / How to Play)
+	## is on screen so it cannot float above that menu at the gameplay position.
+	_tips_suspended = true
+	hide_tip()
+
+
+func resume_tips(show_tip: bool = false) -> void:
+	_tips_suspended = false
+	if show_tip:
+		refresh_active_tip()
+
+
 func leave_context() -> void:
 	_active_context = ""
+	_tips_suspended = false
 	hide_tip()
 
 
 func reset_run() -> void:
 	_last_shown_modality.clear()
 	_active_context = ""
+	_tips_suspended = false
 	hide_tip()
 
 
@@ -106,7 +124,7 @@ func _set_modality(new_modality: int) -> void:
 		return
 	modality = new_modality
 	modality_changed.emit(modality)
-	if _active_context.is_empty() or get_tree().paused:
+	if _active_context.is_empty() or _tips_suspended or get_tree().paused:
 		return
 	# Switching devices re-introduces the controls for the current scene, even
 	# if the other input was already shown once.
@@ -118,7 +136,7 @@ func _duration_for(context: String) -> float:
 
 
 func _present_tip() -> void:
-	if _active_context.is_empty():
+	if _active_context.is_empty() or _tips_suspended:
 		return
 	_last_shown_modality[_active_context] = modality
 	_rebuild_tip()

@@ -10,6 +10,7 @@ const SHADOW := Color(0.0, 0.0, 0.0, 0.7)
 
 var _target: Control
 var _focus_visible := true
+var _modal_root: Control
 var _indicator: FocusIndicator
 var _empty_focus_style := StyleBoxEmpty.new()
 
@@ -87,13 +88,25 @@ func _on_viewport_resized() -> void:
 		_indicator.size = get_viewport().get_visible_rect().size
 
 
+func set_modal_root(root: Control) -> void:
+	## While a modal screen is open, only draw the outline around controls that
+	## actually belong to it. This prevents the ring from staying on a gameplay
+	## control (such as the dialogue box) behind the modal.
+	_modal_root = root
+	_refresh()
+
+
 func _has_valid_target() -> bool:
-	return (
+	if not (
 		is_instance_valid(_target)
 		and _target.is_inside_tree()
 		and _target.is_visible_in_tree()
 		and _target.has_focus()
-	)
+	):
+		return false
+	if is_instance_valid(_modal_root) and not _modal_root.is_ancestor_of(_target):
+		return false
+	return true
 
 
 func _refresh() -> void:

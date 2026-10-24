@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" path="res://assets/button/INT QUIT.png" id="10_int_quit"]
 [ext_resource type="Texture2D" path="res://assets/character/kiara_a.png" id="11_kiara_a"]
 [ext_resource type="Texture2D" path="res://assets/character/kiara.png" id="12_kiara"]
+[ext_resource type="Texture2D" uid="uid://brrm2m2tdx4wf" path="res://assets/mirica.jpg" id="13_mirica"]
 
 [sub_resource type="AtlasTexture" id="Atlas_play"]
 atlas = ExtResource("5_play")
@@ -308,6 +309,30 @@ custom_minimum_size = Vector2(700, 0)
 layout_mode = 2
 theme_override_constants/separation = 20
 
+[node name="AudioRow" type="HBoxContainer" parent="SettingsMenu/Center/Content"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="AudioLabel" type="Label" parent="SettingsMenu/Center/Content/AudioRow"]
+custom_minimum_size = Vector2(200, 53.3333)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 30
+text = "Audio"
+vertical_alignment = 1
+
+[node name="AudioSlider" type="HSlider" parent="SettingsMenu/Center/Content/AudioRow"]
+custom_minimum_size = Vector2(466.6667, 53.3333)
+layout_mode = 2
+focus_mode = 2
+mouse_default_cursor_shape = 2
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+
 [node name="BrightnessRow" type="HBoxContainer" parent="SettingsMenu/Center/Content"]
 layout_mode = 2
 theme_override_constants/separation = 20
@@ -369,3 +394,34 @@ flat = true
 [node name="MenuBGM" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_bgm")
 volume_db = -6.0
+
+[node name="MiricaOverlay" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="MiricaOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Image" type="TextureRect" parent="MiricaOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("13_mirica")
+expand_mode = 1
+stretch_mode = 6
